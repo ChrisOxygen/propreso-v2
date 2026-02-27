@@ -20,7 +20,7 @@ export function HeroNav() {
   return (
     <header className="fixed top-0 inset-x-0 z-50">
       {/* Glass background */}
-      <div className="absolute inset-0 bg-[#0F0A05]/75 backdrop-blur-xl border-b border-white/[0.055]" />
+      <div className="absolute inset-0 bg-[#0F0A05]/75 backdrop-blur-xl border-b border-white/5.5" />
 
       <nav className="relative mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5 md:px-10">
         {/* Logo */}
@@ -54,7 +54,7 @@ export function HeroNav() {
                     "text-[13.5px] text-[#FBF7F3]/50 hover:text-[#FBF7F3]",
                     "hover:bg-white/5 rounded-md",
                     "px-4 py-2 transition-colors duration-150",
-                    "inline-flex items-center select-none"
+                    "inline-flex items-center select-none",
                   )}
                   style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
@@ -83,7 +83,7 @@ export function HeroNav() {
               "bg-[#C8491A] hover:bg-[#E06030] active:bg-[#9E3610] text-white border-0",
               "text-[13px] h-9 px-4 font-medium",
               "shadow-[0_0_18px_rgba(200,73,26,0.32)] hover:shadow-[0_0_28px_rgba(200,73,26,0.5)]",
-              "transition-all duration-200"
+              "transition-all duration-200",
             )}
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >

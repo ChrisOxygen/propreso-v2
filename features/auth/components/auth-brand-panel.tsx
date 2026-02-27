@@ -85,7 +85,7 @@ export function AuthBrandPanel() {
         <div className="flex items-center gap-2.5">
           {/* Orange icon box */}
           <div
-            className="w-8 h-8 rounded-[7px] flex items-center justify-center flex-shrink-0"
+            className="w-8 h-8 rounded-[7px] flex items-center justify-center shrink-0"
             style={{
               background: "linear-gradient(135deg, #C8491A 0%, #E06030 100%)",
               boxShadow:
@@ -153,7 +153,7 @@ export function AuthBrandPanel() {
         </div>
 
         {/* Floating stat cards */}
-        <div className="w-full max-w-[280px] space-y-3">
+        <div className="w-full max-w-70 space-y-3">
           {/* Card 1 */}
           <div
             className="rounded-xl px-4 py-3 flex items-center gap-3 animate-fade-up"
@@ -164,7 +164,7 @@ export function AuthBrandPanel() {
             }}
           >
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
               style={{ background: "rgba(200,73,26,0.2)" }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -209,7 +209,7 @@ export function AuthBrandPanel() {
             }}
           >
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
               style={{ background: "rgba(200,73,26,0.2)" }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -260,7 +260,7 @@ export function AuthBrandPanel() {
             }}
           >
             <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+              className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
               style={{ background: "rgba(200,73,26,0.2)" }}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">

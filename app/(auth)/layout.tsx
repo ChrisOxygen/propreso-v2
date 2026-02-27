@@ -20,7 +20,7 @@ export default function AuthLayout({
         className="flex items-center justify-center min-h-screen px-6 py-12"
         style={{ backgroundColor: "#120B06" }}
       >
-        <div className="w-full max-w-[420px]">{children}</div>
+        <div className="w-full max-w-105">{children}</div>
       </div>
     </div>
   );

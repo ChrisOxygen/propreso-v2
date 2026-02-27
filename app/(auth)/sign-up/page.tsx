@@ -35,7 +35,10 @@ export default function SignUpPage() {
       {/* Subtitle */}
       <p
         className="mt-2.5 text-[13.5px]"
-        style={{ color: "rgba(251,247,243,0.42)", fontFamily: "var(--font-inter)" }}
+        style={{
+          color: "rgba(251,247,243,0.42)",
+          fontFamily: "var(--font-inter)",
+        }}
       >
         Already have an account?{" "}
         <Link
@@ -70,7 +73,10 @@ export default function SignUpPage() {
             <Label
               htmlFor="firstName"
               className="text-[12px] font-medium"
-              style={{ color: "rgba(251,247,243,0.55)", fontFamily: "var(--font-space-grotesk)" }}
+              style={{
+                color: "rgba(251,247,243,0.55)",
+                fontFamily: "var(--font-space-grotesk)",
+              }}
             >
               First name
             </Label>
@@ -95,7 +101,10 @@ export default function SignUpPage() {
             <Label
               htmlFor="lastName"
               className="text-[12px] font-medium"
-              style={{ color: "rgba(251,247,243,0.55)", fontFamily: "var(--font-space-grotesk)" }}
+              style={{
+                color: "rgba(251,247,243,0.55)",
+                fontFamily: "var(--font-space-grotesk)",
+              }}
             >
               Last name
             </Label>
@@ -122,7 +131,10 @@ export default function SignUpPage() {
           <Label
             htmlFor="email"
             className="text-[12px] font-medium"
-            style={{ color: "rgba(251,247,243,0.55)", fontFamily: "var(--font-space-grotesk)" }}
+            style={{
+              color: "rgba(251,247,243,0.55)",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
           >
             Email
           </Label>
@@ -149,7 +161,10 @@ export default function SignUpPage() {
           <Label
             htmlFor="password"
             className="text-[12px] font-medium"
-            style={{ color: "rgba(251,247,243,0.55)", fontFamily: "var(--font-space-grotesk)" }}
+            style={{
+              color: "rgba(251,247,243,0.55)",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
           >
             Password
           </Label>
@@ -189,16 +204,23 @@ export default function SignUpPage() {
             id="terms"
             checked={termsValue === true}
             onCheckedChange={(checked) => {
-              setValue("terms", checked === true ? true : (undefined as unknown as true), {
-                shouldValidate: true,
-              });
+              setValue(
+                "terms",
+                checked === true ? true : (undefined as unknown as true),
+                {
+                  shouldValidate: true,
+                },
+              );
             }}
-            className="mt-[1px] border-white/20 data-[state=checked]:bg-[#C8491A] data-[state=checked]:border-[#C8491A]"
+            className="mt-px border-white/20 data-[state=checked]:bg-[#C8491A] data-[state=checked]:border-[#C8491A]"
           />
           <Label
             htmlFor="terms"
-            className="text-[12.5px] leading-[1.5] cursor-pointer"
-            style={{ color: "rgba(251,247,243,0.45)", fontFamily: "var(--font-inter)" }}
+            className="text-[12.5px] leading-normal cursor-pointer"
+            style={{
+              color: "rgba(251,247,243,0.45)",
+              fontFamily: "var(--font-inter)",
+            }}
           >
             I agree to the{" "}
             <Link
@@ -248,14 +270,23 @@ export default function SignUpPage() {
 
         {/* Divider */}
         <div className="flex items-center gap-3 py-1">
-          <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+          <div
+            className="flex-1 h-px"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          />
           <span
             className="text-[11.5px] shrink-0"
-            style={{ color: "rgba(251,247,243,0.28)", fontFamily: "var(--font-inter)" }}
+            style={{
+              color: "rgba(251,247,243,0.28)",
+              fontFamily: "var(--font-inter)",
+            }}
           >
             Or continue with
           </span>
-          <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+          <div
+            className="flex-1 h-px"
+            style={{ background: "rgba(255,255,255,0.08)" }}
+          />
         </div>
 
         {/* Google OAuth */}
@@ -270,12 +301,16 @@ export default function SignUpPage() {
             fontFamily: "var(--font-space-grotesk)",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.07)";
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(255,255,255,0.16)";
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "rgba(255,255,255,0.07)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor =
+              "rgba(255,255,255,0.16)";
           }}
           onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.04)";
-            (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(255,255,255,0.1)";
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "rgba(255,255,255,0.04)";
+            (e.currentTarget as HTMLButtonElement).style.borderColor =
+              "rgba(255,255,255,0.1)";
           }}
         >
           {/* Google icon */}
