@@ -42,6 +42,12 @@ enum ProposalLength {
   LONG
 }
 
+enum ProposalStatus {
+  REPLIED
+  WON
+  NO_RESPONSE
+}
+
 model User {
   id            String    @id
   email         String    @unique
@@ -82,6 +88,7 @@ model Proposal {
   upworkOpener     Boolean   @default(false)
   generatedContent String
   editedContent    String?
+  status           ProposalStatus?
   createdAt        DateTime  @default(now())
 
   @@index([userId])
