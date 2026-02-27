@@ -9,7 +9,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
-    directUrl: process.env["DIRECT_URL"],
+    // DIRECT_URL (Supabase direct, port 5432) for migrations — pooler doesn't support DDL
+    // Runtime PrismaClient uses DATABASE_URL (pooled) configured in shared/lib/prisma.ts
+    url: process.env["DIRECT_URL"],
   },
 });
