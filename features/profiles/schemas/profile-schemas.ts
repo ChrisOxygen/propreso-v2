@@ -18,7 +18,6 @@ export const ZCreateProfileSchema = z.object({
     .string()
     .min(50, "Please write at least 50 characters")
     .max(600, "Bio is too long"),
-  tone: z.enum(["PROFESSIONAL", "CONVERSATIONAL", "CONFIDENT", "FRIENDLY"]),
   portfolioItems: z
     .array(ZPortfolioItemSchema)
     .max(5, "Maximum 5 portfolio items"),

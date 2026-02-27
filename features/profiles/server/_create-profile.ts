@@ -16,7 +16,6 @@ export async function _createProfile(userId: string, data: ZCreateProfile) {
       name: data.name,
       skills: data.skills,
       bio: data.bio,
-      tone: data.tone,
       portfolioItems: data.portfolioItems ?? [],
       isDefault: count === 0,
     },

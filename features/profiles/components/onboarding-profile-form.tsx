@@ -58,29 +58,6 @@ const POPULAR_ROLES = [
   { label: "Video Editor", Icon: Film },
 ];
 
-const TONES = [
-  {
-    value: "PROFESSIONAL" as const,
-    label: "Professional",
-    desc: "Formal & polished",
-  },
-  {
-    value: "CONVERSATIONAL" as const,
-    label: "Conversational",
-    desc: "Friendly & approachable",
-  },
-  {
-    value: "CONFIDENT" as const,
-    label: "Confident",
-    desc: "Bold & direct",
-  },
-  {
-    value: "FRIENDLY" as const,
-    label: "Friendly",
-    desc: "Warm & personable",
-  },
-];
-
 // Deterministic widths for skeleton badges (avoids re-render jitter)
 const SKELETON_WIDTHS = [72, 90, 64, 96, 80, 106, 76, 88, 68, 92, 74, 84, 98, 66, 80, 88, 72, 94];
 
@@ -119,7 +96,7 @@ export function OnboardingProfileForm() {
     formState: { errors },
   } = useForm<ZCreateProfile>({
     resolver: zodResolver(ZCreateProfileSchema),
-    defaultValues: { tone: "PROFESSIONAL", portfolioItems: [], skills: [] },
+    defaultValues: { portfolioItems: [], skills: [] },
   });
 
   const { fields: portfolioFields, append, remove } = useFieldArray({
@@ -127,7 +104,6 @@ export function OnboardingProfileForm() {
     name: "portfolioItems",
   });
 
-  const toneValue = watch("tone");
   const bioValue = watch("bio") ?? "";
 
   // The effective role is the preset or whatever the user typed
@@ -178,7 +154,7 @@ export function OnboardingProfileForm() {
       return;
     }
     if (step === 3) {
-      const valid = await trigger(["bio", "tone"]);
+      const valid = await trigger(["bio"]);
       if (valid) setStep(4);
     }
   };
@@ -713,65 +689,6 @@ export function OnboardingProfileForm() {
                   {errors.bio.message}
                 </p>
               )}
-            </div>
-
-            {/* Tone selector */}
-            <div className="space-y-2">
-              <label
-                className="text-[12px] font-medium"
-                style={{
-                  color: "rgba(251,247,243,0.5)",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
-              >
-                Default proposal tone
-              </label>
-              <div className="grid grid-cols-2 gap-2">
-                {TONES.map((t) => (
-                  <button
-                    key={t.value}
-                    type="button"
-                    onClick={() => setValue("tone", t.value)}
-                    className="p-3 rounded-lg text-left transition-all duration-150"
-                    style={{
-                      background:
-                        toneValue === t.value
-                          ? "rgba(200,73,26,0.12)"
-                          : "rgba(255,255,255,0.03)",
-                      border:
-                        toneValue === t.value
-                          ? "1px solid rgba(200,73,26,0.38)"
-                          : "1px solid rgba(255,255,255,0.06)",
-                      boxShadow:
-                        toneValue === t.value
-                          ? "0 0 12px rgba(200,73,26,0.1)"
-                          : "none",
-                    }}
-                  >
-                    <p
-                      className="text-[12.5px] font-semibold"
-                      style={{
-                        color:
-                          toneValue === t.value
-                            ? "#E08060"
-                            : "rgba(251,247,243,0.65)",
-                        fontFamily: "var(--font-space-grotesk)",
-                      }}
-                    >
-                      {t.label}
-                    </p>
-                    <p
-                      className="text-[11px] mt-0.5"
-                      style={{
-                        color: "rgba(251,247,243,0.3)",
-                        fontFamily: "var(--font-inter)",
-                      }}
-                    >
-                      {t.desc}
-                    </p>
-                  </button>
-                ))}
-              </div>
             </div>
 
             <div className="flex gap-2.5">
