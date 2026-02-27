@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import { HeroNav } from "./_components/hero-nav";
+import { HeroNav } from "@/features/marketing/components/hero-nav";
 
 export default function Home() {
   return (
