@@ -12,3 +12,72 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+
+
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum Tone {
+  PROFESSIONAL
+  CONVERSATIONAL
+  CONFIDENT
+  FRIENDLY
+}
+
+enum ProposalStyle {
+  STORYTELLING
+  DIRECT
+  RESULTS_FIRST
+  QUESTION_LED
+  BRIEF
+}
+
+model User {
+  id            String    @id
+  email         String    @unique
+  fullName      String?
+  plan          Plan      @default(FREE)
+  createdAt     DateTime  @default(now())
+  profiles      FreelancerProfile[]
+  proposals     Proposal[]
+}
+
+model FreelancerProfile {
+  id              String    @id @default(uuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  skillsSummary   String
+  experienceSummary String
+  tone            Tone      @default(PROFESSIONAL)
+  portfolioLinks  String[]
+  isDefault       Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  proposals       Proposal[]
+
+  @@index([userId])
+}
+
+model Proposal {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profileId        String
+  profile          FreelancerProfile @relation(fields: [profileId], references: [id])
+  jobTitle         String
+  jobUrl           String?
+  jobDescription   String
+  tone             Tone
+  proposalStyle    ProposalStyle
+  upworkOpener     Boolean   @default(false)
+  generatedContent String
+  editedContent    String?
+  createdAt        DateTime  @default(now())
+
+  @@index([userId])
+  @@index([userId, createdAt])
+}

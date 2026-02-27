@@ -69,6 +69,8 @@ Feature-based. No `src/` directory. All app code lives at the project root. Cros
 │   │   └── utils.ts              # cn() and shared utilities
 │   └── types/                    # global shared types
 │
+├── providers/
+│   └── query-provider.tsx        # TanStack QueryClientProvider (wraps root layout)
 ├── proxy.ts                      # protects all /(dashboard) routes (Next.js 16: middleware → proxy)
 ├── prisma/
 │   └── schema.prisma
@@ -103,6 +105,10 @@ Feature-based. No `src/` directory. All app code lives at the project root. Cros
 ### TanStack Query v5
 - Single object argument only: `useQuery({ queryKey: [...], queryFn: ... })`
 - `cacheTime` renamed to `gcTime`
+- `QueryProvider` lives in `providers/query-provider.tsx` and wraps the root layout
+- **Always create a custom hook** for every query or mutation — never call `useQuery`/`useMutation` directly in a component
+  - Query hooks → `features/<feature>/hooks/use-<resource>.ts` e.g. `useProfiles`
+  - Mutation hooks → `features/<feature>/hooks/use-<verb>-<resource>.ts` e.g. `useCreateProfile`
 
 ## Critical Rules
 
@@ -136,6 +142,7 @@ Route: `POST /api/proposals/generate`. Prompt is assembled in `shared/lib/prompt
   - `frontend-design` — building or styling UI components, pages, layouts, or any web interface work
   - `vercel-react-best-practices` — writing, reviewing, or refactoring React/Next.js code
   - `keybindings-help` — customizing keyboard shortcuts or keybindings
+  - `tanstack-query-best-practices` — writing or reviewing TanStack Query hooks
 - **Before writing code**: check if there's an existing pattern in `features/` to follow
 - **After schema changes**: run `prisma generate` then `tsc --noEmit` to verify types
 - **After building a feature**: run `tsc --noEmit` and `npm run lint` before considering it done

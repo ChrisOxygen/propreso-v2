@@ -12,6 +12,7 @@
     "@ai-sdk/openai": "^3.0.36",
     "@ai-sdk/react": "^3.0.105",
     "@hookform/resolvers": "^5.2.2",
+    "@prisma/adapter-pg": "^7.4.1",
     "@prisma/client": "^7.4.1",
     "@stripe/stripe-js": "^8.8.0",
     "@supabase/ssr": "^0.8.0",
@@ -23,6 +24,7 @@
     "date-fns": "^4.1.0",
     "lucide-react": "^0.575.0",
     "next": "16.1.6",
+    "pg": "^8.19.0",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -34,6 +36,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.16.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv": "^17.3.1",

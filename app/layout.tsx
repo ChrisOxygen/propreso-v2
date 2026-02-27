@@ -6,6 +6,7 @@ import {
   Instrument_Serif,
 } from "next/font/google";
 import "./globals.css";
+import { QueryProvider } from "@/providers/query-provider";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -45,7 +46,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} antialiased`}
       >
-        {children}
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
