@@ -132,6 +132,10 @@ Route: `POST /api/proposals/generate`. Prompt is assembled in `shared/lib/prompt
 
 ## Workflow
 
+- **Before any task**: check available skills (via the Skill tool) — if a skill matches the task, invoke it before doing anything else. Current skills:
+  - `frontend-design` — building or styling UI components, pages, layouts, or any web interface work
+  - `vercel-react-best-practices` — writing, reviewing, or refactoring React/Next.js code
+  - `keybindings-help` — customizing keyboard shortcuts or keybindings
 - **Before writing code**: check if there's an existing pattern in `features/` to follow
 - **After schema changes**: run `prisma generate` then `tsc --noEmit` to verify types
 - **After building a feature**: run `tsc --noEmit` and `npm run lint` before considering it done
