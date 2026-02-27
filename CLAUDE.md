@@ -147,6 +147,7 @@ Route: `POST /api/proposals/generate`. Prompt is assembled in `shared/lib/prompt
 - **After schema changes**: run `prisma generate` then `tsc --noEmit` to verify types
 - **After building a feature**: run `tsc --noEmit` and `npm run lint` before considering it done
 - **New shadcn component needed**: `npx shadcn@latest add <component>`, never hand-write
+- **UI icons**: always use `lucide-react` — never inline SVG, never other icon libraries
 - **Brand icons**: always use the actual assets, never hand-write inline SVG replacements
   - `public/assets/site-icon-white.svg` — white flame, use on dark/orange backgrounds (e.g. inside the orange icon box)
   - `public/assets/propreso-icon-accent-primary.svg` — burnt-orange flame, use on light backgrounds
