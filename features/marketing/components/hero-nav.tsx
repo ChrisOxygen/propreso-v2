@@ -68,14 +68,16 @@ export function HeroNav() {
         {/* Right-side CTA buttons */}
         <div className="flex items-center gap-2">
           <Button
+            asChild
             variant="ghost"
             size="sm"
             className="text-[#FBF7F3]/55 hover:text-[#FBF7F3] hover:bg-white/5 text-[13px] h-9 px-4"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Sign In
+            <Link href="/sign-in">Sign In</Link>
           </Button>
           <Button
+            asChild
             size="sm"
             className={cn(
               "bg-[#C8491A] hover:bg-[#E06030] active:bg-[#9E3610] text-white border-0",
@@ -85,7 +87,7 @@ export function HeroNav() {
             )}
             style={{ fontFamily: "var(--font-space-grotesk)" }}
           >
-            Get Started
+            <Link href="/sign-up">Get Started</Link>
           </Button>
         </div>
       </nav>

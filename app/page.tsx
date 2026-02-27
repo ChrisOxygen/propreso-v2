@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { HeroNav } from "@/features/marketing/components/hero-nav";
@@ -109,19 +110,21 @@ export default function Home() {
             {/* CTA buttons */}
             <div className="animate-fade-up delay-400 flex flex-col sm:flex-row items-center gap-3 mt-1">
               <Button
+                asChild
                 size="lg"
                 className="bg-[#C8491A] hover:bg-[#E06030] active:bg-[#9E3610] text-white border-0 h-12 px-8 text-[14.5px] font-semibold tracking-[-0.01em] shadow-[0_0_32px_rgba(200,73,26,0.38)] hover:shadow-[0_0_44px_rgba(200,73,26,0.55)] transition-all duration-200 rounded-full"
                 style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
-                Get Started Free
+                <Link href="/sign-up">Get Started Free</Link>
               </Button>
               <Button
+                asChild
                 variant="outline"
                 size="lg"
                 className="border-[#FBF7F3]/14 bg-white/4 hover:bg-white/8 text-[#FBF7F3]/65 hover:text-[#FBF7F3] h-12 px-8 text-[14.5px] font-medium tracking-[-0.01em] transition-all duration-200 rounded-full backdrop-blur-sm"
                 style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
-                Sign In
+                <Link href="/sign-in">Sign In</Link>
               </Button>
             </div>
 

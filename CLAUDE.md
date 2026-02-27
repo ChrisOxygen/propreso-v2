@@ -64,12 +64,12 @@ Feature-based. No `src/` directory. All app code lives at the project root. Cros
 │   │   └── ui/                   # shadcn/ui — DO NOT edit manually
 │   ├── lib/
 │   │   ├── prisma.ts             # Prisma singleton client
-│   │   ├── supabase/             # client.ts, server.ts, middleware.ts
+│   │   ├── supabase/             # client.ts, server.ts, middleware.ts (proxy helper)
 │   │   ├── prompt-builder.ts     # AI prompt assembly
 │   │   └── utils.ts              # cn() and shared utilities
 │   └── types/                    # global shared types
 │
-├── middleware.ts                 # protects all /(dashboard) routes
+├── proxy.ts                      # protects all /(dashboard) routes (Next.js 16: middleware → proxy)
 ├── prisma/
 │   └── schema.prisma
 └── prisma.config.ts              # Prisma 7 config (replaces datasource in schema.prisma)
@@ -80,7 +80,7 @@ Feature-based. No `src/` directory. All app code lives at the project root. Cros
 ### Next.js 16.1
 - `params` and `searchParams` in layouts and pages are now **async** — always `await props.params`
 - Turbopack is the default bundler — no extra config needed
-- `proxy.ts` replaces `middleware.ts` for network-level concerns in some setups — use `middleware.ts` for auth only
+- **`middleware.ts` is deprecated** — renamed to `proxy.ts`. The exported function is also renamed from `middleware` to `proxy`. Use `proxy.ts` at the project root. `middleware.ts` still works but emits a deprecation warning.
 - Use `npx @next/codemod@canary upgrade latest` to upgrade between versions
 
 ### Prisma 7.x
@@ -140,6 +140,10 @@ Route: `POST /api/proposals/generate`. Prompt is assembled in `shared/lib/prompt
 - **After schema changes**: run `prisma generate` then `tsc --noEmit` to verify types
 - **After building a feature**: run `tsc --noEmit` and `npm run lint` before considering it done
 - **New shadcn component needed**: `npx shadcn@latest add <component>`, never hand-write
+- **Brand icons**: always use the actual assets, never hand-write inline SVG replacements
+  - `public/assets/site-icon-white.svg` — white flame, use on dark/orange backgrounds (e.g. inside the orange icon box)
+  - `public/assets/propreso-icon-accent-primary.svg` — burnt-orange flame, use on light backgrounds
+  - Import with `next/image`: `<Image src="/assets/site-icon-white.svg" alt="Propreso" width={11} height={14} />`
 
 ## Environment Variables
 
