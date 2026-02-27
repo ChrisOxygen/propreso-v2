@@ -1,20 +1,28 @@
 import { z } from "zod";
 
+export const ZPortfolioItemSchema = z.object({
+  url: z.string().url({ message: "Please enter a valid URL" }),
+  description: z.string().max(200, "Description is too long"),
+});
+
 export const ZCreateProfileSchema = z.object({
   name: z
     .string()
-    .min(2, "Profile name must be at least 2 characters")
-    .max(80, "Profile name is too long"),
-  skillsSummary: z
+    .min(2, "Role must be at least 2 characters")
+    .max(80, "Role name is too long"),
+  skills: z
+    .array(z.string())
+    .min(1, "Select at least 1 skill")
+    .max(10, "Maximum 10 skills"),
+  bio: z
     .string()
-    .min(20, "Please describe your skills (at least 20 characters)")
-    .max(1000, "Skills summary is too long"),
-  experienceSummary: z
-    .string()
-    .min(20, "Please describe your experience (at least 20 characters)")
-    .max(1000, "Experience summary is too long"),
+    .min(50, "Please write at least 50 characters")
+    .max(600, "Bio is too long"),
   tone: z.enum(["PROFESSIONAL", "CONVERSATIONAL", "CONFIDENT", "FRIENDLY"]),
-  portfolioLinks: z.array(z.url({ message: "Invalid URL" })).optional(),
+  portfolioItems: z
+    .array(ZPortfolioItemSchema)
+    .max(5, "Maximum 5 portfolio items"),
 });
 
 export type ZCreateProfile = z.infer<typeof ZCreateProfileSchema>;
+export type ZPortfolioItem = z.infer<typeof ZPortfolioItemSchema>;

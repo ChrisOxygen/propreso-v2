@@ -14,11 +14,11 @@ export async function _createProfile(userId: string, data: ZCreateProfile) {
     data: {
       userId,
       name: data.name,
-      skillsSummary: data.skillsSummary,
-      experienceSummary: data.experienceSummary,
+      skills: data.skills,
+      bio: data.bio,
       tone: data.tone,
-      portfolioLinks: data.portfolioLinks ?? [],
-      isDefault: count === 0, // first profile is always the default
+      portfolioItems: data.portfolioItems ?? [],
+      isDefault: count === 0,
     },
   });
 }

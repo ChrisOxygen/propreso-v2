@@ -47,17 +47,17 @@ model User {
 }
 
 model FreelancerProfile {
-  id              String    @id @default(uuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name            String
-  skillsSummary   String
-  experienceSummary String
-  tone            Tone      @default(PROFESSIONAL)
-  portfolioLinks  String[]
-  isDefault       Boolean   @default(false)
-  createdAt       DateTime  @default(now())
-  proposals       Proposal[]
+  id             String    @id @default(uuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name           String
+  skills         String[]  @default([])
+  bio            String
+  tone           Tone      @default(PROFESSIONAL)
+  portfolioItems Json      @default("[]")
+  isDefault      Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  proposals      Proposal[]
 
   @@index([userId])
 }
