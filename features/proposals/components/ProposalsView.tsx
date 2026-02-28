@@ -139,10 +139,10 @@ export function ProposalsView() {
   const page = Math.max(1, Number(searchParams.get("page") ?? "1"));
 
   const params = { status, search, page };
-  const { data, isLoading, isFetching, isError } = useProposals(params);
+  const { data, isPending, isFetching, isError } = useProposals(params);
 
-  /* ── Initial load ── */
-  if (isLoading) {
+  /* ── Initial load (no data yet, not a page/filter transition) ── */
+  if (isPending) {
     return <ProposalsViewSkeleton />;
   }
 
