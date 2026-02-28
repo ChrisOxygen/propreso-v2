@@ -206,3 +206,31 @@
 .delay-400 { animation-delay: 400ms; }
 .delay-500 { animation-delay: 500ms; }
 .delay-700 { animation-delay: 700ms; }
+
+/* ─── Portal dark-mode overrides ─────────────────────────────────────
+   Radix portals (Sheet, DropdownMenu, etc.) render at document.body and
+   sit outside the <div class="dark"> dashboard wrapper, so they inherit
+   :root (light) CSS variables.  We force the dark palette here via
+   data-attributes shadcn adds to each portal root.              ──── */
+
+/* Mobile sidebar sheet */
+[data-sidebar="sidebar"][data-mobile="true"] {
+  --sidebar:                   oklch(0.14 0.028 45);
+  --sidebar-foreground:        oklch(0.944 0.020 68);
+  --sidebar-accent:            oklch(0.22 0.025 45);
+  --sidebar-accent-foreground: oklch(0.944 0.020 68);
+  --sidebar-border:            oklch(1 0 0 / 10%);
+  --sidebar-ring:              oklch(0.617 0.197 37);
+  --sidebar-primary:           oklch(0.617 0.197 37);
+  --sidebar-primary-foreground:oklch(1 0 0);
+  /* also fix generic tokens consumed inside the sheet */
+  --background:   oklch(0.14 0.028 45);
+  --foreground:   oklch(0.944 0.020 68);
+  --border:       oklch(1 0 0 / 10%);
+  --input:        oklch(1 0 0 / 15%);
+  --ring:         oklch(0.617 0.197 37);
+  --muted:        oklch(0.22 0.025 45);
+  --muted-foreground: oklch(0.65 0.055 52);
+  --accent:            oklch(0.22 0.025 45);
+  --accent-foreground: oklch(0.944 0.020 68);
+}

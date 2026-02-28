@@ -18,7 +18,7 @@ function TableSkeleton() {
       style={{ border: "1px solid rgba(255,255,255,0.07)" }}
     >
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse min-w-170" style={{ tableLayout: "fixed" }}>
+        <table className="w-full border-collapse min-w-[680px]" style={{ tableLayout: "fixed" }}>
           <colgroup>
             {["40%", "17%", "10%", "9%", "13%", "11%"].map((w) => (
               <col key={w} style={{ width: w }} />

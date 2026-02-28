@@ -1,10 +1,22 @@
 "use client";
 
-import Link from "next/link";
+import * as React from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { LayoutDashboard, FileText, UserRound, Settings } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import Link from "next/link";
+import { LayoutDashboard, FileText, UserRound } from "lucide-react";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/shared/components/ui/sidebar";
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 
 const NAV_ITEMS = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -12,103 +24,74 @@ const NAV_ITEMS = [
   { href: "/profiles", icon: UserRound, label: "Profiles" },
 ] as const;
 
-const BOTTOM_ITEMS = [
-  { href: "/account", icon: Settings, label: "Account" },
-] as const;
-
-function NavItem({
-  href,
-  icon: Icon,
-  label,
-  active,
-}: {
-  href: string;
-  icon: React.ElementType;
-  label: string;
-  active: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      className={cn(
-        "flex items-center gap-2.5 h-9 px-3 rounded-lg text-[13px] font-medium transition-colors duration-150",
-        active
-          ? "bg-[rgba(200,73,26,0.13)] text-[#E85A2C]"
-          : "text-[rgba(251,247,243,0.48)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[rgba(251,247,243,0.8)]"
-      )}
-      style={{ fontFamily: "var(--font-inter)" }}
-    >
-      <Icon size={15} strokeWidth={active ? 2.1 : 1.6} />
-      {label}
-    </Link>
-  );
+interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  user: {
+    name: string;
+    email: string;
+  };
 }
 
-export function DashboardSidebar() {
+export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
   const pathname = usePathname();
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
 
+  const navItems = NAV_ITEMS.map((item) => ({
+    ...item,
+    isActive: isActive(item.href),
+  }));
+
   return (
-    <aside
-      className="fixed top-0 left-0 h-full w-[220px] hidden md:flex flex-col z-40"
-      style={{
-        background: "#111116",
-        borderRight: "1px solid rgba(255,255,255,0.06)",
-      }}
-    >
+    <Sidebar collapsible="icon" {...props}>
       {/* Brand */}
-      <div
-        className="flex items-center gap-2.5 px-5 h-[60px] shrink-0"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
-      >
-        <div
-          className="w-7 h-7 rounded-[7px] flex items-center justify-center shrink-0"
-          style={{ background: "#C8491A" }}
-        >
-          <Image
-            src="/assets/site-icon-white.svg"
-            alt="Propreso"
-            width={11}
-            height={14}
-          />
-        </div>
-        <span
-          className="text-[15px] font-semibold tracking-[-0.025em]"
-          style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-        >
-          Propreso
-        </span>
-      </div>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              size="lg"
+              asChild
+              className="hover:bg-white/5 active:bg-white/5"
+            >
+              <Link href="/dashboard">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-[#C8491A] shrink-0">
+                  <Image
+                    src="/assets/site-icon-white.svg"
+                    alt="Propreso"
+                    width={11}
+                    height={14}
+                  />
+                </div>
+                <div className="grid flex-1 text-left leading-tight">
+                  <span
+                    className="truncate text-[15px] font-semibold tracking-[-0.025em] text-[#FBF7F3]"
+                    style={{ fontFamily: "var(--font-space-grotesk)" }}
+                  >
+                    Propreso
+                  </span>
+                  <span
+                    className="truncate text-[11px] text-[rgba(251,247,243,0.35)]"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    AI Proposal Generator
+                  </span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
 
       {/* Main nav */}
-      <nav className="flex-1 px-3 py-4 flex flex-col gap-0.5 overflow-y-auto">
-        {NAV_ITEMS.map(({ href, icon, label }) => (
-          <NavItem
-            key={href}
-            href={href}
-            icon={icon}
-            label={label}
-            active={isActive(href)}
-          />
-        ))}
-      </nav>
+      <SidebarContent>
+        <NavMain items={navItems} />
+      </SidebarContent>
 
-      {/* Bottom nav */}
-      <div
-        className="px-3 py-4 shrink-0 flex flex-col gap-0.5"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
-      >
-        {BOTTOM_ITEMS.map(({ href, icon, label }) => (
-          <NavItem
-            key={href}
-            href={href}
-            icon={icon}
-            label={label}
-            active={isActive(href)}
-          />
-        ))}
-      </div>
-    </aside>
+      {/* User footer */}
+      <SidebarFooter>
+        <NavUser user={user} />
+      </SidebarFooter>
+
+      <SidebarRail />
+    </Sidebar>
   );
 }

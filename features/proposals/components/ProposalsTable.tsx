@@ -53,11 +53,11 @@ const STATUS_CONFIG: Record<
 
 const COLUMNS = [
   { label: "Job Title", width: "40%" },
-  { label: "Profile",   width: "17%" },
-  { label: "Formula",   width: "10%" },
-  { label: "Length",    width: "9%"  },
-  { label: "Status",    width: "13%" },
-  { label: "Date",      width: "11%" },
+  { label: "Profile", width: "17%" },
+  { label: "Formula", width: "10%" },
+  { label: "Length", width: "9%" },
+  { label: "Status", width: "13%" },
+  { label: "Date", width: "11%" },
 ] as const;
 
 interface ProposalsTableProps {
@@ -65,7 +65,10 @@ interface ProposalsTableProps {
   isFetching?: boolean;
 }
 
-export function ProposalsTable({ proposals, isFetching = false }: ProposalsTableProps) {
+export function ProposalsTable({
+  proposals,
+  isFetching = false,
+}: ProposalsTableProps) {
   const router = useRouter();
 
   return (
@@ -84,8 +87,8 @@ export function ProposalsTable({ proposals, isFetching = false }: ProposalsTable
       <div className="overflow-x-auto">
         <table
           className={cn(
-            "w-full border-collapse min-w-170 transition-opacity duration-150",
-            isFetching && "opacity-60"
+            "w-full border-collapse min-w-170  transition-opacity duration-150",
+            isFetching && "opacity-60",
           )}
           style={{ tableLayout: "fixed" }}
         >
@@ -121,7 +124,8 @@ export function ProposalsTable({ proposals, isFetching = false }: ProposalsTable
           <tbody>
             {proposals.map((proposal, index) => {
               const statusCfg =
-                STATUS_CONFIG[proposal.status ?? "PENDING"] ?? STATUS_CONFIG.PENDING;
+                STATUS_CONFIG[proposal.status ?? "PENDING"] ??
+                STATUS_CONFIG.PENDING;
               const isLast = index === proposals.length - 1;
 
               return (
@@ -156,10 +160,12 @@ export function ProposalsTable({ proposals, isFetching = false }: ProposalsTable
                           className="shrink-0 transition-colors duration-100"
                           style={{ color: "rgba(251,247,243,0.2)" }}
                           onMouseEnter={(e) =>
-                            (e.currentTarget.style.color = "rgba(251,247,243,0.55)")
+                            (e.currentTarget.style.color =
+                              "rgba(251,247,243,0.55)")
                           }
                           onMouseLeave={(e) =>
-                            (e.currentTarget.style.color = "rgba(251,247,243,0.2)")
+                            (e.currentTarget.style.color =
+                              "rgba(251,247,243,0.2)")
                           }
                         >
                           <ExternalLink size={11} />
@@ -205,7 +211,8 @@ export function ProposalsTable({ proposals, isFetching = false }: ProposalsTable
                         fontFamily: "var(--font-inter)",
                       }}
                     >
-                      {LENGTH_LABELS[proposal.proposalLength] ?? proposal.proposalLength}
+                      {LENGTH_LABELS[proposal.proposalLength] ??
+                        proposal.proposalLength}
                     </span>
                   </td>
 
