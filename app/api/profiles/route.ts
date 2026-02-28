@@ -1,7 +1,23 @@
 import { createClient } from "@/shared/lib/supabase/server";
 import { _createProfile } from "@/features/profiles/server/_create-profile";
+import { _getProfilesByUserId } from "@/features/profiles/server/_get-profiles";
 import { ZCreateProfileSchema } from "@/features/profiles/schemas/profile-schemas";
 import { NextResponse } from "next/server";
+
+export async function GET() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+
+  if (error || !user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const profiles = await _getProfilesByUserId(user.id);
+  return NextResponse.json(profiles);
+}
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -19,7 +35,7 @@ export async function POST(request: Request) {
 
   if (!parsed.success) {
     return NextResponse.json(
-      { error: parsed.error.flatten() },
+      { error: parsed.error.issues },
       { status: 400 }
     );
   }

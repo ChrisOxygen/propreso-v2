@@ -76,14 +76,18 @@ function fieldBorder(hasError: boolean) {
 
 // ── Component ─────────────────────────────────────────────────────────────
 
-export function OnboardingProfileForm() {
+interface OnboardingProfileFormProps {
+  onSuccess?: () => void;
+}
+
+export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps = {}) {
   const [step, setStep] = useState(1);
   const [presetRole, setPresetRole] = useState<string | null>(null);
   const [customRole, setCustomRole] = useState("");
   const [activeRole, setActiveRole] = useState<string | null>(null);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
-  const mutation = useCreateProfile();
+  const mutation = useCreateProfile(onSuccess ? { onSuccess } : undefined);
   const skillsQuery = useRoleSkills(activeRole);
 
   const {

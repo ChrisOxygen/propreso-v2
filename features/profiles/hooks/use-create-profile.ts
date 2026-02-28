@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import type { ZCreateProfile } from "@/features/profiles/schemas/profile-schemas";
 
-export function useCreateProfile() {
+export function useCreateProfile(options?: { onSuccess?: () => void }) {
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -25,7 +25,11 @@ export function useCreateProfile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["profiles"] });
-      router.push("/dashboard");
+      if (options?.onSuccess) {
+        options.onSuccess();
+      } else {
+        router.push("/dashboard");
+      }
     },
   });
 }

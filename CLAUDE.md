@@ -109,6 +109,7 @@ Feature-based. No `src/` directory. All app code lives at the project root. Cros
 - **Always create a custom hook** for every query or mutation — never call `useQuery`/`useMutation` directly in a component
   - Query hooks → `features/<feature>/hooks/use-<resource>.ts` e.g. `useProfiles`
   - Mutation hooks → `features/<feature>/hooks/use-<verb>-<resource>.ts` e.g. `useCreateProfile`
+- **Loading states** — always use `isPending` (not `isLoading`) as the loading indicator for both queries and mutations. Render an inline skeleton when `isPending` is true — never return `null` or rely solely on `loading.tsx`.
 
 ## Critical Rules
 

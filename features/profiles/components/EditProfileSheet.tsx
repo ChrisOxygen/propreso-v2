@@ -1,0 +1,481 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/shared/components/ui/sheet";
+import { X, Plus, Trash2, Loader2 } from "lucide-react";
+import {
+  ZCreateProfileSchema,
+  type ZCreateProfile,
+  type ZPortfolioItem,
+} from "@/features/profiles/schemas/profile-schemas";
+import { useUpdateProfile } from "@/features/profiles/hooks/use-update-profile";
+import type { FreelancerProfileModel } from "@/shared/lib/generated/prisma/models";
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function fieldStyle(hasError: boolean) {
+  return {
+    background: "rgba(255,255,255,0.04)",
+    border: hasError
+      ? "1px solid rgba(200,73,26,0.5)"
+      : "1px solid rgba(255,255,255,0.09)",
+    color: "#FBF7F3",
+    outline: "none",
+  };
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="text-[11px] font-semibold uppercase tracking-widest mb-2"
+      style={{ color: "rgba(251,247,243,0.3)" }}
+    >
+      {children}
+    </p>
+  );
+}
+
+// ── Component ──────────────────────────────────────────────────────────────
+
+interface EditProfileSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  profile: FreelancerProfileModel;
+}
+
+export function EditProfileSheet({
+  open,
+  onOpenChange,
+  profile,
+}: EditProfileSheetProps) {
+  const updateProfile = useUpdateProfile();
+  const [skillInput, setSkillInput] = useState("");
+  const skillInputRef = useRef<HTMLInputElement>(null);
+
+  // Parse portfolioItems from JSON (Prisma stores as JsonValue)
+  const initialPortfolio = (() => {
+    try {
+      const items = profile.portfolioItems as ZPortfolioItem[];
+      return Array.isArray(items) ? items : [];
+    } catch {
+      return [];
+    }
+  })();
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm<ZCreateProfile>({
+    resolver: zodResolver(ZCreateProfileSchema),
+    defaultValues: {
+      name: profile.name,
+      bio: profile.bio,
+      skills: profile.skills,
+      portfolioItems: initialPortfolio,
+    },
+  });
+
+  const { fields: portfolioFields, append, remove } = useFieldArray({
+    control,
+    name: "portfolioItems",
+  });
+
+  const skills = watch("skills") ?? [];
+  const bio = watch("bio") ?? "";
+
+  // Reset form when profile changes (e.g. switching which card is edited)
+  useEffect(() => {
+    if (open) {
+      reset({
+        name: profile.name,
+        bio: profile.bio,
+        skills: profile.skills,
+        portfolioItems: initialPortfolio,
+      });
+      setSkillInput("");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, profile.id]);
+
+  function addSkill() {
+    const trimmed = skillInput.trim();
+    if (!trimmed || skills.includes(trimmed) || skills.length >= 10) return;
+    setValue("skills", [...skills, trimmed], { shouldValidate: true });
+    setSkillInput("");
+    skillInputRef.current?.focus();
+  }
+
+  function removeSkill(skill: string) {
+    setValue(
+      "skills",
+      skills.filter((s) => s !== skill),
+      { shouldValidate: true }
+    );
+  }
+
+  function onSubmit(data: ZCreateProfile) {
+    updateProfile.mutate(
+      { profileId: profile.id, data },
+      { onSuccess: () => onOpenChange(false) }
+    );
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        className="w-full sm:max-w-md flex flex-col gap-0 overflow-y-auto p-0"
+        style={{
+          background: "#120D08",
+          border: "1px solid rgba(255,255,255,0.08)",
+        }}
+      >
+        {/* Header */}
+        <SheetHeader className="px-6 pt-6 pb-4 shrink-0">
+          <SheetTitle
+            className="text-[15px] font-semibold"
+            style={{
+              color: "#FBF7F3",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
+          >
+            Edit Profile
+          </SheetTitle>
+          <p
+            className="text-[12px] mt-0.5"
+            style={{ color: "rgba(251,247,243,0.38)" }}
+          >
+            Changes apply to future proposals.
+          </p>
+        </SheetHeader>
+
+        <div
+          className="shrink-0 h-px mx-6"
+          style={{ background: "rgba(255,255,255,0.07)" }}
+        />
+
+        {/* Form body */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col flex-1 px-6 py-5 gap-6"
+        >
+          {/* Role name */}
+          <div>
+            <SectionLabel>Role Name</SectionLabel>
+            <input
+              {...register("name")}
+              className="w-full h-9 px-3.5 rounded-lg text-[13px] transition-colors duration-150"
+              style={fieldStyle(!!errors.name)}
+              placeholder="e.g. Full Stack Developer"
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)";
+                e.currentTarget.style.boxShadow =
+                  "0 0 0 3px rgba(200,73,26,0.08)";
+              }}
+              onBlur={(e) => {
+                if (!errors.name) {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)";
+                  e.currentTarget.style.boxShadow = "none";
+                }
+              }}
+            />
+            {errors.name && (
+              <p
+                className="mt-1.5 text-[11.5px]"
+                style={{ color: "rgba(200,73,26,0.9)" }}
+              >
+                {errors.name.message}
+              </p>
+            )}
+          </div>
+
+          {/* Skills */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <SectionLabel>Skills</SectionLabel>
+              <span
+                className="text-[11px]"
+                style={{ color: "rgba(251,247,243,0.3)" }}
+              >
+                {skills.length}/10
+              </span>
+            </div>
+
+            {/* Existing skill chips */}
+            {skills.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-2.5">
+                {skills.map((skill) => (
+                  <button
+                    key={skill}
+                    type="button"
+                    onClick={() => removeSkill(skill)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11.5px] font-medium transition-colors duration-150 group/chip"
+                    style={{
+                      background: "rgba(200,73,26,0.12)",
+                      color: "#E06030",
+                      border: "1px solid rgba(200,73,26,0.2)",
+                    }}
+                  >
+                    {skill}
+                    <X
+                      size={9}
+                      className="opacity-60 group-hover/chip:opacity-100"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Add custom skill */}
+            <div className="flex gap-2">
+              <input
+                ref={skillInputRef}
+                value={skillInput}
+                onChange={(e) => setSkillInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addSkill();
+                  }
+                }}
+                disabled={skills.length >= 10}
+                placeholder={
+                  skills.length >= 10 ? "Max 10 skills" : "Add a skill…"
+                }
+                className="flex-1 h-8 px-3 rounded-lg text-[12.5px] disabled:opacity-40"
+                style={fieldStyle(!!errors.skills)}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)";
+                  e.currentTarget.style.boxShadow =
+                    "0 0 0 3px rgba(200,73,26,0.08)";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              />
+              <button
+                type="button"
+                onClick={addSkill}
+                disabled={!skillInput.trim() || skills.length >= 10}
+                className="h-8 w-8 rounded-lg flex items-center justify-center transition-colors duration-150 disabled:opacity-30"
+                style={{
+                  background: "rgba(200,73,26,0.15)",
+                  border: "1px solid rgba(200,73,26,0.2)",
+                  color: "#E06030",
+                }}
+              >
+                <Plus size={14} />
+              </button>
+            </div>
+
+            {errors.skills && (
+              <p
+                className="mt-1.5 text-[11.5px]"
+                style={{ color: "rgba(200,73,26,0.9)" }}
+              >
+                {errors.skills.message}
+              </p>
+            )}
+          </div>
+
+          {/* Bio */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <SectionLabel>Bio</SectionLabel>
+              <span
+                className="text-[11px]"
+                style={{
+                  color:
+                    bio.length > 500
+                      ? "rgba(200,73,26,0.8)"
+                      : "rgba(251,247,243,0.3)",
+                }}
+              >
+                {bio.length}/600
+              </span>
+            </div>
+            <textarea
+              {...register("bio")}
+              rows={5}
+              placeholder="Describe your expertise, approach, and what makes you stand out on Upwork…"
+              className="w-full px-3.5 py-2.5 rounded-lg text-[13px] leading-relaxed resize-none transition-colors duration-150"
+              style={fieldStyle(!!errors.bio)}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)";
+                e.currentTarget.style.boxShadow =
+                  "0 0 0 3px rgba(200,73,26,0.08)";
+              }}
+              onBlur={(e) => {
+                if (!errors.bio) {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)";
+                  e.currentTarget.style.boxShadow = "none";
+                }
+              }}
+            />
+            {errors.bio && (
+              <p
+                className="mt-1.5 text-[11.5px]"
+                style={{ color: "rgba(200,73,26,0.9)" }}
+              >
+                {errors.bio.message}
+              </p>
+            )}
+          </div>
+
+          {/* Portfolio Items */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <SectionLabel>Portfolio Links</SectionLabel>
+              {portfolioFields.length < 5 && (
+                <button
+                  type="button"
+                  onClick={() => append({ url: "", description: "" })}
+                  className="inline-flex items-center gap-1 text-[11px] font-medium transition-opacity duration-150 hover:opacity-80"
+                  style={{ color: "rgba(200,73,26,0.8)" }}
+                >
+                  <Plus size={11} />
+                  Add Link
+                </button>
+              )}
+            </div>
+
+            {portfolioFields.length === 0 && (
+              <button
+                type="button"
+                onClick={() => append({ url: "", description: "" })}
+                className="w-full h-9 rounded-lg text-[12.5px] transition-colors duration-150 hover:opacity-80"
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  border: "1px dashed rgba(255,255,255,0.1)",
+                  color: "rgba(251,247,243,0.3)",
+                }}
+              >
+                + Add portfolio link
+              </button>
+            )}
+
+            <div className="space-y-3">
+              {portfolioFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="p-3 rounded-lg"
+                  style={{
+                    background: "rgba(255,255,255,0.02)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                  }}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <span
+                      className="text-[11px] font-medium"
+                      style={{ color: "rgba(251,247,243,0.35)" }}
+                    >
+                      Link {index + 1}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="h-5 w-5 flex items-center justify-center rounded transition-colors duration-150 hover:opacity-80"
+                      style={{ color: "rgba(229,115,115,0.7)" }}
+                    >
+                      <Trash2 size={11} />
+                    </button>
+                  </div>
+                  <input
+                    {...register(`portfolioItems.${index}.url`)}
+                    placeholder="https://your-project.com"
+                    className="w-full h-8 px-3 rounded-md text-[12.5px] mb-2"
+                    style={fieldStyle(
+                      !!errors.portfolioItems?.[index]?.url
+                    )}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(200,73,26,0.5)";
+                      e.currentTarget.style.boxShadow =
+                        "0 0 0 3px rgba(200,73,26,0.08)";
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(255,255,255,0.09)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                  {errors.portfolioItems?.[index]?.url && (
+                    <p
+                      className="mb-1.5 text-[11px]"
+                      style={{ color: "rgba(200,73,26,0.9)" }}
+                    >
+                      {errors.portfolioItems[index].url?.message}
+                    </p>
+                  )}
+                  <input
+                    {...register(`portfolioItems.${index}.description`)}
+                    placeholder="Brief description of this project"
+                    className="w-full h-8 px-3 rounded-md text-[12.5px]"
+                    style={fieldStyle(
+                      !!errors.portfolioItems?.[index]?.description
+                    )}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(200,73,26,0.5)";
+                      e.currentTarget.style.boxShadow =
+                        "0 0 0 3px rgba(200,73,26,0.08)";
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(255,255,255,0.09)";
+                      e.currentTarget.style.boxShadow = "none";
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer CTA */}
+          <div className="mt-auto pt-2 flex gap-2">
+            <button
+              type="button"
+              onClick={() => onOpenChange(false)}
+              className="flex-1 h-10 rounded-lg text-[13px] font-medium transition-colors duration-150"
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.09)",
+                color: "rgba(251,247,243,0.6)",
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={updateProfile.isPending}
+              className="flex-1 h-10 rounded-lg text-[13px] font-semibold transition-opacity duration-150 disabled:opacity-60 flex items-center justify-center gap-1.5"
+              style={{
+                background: "linear-gradient(135deg, #C8491A 0%, #D45820 100%)",
+                color: "#fff",
+                boxShadow: "0 0 20px rgba(200,73,26,0.3)",
+                fontFamily: "var(--font-space-grotesk)",
+              }}
+            >
+              {updateProfile.isPending && (
+                <Loader2 size={13} className="animate-spin" />
+              )}
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </SheetContent>
+    </Sheet>
+  );
+}
