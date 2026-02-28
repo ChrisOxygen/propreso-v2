@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { ProposalListItem } from "@/features/proposals/server/_get-proposals";
+import type { ProposalsData } from "@/features/proposals/types";
 import type { ZProposalStatus } from "@/features/proposals/schemas/proposal-schemas";
 
 interface UpdateStatusPayload {
@@ -29,26 +29,29 @@ export function useUpdateProposalStatus() {
     onMutate: async ({ proposalId, status }) => {
       await queryClient.cancelQueries({ queryKey: ["proposals"] });
 
-      const previousProposals = queryClient.getQueryData<ProposalListItem[]>([
-        "proposals",
-      ]);
+      // Snapshot all ["proposals", ...] cache entries for rollback
+      const previousEntries = queryClient.getQueriesData<ProposalsData>({
+        queryKey: ["proposals"],
+      });
 
-      if (previousProposals) {
-        queryClient.setQueryData<ProposalListItem[]>(
-          ["proposals"],
-          previousProposals.map((p) =>
+      // Optimistically update each cached page/filter combination
+      previousEntries.forEach(([queryKey, data]) => {
+        if (!data) return;
+        queryClient.setQueryData<ProposalsData>(queryKey, {
+          ...data,
+          proposals: data.proposals.map((p) =>
             p.id === proposalId ? { ...p, status } : p
-          )
-        );
-      }
+          ),
+        });
+      });
 
-      return { previousProposals };
+      return { previousEntries };
     },
 
     onError: (_err, _variables, context) => {
-      if (context?.previousProposals) {
-        queryClient.setQueryData(["proposals"], context.previousProposals);
-      }
+      context?.previousEntries.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
     },
 
     onSettled: () => {

@@ -1,6 +1,10 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { ProposalsView } from "@/features/proposals/components/ProposalsView";
+import {
+  ProposalsView,
+  ProposalsViewSkeleton,
+} from "@/features/proposals/components/ProposalsView";
 import { SeedButton } from "@/features/proposals/components/SeedButton";
 
 export default function ProposalsPage() {
@@ -43,8 +47,10 @@ export default function ProposalsPage() {
         </div>
       </div>
 
-      {/* Metrics + list/table */}
-      <ProposalsView />
+      {/* Metrics + list/table — Suspense required because ProposalsView uses useSearchParams */}
+      <Suspense fallback={<ProposalsViewSkeleton />}>
+        <ProposalsView />
+      </Suspense>
     </div>
   );
 }

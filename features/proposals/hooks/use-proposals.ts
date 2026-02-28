@@ -1,17 +1,24 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import type { ProposalListItem } from "@/features/proposals/server/_get-proposals";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import type { ProposalsData, ProposalsQueryParams } from "@/features/proposals/types";
 
-async function fetchProposals(): Promise<ProposalListItem[]> {
-  const res = await fetch("/api/proposals");
+async function fetchProposals(params: ProposalsQueryParams): Promise<ProposalsData> {
+  const url = new URL("/api/proposals", window.location.origin);
+  if (params.page && params.page > 1) url.searchParams.set("page", String(params.page));
+  if (params.status && params.status !== "ALL") url.searchParams.set("status", params.status);
+  if (params.search?.trim()) url.searchParams.set("q", params.search.trim());
+
+  const res = await fetch(url.toString());
   if (!res.ok) throw new Error("Failed to fetch proposals");
   return res.json();
 }
 
-export function useProposals() {
+export function useProposals(params: ProposalsQueryParams = {}) {
   return useQuery({
-    queryKey: ["proposals"],
-    queryFn: fetchProposals,
+    queryKey: ["proposals", params],
+    queryFn: () => fetchProposals(params),
+    // Keep previous page data visible while next page/filter loads
+    placeholderData: keepPreviousData,
   });
 }

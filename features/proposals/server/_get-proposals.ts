@@ -1,4 +1,5 @@
 import { prisma } from "@/shared/lib/prisma";
+import { ProposalStatus } from "@/shared/lib/generated/prisma/enums";
 
 const proposalSelect = {
   id: true,
@@ -19,14 +20,70 @@ const proposalSelect = {
   },
 } as const;
 
+// The list item shape — derived from the select above
 export type ProposalListItem = Awaited<
   ReturnType<typeof _getProposals>
->[number];
+>["proposals"][number];
 
-export async function _getProposals(userId: string) {
-  return prisma.proposal.findMany({
-    where: { userId },
-    select: proposalSelect,
-    orderBy: { createdAt: "desc" },
-  });
+export interface GetProposalsParams {
+  page?: number;
+  limit?: number;
+  /** "ALL" or a ProposalStatus value or "PENDING" (maps to null in DB) */
+  status?: string | null;
+  search?: string | null;
+}
+
+const PAGE_LIMIT = 10;
+
+export async function _getProposals(
+  userId: string,
+  params: GetProposalsParams = {}
+) {
+  const { page = 1, limit = PAGE_LIMIT, status, search } = params;
+  const skip = (page - 1) * limit;
+
+  // Build the filter clause
+  const statusFilter =
+    !status || status === "ALL"
+      ? {}
+      : status === "PENDING"
+      ? { status: null }
+      : { status: status as ProposalStatus };
+
+  const searchFilter = search?.trim()
+    ? { jobTitle: { contains: search.trim(), mode: "insensitive" as const } }
+    : {};
+
+  const where = { userId, ...statusFilter, ...searchFilter };
+
+  const [proposals, total, wonCount, repliedCount, allTotal] =
+    await Promise.all([
+      prisma.proposal.findMany({
+        where,
+        select: proposalSelect,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      prisma.proposal.count({ where }),
+      prisma.proposal.count({ where: { userId, status: "WON" } }),
+      prisma.proposal.count({ where: { userId, status: "REPLIED" } }),
+      prisma.proposal.count({ where: { userId } }),
+    ]);
+
+  return {
+    proposals,
+    pagination: {
+      total,
+      page,
+      totalPages: Math.max(1, Math.ceil(total / limit)),
+      limit,
+    },
+    // Global (unfiltered) counts — always reflects all user proposals
+    stats: {
+      total: allTotal,
+      won: wonCount,
+      replied: repliedCount,
+    },
+  };
 }
