@@ -8,6 +8,7 @@ import {
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
+import { Toaster } from "@/shared/components/ui/sonner";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -49,6 +50,7 @@ export default function RootLayout({
       >
         <QueryProvider>
           <TooltipProvider>{children}</TooltipProvider>
+          <Toaster />
         </QueryProvider>
       </body>
     </html>
