@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Copy, Check, BookmarkPlus, Loader2, Sparkles } from "lucide-react";
+import { toast } from "sonner";
+import { Copy, Check, BookmarkPlus, Loader2, Sparkles, AlertTriangle } from "lucide-react";
 
 const UPWORK_CHAR_LIMIT = 5000;
 
@@ -9,6 +10,7 @@ interface GenerateOutputProps {
   content: string;
   isStreaming: boolean;
   isSaving: boolean;
+  isDirty: boolean;
   onSave: () => void;
   onRegenerate: () => void;
   hasGenerated: boolean;
@@ -24,6 +26,7 @@ export function GenerateOutput({
   content,
   isStreaming,
   isSaving,
+  isDirty,
   onSave,
   onRegenerate,
   hasGenerated,
@@ -45,6 +48,16 @@ export function GenerateOutput({
     await navigator.clipboard.writeText(content);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+
+    if (isDirty) {
+      toast("Proposal copied!", {
+        description: "Save it to your history so you can find it later.",
+        action: {
+          label: "Save now",
+          onClick: onSave,
+        },
+      });
+    }
   }
 
   // Empty state
@@ -109,6 +122,39 @@ export function GenerateOutput({
           <div ref={bottomRef} />
         </div>
       </div>
+
+      {/* Unsaved banner */}
+      {isDirty && (
+        <div
+          className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg"
+          style={{
+            background: "rgba(200,73,26,0.08)",
+            border: "1px solid rgba(200,73,26,0.2)",
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <AlertTriangle size={13} style={{ color: "rgba(200,73,26,0.8)", flexShrink: 0 }} />
+            <p className="text-[12px]" style={{ color: "rgba(251,247,243,0.5)" }}>
+              Unsaved — navigate away and this proposal will be lost.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onSave}
+            disabled={isSaving}
+            className="shrink-0 inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[11.5px] font-semibold transition-all duration-150 disabled:opacity-50"
+            style={{
+              background: "rgba(200,73,26,0.15)",
+              border: "1px solid rgba(200,73,26,0.3)",
+              color: "#E06030",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
+          >
+            {isSaving ? <Loader2 size={11} className="animate-spin" /> : <BookmarkPlus size={11} />}
+            Save now
+          </button>
+        </div>
+      )}
 
       {/* Footer: counts + actions */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
