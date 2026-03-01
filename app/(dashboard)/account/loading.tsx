@@ -14,7 +14,7 @@ export default function AccountLoading() {
       </div>
 
       {/* Settings sections */}
-      {[1, 2, 3].map((i) => (
+      {[1, 2, 3, 4].map((i) => (
         <div
           key={i}
           className="rounded-xl p-5 mb-3 animate-pulse"
