@@ -41,3 +41,5 @@ yarn-error.log*
 next-env.d.ts
 
 /shared/lib/generated/prisma
+
+propreso-v2-plan_2.html

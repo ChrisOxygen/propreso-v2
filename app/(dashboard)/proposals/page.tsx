@@ -11,11 +11,14 @@ export default function ProposalsPage() {
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-8">
       {/* Page header */}
-      <div className="flex items-start justify-between gap-4 mb-6">
+      <div className="flex items-start flex-col sm:flex-row justify-between gap-4 mb-6">
         <div>
           <h1
             className="text-[1.35rem] font-bold tracking-[-0.03em]"
-            style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
+            style={{
+              color: "#FBF7F3",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
           >
             Proposals
           </h1>
