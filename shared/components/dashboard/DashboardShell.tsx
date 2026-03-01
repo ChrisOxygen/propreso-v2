@@ -14,6 +14,7 @@ const PAGE_LABELS: Record<string, string> = {
   "/proposals": "Proposals",
   "/profiles": "Profiles",
   "/account": "Account",
+  "/billing": "Billing",
 };
 
 interface DashboardShellProps {

@@ -49,13 +49,18 @@ enum ProposalStatus {
 }
 
 model User {
-  id            String    @id
-  email         String    @unique
-  fullName      String?
-  plan          Plan      @default(FREE)
-  createdAt     DateTime  @default(now())
-  profiles      FreelancerProfile[]
-  proposals     Proposal[]
+  id                   String    @id
+  email                String    @unique
+  fullName             String?
+  plan                 Plan      @default(FREE)
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  stripePriceId        String?
+  currentPeriodEnd     DateTime?
+  subscriptionStatus   String?
+  createdAt            DateTime  @default(now())
+  profiles             FreelancerProfile[]
+  proposals            Proposal[]
 }
 
 model FreelancerProfile {

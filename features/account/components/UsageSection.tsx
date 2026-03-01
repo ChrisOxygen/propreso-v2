@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Zap } from "lucide-react";
 import { FREE_PROPOSAL_LIMIT, FREE_PROFILE_LIMIT } from "@/features/account/types";
 import { SectionCard, SectionHeader } from "./shared";
@@ -142,10 +143,9 @@ export function UsageSection({ plan, proposalCount, profileCount }: UsageSection
                 Unlimited proposals, unlimited profiles, priority AI.
               </p>
             </div>
-            <button
-              type="button"
-              disabled
-              className="shrink-0 inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12.5px] font-semibold opacity-60 cursor-not-allowed"
+            <Link
+              href="/billing"
+              className="shrink-0 inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12.5px] font-semibold"
               style={{
                 background: "linear-gradient(135deg, #C8491A 0%, #D45820 100%)",
                 color: "#fff",
@@ -153,8 +153,8 @@ export function UsageSection({ plan, proposalCount, profileCount }: UsageSection
               }}
             >
               <Zap size={12} fill="currentColor" />
-              Coming soon
-            </button>
+              Upgrade to Pro
+            </Link>
           </div>
         )}
       </div>
