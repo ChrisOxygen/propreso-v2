@@ -34,37 +34,20 @@ export function ProfileCard({ profile, totalProfiles }: ProfileCardProps) {
   return (
     <>
       <div
-        className="group relative flex flex-col rounded-xl p-5 transition-all duration-200"
-        style={{
-          background: profile.isDefault
-            ? "rgba(200,73,26,0.07)"
-            : "rgba(255,255,255,0.03)",
-          border: profile.isDefault
-            ? "1px solid rgba(200,73,26,0.25)"
-            : "1px solid rgba(255,255,255,0.07)",
-        }}
+        className={`group relative flex flex-col rounded-xl p-5 transition-all duration-200 ${
+          profile.isDefault
+            ? "bg-accent border border-primary/25"
+            : "bg-card border border-border"
+        }`}
       >
         {/* Header row */}
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-2 min-w-0">
-            <h3
-              className="text-[14px] font-semibold truncate"
-              style={{
-                color: "#FBF7F3",
-                fontFamily: "var(--font-space-grotesk)",
-              }}
-            >
+            <h3 className="text-[14px] font-semibold truncate font-heading text-foreground">
               {profile.name}
             </h3>
             {profile.isDefault && (
-              <span
-                className="inline-flex items-center gap-1 shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide"
-                style={{
-                  background: "rgba(200,73,26,0.18)",
-                  color: "#E06030",
-                  border: "1px solid rgba(200,73,26,0.3)",
-                }}
-              >
+              <span className="inline-flex items-center gap-1 shrink-0 px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide bg-primary/10 text-primary border border-primary/20">
                 <Zap size={9} strokeWidth={2.5} />
                 DEFAULT
               </span>
@@ -77,23 +60,17 @@ export function ProfileCard({ profile, totalProfiles }: ProfileCardProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
-                style={{ color: "rgba(251,247,243,0.5)" }}
+                className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-150 text-muted-foreground hover:text-foreground"
               >
                 <MoreHorizontal size={15} />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-44"
-              style={{
-                background: "#1A1410",
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}
+              className="w-44 bg-card border-border"
             >
               <DropdownMenuItem
-                className="text-[13px] gap-2 cursor-pointer"
-                style={{ color: "rgba(251,247,243,0.8)" }}
+                className="text-[13px] gap-2 cursor-pointer text-foreground"
                 onClick={() => setEditOpen(true)}
               >
                 <Pencil size={13} />
@@ -102,8 +79,7 @@ export function ProfileCard({ profile, totalProfiles }: ProfileCardProps) {
 
               {!profile.isDefault && (
                 <DropdownMenuItem
-                  className="text-[13px] gap-2 cursor-pointer"
-                  style={{ color: "rgba(251,247,243,0.8)" }}
+                  className="text-[13px] gap-2 cursor-pointer text-foreground"
                   onClick={() => setDefault.mutate(profile.id)}
                   disabled={setDefault.isPending}
                 >
@@ -112,13 +88,10 @@ export function ProfileCard({ profile, totalProfiles }: ProfileCardProps) {
                 </DropdownMenuItem>
               )}
 
-              <DropdownMenuSeparator
-                style={{ background: "rgba(255,255,255,0.07)" }}
-              />
+              <DropdownMenuSeparator className="bg-border" />
 
               <DropdownMenuItem
-                className="text-[13px] gap-2 cursor-pointer"
-                style={{ color: "#E57373" }}
+                className="text-[13px] gap-2 cursor-pointer text-destructive focus:text-destructive"
                 onClick={() => setDeleteOpen(true)}
                 disabled={totalProfiles === 1}
               >
@@ -130,10 +103,7 @@ export function ProfileCard({ profile, totalProfiles }: ProfileCardProps) {
         </div>
 
         {/* Bio excerpt */}
-        <p
-          className="text-[12.5px] leading-[1.6] line-clamp-2 mb-4"
-          style={{ color: "rgba(251,247,243,0.45)" }}
-        >
+        <p className="text-[12.5px] leading-[1.6] line-clamp-2 mb-4 text-text-secondary">
           {profile.bio}
         </p>
 
@@ -142,25 +112,13 @@ export function ProfileCard({ profile, totalProfiles }: ProfileCardProps) {
           {visibleSkills.map((skill: string) => (
             <span
               key={skill}
-              className="px-2 py-0.5 rounded text-[11px] font-medium"
-              style={{
-                background: "rgba(255,255,255,0.06)",
-                color: "rgba(251,247,243,0.55)",
-                border: "1px solid rgba(255,255,255,0.07)",
-              }}
+              className="px-2 py-0.5 rounded text-[11px] font-medium bg-muted text-text-secondary border border-border"
             >
               {skill}
             </span>
           ))}
           {overflowCount > 0 && (
-            <span
-              className="px-2 py-0.5 rounded text-[11px] font-medium"
-              style={{
-                background: "rgba(200,73,26,0.1)",
-                color: "rgba(200,73,26,0.8)",
-                border: "1px solid rgba(200,73,26,0.15)",
-              }}
-            >
+            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-primary/10 text-primary border border-primary/20">
               +{overflowCount} more
             </span>
           )}

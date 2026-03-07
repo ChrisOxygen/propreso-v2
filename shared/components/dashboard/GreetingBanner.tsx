@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { Sun, Sunset, Moon } from "lucide-react";
-import { Breadcrumbs } from "./Breadcrumbs";
 
 interface GreetingBannerProps {
   name: string;

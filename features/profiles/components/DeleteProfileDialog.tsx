@@ -36,27 +36,12 @@ export function DeleteProfileDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent
-        style={{
-          background: "#16100A",
-          border: "1px solid rgba(255,255,255,0.1)",
-          color: "#FBF7F3",
-        }}
-      >
+      <AlertDialogContent className="bg-card border border-border">
         <AlertDialogHeader>
-          <AlertDialogTitle
-            className="text-[15px] font-semibold"
-            style={{
-              color: "#FBF7F3",
-              fontFamily: "var(--font-space-grotesk)",
-            }}
-          >
+          <AlertDialogTitle className="text-[15px] font-semibold font-heading text-foreground">
             Delete &ldquo;{profileName}&rdquo;?
           </AlertDialogTitle>
-          <AlertDialogDescription
-            className="text-[13px] leading-relaxed"
-            style={{ color: "rgba(251,247,243,0.45)" }}
-          >
+          <AlertDialogDescription className="text-[13px] leading-relaxed text-muted-foreground">
             This profile will be permanently deleted. Proposals generated with
             it will remain in your history, but won&apos;t be linked to a
             profile.
@@ -64,23 +49,13 @@ export function DeleteProfileDialog({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel
-            className="text-[13px] h-9"
-            style={{
-              background: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.1)",
-              color: "rgba(251,247,243,0.7)",
-            }}
+            className="text-[13px] h-9 bg-background border border-border text-text-secondary hover:bg-muted"
             disabled={deleteProfile.isPending}
           >
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            className="text-[13px] h-9 font-semibold"
-            style={{
-              background: "rgba(220,53,53,0.15)",
-              border: "1px solid rgba(220,53,53,0.3)",
-              color: "#E57373",
-            }}
+            className="text-[13px] h-9 font-semibold bg-error-subtle border border-destructive/30 text-destructive hover:bg-destructive/10"
             onClick={handleConfirm}
             disabled={deleteProfile.isPending}
           >

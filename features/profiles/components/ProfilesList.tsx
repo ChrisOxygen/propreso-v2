@@ -15,16 +15,12 @@ export function ProfilesList() {
       <div className="space-y-5">
         {/* Usage indicator skeleton */}
         <div className="flex items-center justify-between">
-          <div
-            className="h-3 rounded w-32 animate-pulse"
-            style={{ background: "rgba(255,255,255,0.06)" }}
-          />
+          <div className="h-3 rounded w-32 animate-pulse bg-muted" />
           <div className="flex items-center gap-1.5">
             {[0, 1].map((i) => (
               <span
                 key={i}
-                className="w-5 h-1.5 rounded-full animate-pulse"
-                style={{ background: "rgba(255,255,255,0.1)" }}
+                className="w-5 h-1.5 rounded-full animate-pulse bg-muted"
               />
             ))}
           </div>
@@ -35,39 +31,19 @@ export function ProfilesList() {
           {[0, 1].map((i) => (
             <div
               key={i}
-              className="rounded-xl p-5 animate-pulse"
-              style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(255,255,255,0.07)",
-              }}
+              className="rounded-xl p-5 animate-pulse bg-card border border-border"
             >
               <div className="flex items-start justify-between gap-3 mb-3">
-                <div
-                  className="h-5 rounded w-32"
-                  style={{ background: "rgba(255,255,255,0.07)" }}
-                />
-                <div
-                  className="h-5 rounded-full w-16"
-                  style={{ background: "rgba(255,255,255,0.05)" }}
-                />
+                <div className="h-5 rounded w-32 bg-muted" />
+                <div className="h-5 rounded-full w-16 bg-muted" />
               </div>
               <div className="space-y-2 mb-4">
-                <div
-                  className="h-3 rounded w-full"
-                  style={{ background: "rgba(255,255,255,0.04)" }}
-                />
-                <div
-                  className="h-3 rounded w-3/4"
-                  style={{ background: "rgba(255,255,255,0.04)" }}
-                />
+                <div className="h-3 rounded w-full bg-muted" />
+                <div className="h-3 rounded w-3/4 bg-muted" />
               </div>
               <div className="flex gap-1.5">
                 {[0, 1, 2].map((j) => (
-                  <div
-                    key={j}
-                    className="h-5 rounded w-12"
-                    style={{ background: "rgba(255,255,255,0.05)" }}
-                  />
+                  <div key={j} className="h-5 rounded w-12 bg-muted" />
                 ))}
               </div>
             </div>
@@ -79,14 +55,8 @@ export function ProfilesList() {
 
   if (isError) {
     return (
-      <div
-        className="rounded-xl px-5 py-10 text-center"
-        style={{
-          background: "rgba(255,255,255,0.02)",
-          border: "1px solid rgba(255,255,255,0.07)",
-        }}
-      >
-        <p className="text-[13px]" style={{ color: "rgba(251,247,243,0.4)" }}>
+      <div className="rounded-xl px-5 py-10 text-center bg-card border border-border">
+        <p className="text-[13px] text-muted-foreground">
           Failed to load profiles. Please refresh.
         </p>
       </div>
@@ -99,10 +69,7 @@ export function ProfilesList() {
     <div className="space-y-5">
       {/* Usage indicator */}
       <div className="flex items-center justify-between">
-        <span
-          className="text-[12px]"
-          style={{ color: "rgba(251,247,243,0.35)" }}
-        >
+        <span className="text-[12px] text-muted-foreground">
           {profiles.length} of {FREE_PROFILE_LIMIT} profiles used
         </span>
 
@@ -111,13 +78,9 @@ export function ProfilesList() {
           {Array.from({ length: FREE_PROFILE_LIMIT }).map((_, i) => (
             <span
               key={i}
-              className="w-5 h-1.5 rounded-full transition-colors duration-300"
-              style={{
-                background:
-                  i < profiles.length
-                    ? "#C8491A"
-                    : "rgba(255,255,255,0.1)",
-              }}
+              className={`w-5 h-1.5 rounded-full transition-colors duration-300 ${
+                i < profiles.length ? "bg-primary" : "bg-border"
+              }`}
             />
           ))}
         </div>
@@ -137,51 +100,22 @@ export function ProfilesList() {
         {!atLimit ? (
           <Link
             href="/profiles/new"
-            className="flex flex-col items-center justify-center rounded-xl p-5 transition-all duration-200 min-h-[140px] group"
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px dashed rgba(255,255,255,0.1)",
-            }}
+            className="flex flex-col items-center justify-center rounded-xl p-5 transition-all duration-200 min-h-35 group bg-card border border-dashed border-border hover:border-border-strong hover:bg-accent"
           >
-            <span
-              className="w-8 h-8 rounded-full flex items-center justify-center mb-2 transition-colors duration-200 group-hover:opacity-80"
-              style={{
-                background: "rgba(200,73,26,0.12)",
-                border: "1px solid rgba(200,73,26,0.2)",
-              }}
-            >
-              <Plus size={15} style={{ color: "#C8491A" }} />
+            <span className="w-8 h-8 rounded-full flex items-center justify-center mb-2 transition-colors duration-200 bg-accent border border-border-strong group-hover:bg-primary/10 group-hover:border-primary/30">
+              <Plus size={15} className="text-primary" />
             </span>
-            <span
-              className="text-[12.5px] font-medium"
-              style={{ color: "rgba(251,247,243,0.35)" }}
-            >
+            <span className="text-[12.5px] font-medium text-muted-foreground">
               Add Profile
             </span>
           </Link>
         ) : (
-          <div
-            className="flex flex-col items-center justify-center rounded-xl p-5 min-h-[140px]"
-            style={{
-              background: "rgba(255,255,255,0.015)",
-              border: "1px dashed rgba(255,255,255,0.06)",
-            }}
-          >
-            <UserCircle2
-              size={22}
-              className="mb-2"
-              style={{ color: "rgba(251,247,243,0.15)" }}
-            />
-            <span
-              className="text-[12px] font-medium mb-0.5"
-              style={{ color: "rgba(251,247,243,0.25)" }}
-            >
+          <div className="flex flex-col items-center justify-center rounded-xl p-5 min-h-35 bg-card border border-dashed border-border">
+            <UserCircle2 size={22} className="mb-2 text-border-strong" />
+            <span className="text-[12px] font-medium mb-0.5 text-muted-foreground">
               Profile limit reached
             </span>
-            <span
-              className="text-[11px]"
-              style={{ color: "rgba(251,247,243,0.18)" }}
-            >
+            <span className="text-[11px] text-muted-foreground/60">
               Upgrade to Pro for unlimited profiles
             </span>
           </div>

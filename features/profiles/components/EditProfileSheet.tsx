@@ -20,23 +20,19 @@ import type { FreelancerProfileModel } from "@/shared/lib/generated/prisma/model
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
-function fieldStyle(hasError: boolean) {
-  return {
-    background: "rgba(255,255,255,0.04)",
-    border: hasError
-      ? "1px solid rgba(200,73,26,0.5)"
-      : "1px solid rgba(255,255,255,0.09)",
-    color: "#FBF7F3",
-    outline: "none",
-  };
+function fieldClass(hasError: boolean) {
+  return [
+    "w-full px-3.5 rounded-lg text-[13px] text-foreground bg-background",
+    "border outline-none transition-colors duration-150",
+    "placeholder:text-muted-foreground",
+    "focus:border-primary focus:ring-2 focus:ring-primary/10",
+    hasError ? "border-destructive" : "border-border",
+  ].join(" ");
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p
-      className="text-[11px] font-semibold uppercase tracking-widest mb-2"
-      style={{ color: "rgba(251,247,243,0.3)" }}
-    >
+    <p className="text-[11px] font-semibold uppercase tracking-widest mb-2 text-muted-foreground">
       {children}
     </p>
   );
@@ -134,36 +130,18 @@ export function EditProfileSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        className="w-full sm:max-w-md flex flex-col gap-0 overflow-y-auto p-0"
-        style={{
-          background: "#120D08",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
+      <SheetContent className="w-full sm:max-w-md flex flex-col gap-0 overflow-y-auto p-0 bg-card border-border">
         {/* Header */}
         <SheetHeader className="px-6 pt-6 pb-4 shrink-0">
-          <SheetTitle
-            className="text-[15px] font-semibold"
-            style={{
-              color: "#FBF7F3",
-              fontFamily: "var(--font-space-grotesk)",
-            }}
-          >
+          <SheetTitle className="text-[15px] font-semibold font-heading text-foreground">
             Edit Profile
           </SheetTitle>
-          <p
-            className="text-[12px] mt-0.5"
-            style={{ color: "rgba(251,247,243,0.38)" }}
-          >
+          <p className="text-[12px] mt-0.5 text-muted-foreground">
             Changes apply to future proposals.
           </p>
         </SheetHeader>
 
-        <div
-          className="shrink-0 h-px mx-6"
-          style={{ background: "rgba(255,255,255,0.07)" }}
-        />
+        <div className="shrink-0 h-px mx-6 bg-border" />
 
         {/* Form body */}
         <form
@@ -175,26 +153,11 @@ export function EditProfileSheet({
             <SectionLabel>Role Name</SectionLabel>
             <input
               {...register("name")}
-              className="w-full h-9 px-3.5 rounded-lg text-[13px] transition-colors duration-150"
-              style={fieldStyle(!!errors.name)}
+              className={`${fieldClass(!!errors.name)} h-9`}
               placeholder="e.g. Full Stack Developer"
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)";
-                e.currentTarget.style.boxShadow =
-                  "0 0 0 3px rgba(200,73,26,0.08)";
-              }}
-              onBlur={(e) => {
-                if (!errors.name) {
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)";
-                  e.currentTarget.style.boxShadow = "none";
-                }
-              }}
             />
             {errors.name && (
-              <p
-                className="mt-1.5 text-[11.5px]"
-                style={{ color: "rgba(200,73,26,0.9)" }}
-              >
+              <p className="mt-1.5 text-[11.5px] text-destructive">
                 {errors.name.message}
               </p>
             )}
@@ -204,10 +167,7 @@ export function EditProfileSheet({
           <div>
             <div className="flex items-center justify-between mb-2">
               <SectionLabel>Skills</SectionLabel>
-              <span
-                className="text-[11px]"
-                style={{ color: "rgba(251,247,243,0.3)" }}
-              >
+              <span className="text-[11px] text-muted-foreground">
                 {skills.length}/10
               </span>
             </div>
@@ -220,12 +180,7 @@ export function EditProfileSheet({
                     key={skill}
                     type="button"
                     onClick={() => removeSkill(skill)}
-                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11.5px] font-medium transition-colors duration-150 group/chip"
-                    style={{
-                      background: "rgba(200,73,26,0.12)",
-                      color: "#E06030",
-                      border: "1px solid rgba(200,73,26,0.2)",
-                    }}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11.5px] font-medium transition-colors duration-150 group/chip bg-accent text-primary border border-primary/20 hover:bg-primary/10"
                   >
                     {skill}
                     <X
@@ -253,38 +208,20 @@ export function EditProfileSheet({
                 placeholder={
                   skills.length >= 10 ? "Max 10 skills" : "Add a skill…"
                 }
-                className="flex-1 h-8 px-3 rounded-lg text-[12.5px] disabled:opacity-40"
-                style={fieldStyle(!!errors.skills)}
-                onFocus={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)";
-                  e.currentTarget.style.boxShadow =
-                    "0 0 0 3px rgba(200,73,26,0.08)";
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)";
-                  e.currentTarget.style.boxShadow = "none";
-                }}
+                className={`${fieldClass(!!errors.skills)} h-8 flex-1 text-[12.5px] disabled:opacity-40`}
               />
               <button
                 type="button"
                 onClick={addSkill}
                 disabled={!skillInput.trim() || skills.length >= 10}
-                className="h-8 w-8 rounded-lg flex items-center justify-center transition-colors duration-150 disabled:opacity-30"
-                style={{
-                  background: "rgba(200,73,26,0.15)",
-                  border: "1px solid rgba(200,73,26,0.2)",
-                  color: "#E06030",
-                }}
+                className="h-8 w-8 rounded-lg flex items-center justify-center transition-colors duration-150 disabled:opacity-30 bg-accent border border-primary/20 text-primary hover:bg-primary/10"
               >
                 <Plus size={14} />
               </button>
             </div>
 
             {errors.skills && (
-              <p
-                className="mt-1.5 text-[11.5px]"
-                style={{ color: "rgba(200,73,26,0.9)" }}
-              >
+              <p className="mt-1.5 text-[11.5px] text-destructive">
                 {errors.skills.message}
               </p>
             )}
@@ -295,13 +232,9 @@ export function EditProfileSheet({
             <div className="flex items-center justify-between mb-2">
               <SectionLabel>Bio</SectionLabel>
               <span
-                className="text-[11px]"
-                style={{
-                  color:
-                    bio.length > 500
-                      ? "rgba(200,73,26,0.8)"
-                      : "rgba(251,247,243,0.3)",
-                }}
+                className={`text-[11px] ${
+                  bio.length > 500 ? "text-primary" : "text-muted-foreground"
+                }`}
               >
                 {bio.length}/600
               </span>
@@ -310,25 +243,10 @@ export function EditProfileSheet({
               {...register("bio")}
               rows={5}
               placeholder="Describe your expertise, approach, and what makes you stand out on Upwork…"
-              className="w-full px-3.5 py-2.5 rounded-lg text-[13px] leading-relaxed resize-none transition-colors duration-150"
-              style={fieldStyle(!!errors.bio)}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)";
-                e.currentTarget.style.boxShadow =
-                  "0 0 0 3px rgba(200,73,26,0.08)";
-              }}
-              onBlur={(e) => {
-                if (!errors.bio) {
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)";
-                  e.currentTarget.style.boxShadow = "none";
-                }
-              }}
+              className={`${fieldClass(!!errors.bio)} py-2.5 leading-relaxed resize-none`}
             />
             {errors.bio && (
-              <p
-                className="mt-1.5 text-[11.5px]"
-                style={{ color: "rgba(200,73,26,0.9)" }}
-              >
+              <p className="mt-1.5 text-[11.5px] text-destructive">
                 {errors.bio.message}
               </p>
             )}
@@ -342,8 +260,7 @@ export function EditProfileSheet({
                 <button
                   type="button"
                   onClick={() => append({ url: "", description: "" })}
-                  className="inline-flex items-center gap-1 text-[11px] font-medium transition-opacity duration-150 hover:opacity-80"
-                  style={{ color: "rgba(200,73,26,0.8)" }}
+                  className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary-hover transition-colors duration-150"
                 >
                   <Plus size={11} />
                   Add Link
@@ -355,12 +272,7 @@ export function EditProfileSheet({
               <button
                 type="button"
                 onClick={() => append({ url: "", description: "" })}
-                className="w-full h-9 rounded-lg text-[12.5px] transition-colors duration-150 hover:opacity-80"
-                style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "1px dashed rgba(255,255,255,0.1)",
-                  color: "rgba(251,247,243,0.3)",
-                }}
+                className="w-full h-9 rounded-lg text-[12.5px] transition-colors duration-150 bg-background border border-dashed border-border text-muted-foreground hover:border-border-strong hover:bg-accent"
               >
                 + Add portfolio link
               </button>
@@ -370,24 +282,16 @@ export function EditProfileSheet({
               {portfolioFields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="p-3 rounded-lg"
-                  style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid rgba(255,255,255,0.07)",
-                  }}
+                  className="p-3 rounded-lg bg-background border border-border"
                 >
                   <div className="flex items-center justify-between mb-2">
-                    <span
-                      className="text-[11px] font-medium"
-                      style={{ color: "rgba(251,247,243,0.35)" }}
-                    >
+                    <span className="text-[11px] font-medium text-muted-foreground">
                       Link {index + 1}
                     </span>
                     <button
                       type="button"
                       onClick={() => remove(index)}
-                      className="h-5 w-5 flex items-center justify-center rounded transition-colors duration-150 hover:opacity-80"
-                      style={{ color: "rgba(229,115,115,0.7)" }}
+                      className="h-5 w-5 flex items-center justify-center rounded transition-colors duration-150 text-destructive/60 hover:text-destructive"
                     >
                       <Trash2 size={11} />
                     </button>
@@ -395,48 +299,17 @@ export function EditProfileSheet({
                   <input
                     {...register(`portfolioItems.${index}.url`)}
                     placeholder="https://your-project.com"
-                    className="w-full h-8 px-3 rounded-md text-[12.5px] mb-2"
-                    style={fieldStyle(
-                      !!errors.portfolioItems?.[index]?.url
-                    )}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(200,73,26,0.5)";
-                      e.currentTarget.style.boxShadow =
-                        "0 0 0 3px rgba(200,73,26,0.08)";
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(255,255,255,0.09)";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
+                    className={`${fieldClass(!!errors.portfolioItems?.[index]?.url)} h-8 mb-2 text-[12.5px]`}
                   />
                   {errors.portfolioItems?.[index]?.url && (
-                    <p
-                      className="mb-1.5 text-[11px]"
-                      style={{ color: "rgba(200,73,26,0.9)" }}
-                    >
+                    <p className="mb-1.5 text-[11px] text-destructive">
                       {errors.portfolioItems[index].url?.message}
                     </p>
                   )}
                   <input
                     {...register(`portfolioItems.${index}.description`)}
                     placeholder="Brief description of this project"
-                    className="w-full h-8 px-3 rounded-md text-[12.5px]"
-                    style={fieldStyle(
-                      !!errors.portfolioItems?.[index]?.description
-                    )}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(200,73,26,0.5)";
-                      e.currentTarget.style.boxShadow =
-                        "0 0 0 3px rgba(200,73,26,0.08)";
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(255,255,255,0.09)";
-                      e.currentTarget.style.boxShadow = "none";
-                    }}
+                    className={`${fieldClass(!!errors.portfolioItems?.[index]?.description)} h-8 text-[12.5px]`}
                   />
                 </div>
               ))}
@@ -448,25 +321,14 @@ export function EditProfileSheet({
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="flex-1 h-10 rounded-lg text-[13px] font-medium transition-colors duration-150"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.09)",
-                color: "rgba(251,247,243,0.6)",
-              }}
+              className="flex-1 h-10 rounded-lg text-[13px] font-medium transition-colors duration-150 bg-muted border border-border text-text-secondary hover:bg-muted/80"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={updateProfile.isPending}
-              className="flex-1 h-10 rounded-lg text-[13px] font-semibold transition-opacity duration-150 disabled:opacity-60 flex items-center justify-center gap-1.5"
-              style={{
-                background: "linear-gradient(135deg, #C8491A 0%, #D45820 100%)",
-                color: "#fff",
-                boxShadow: "0 0 20px rgba(200,73,26,0.3)",
-                fontFamily: "var(--font-space-grotesk)",
-              }}
+              className="flex-1 h-10 rounded-lg text-[13px] font-semibold font-heading transition-opacity duration-150 disabled:opacity-60 flex items-center justify-center gap-1.5 bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active"
             >
               {updateProfile.isPending && (
                 <Loader2 size={13} className="animate-spin" />
