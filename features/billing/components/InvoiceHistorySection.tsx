@@ -5,34 +5,26 @@ import { format } from "date-fns";
 import { SectionCard, SectionHeader } from "./shared";
 import type { BillingInvoice } from "@/features/billing/types";
 
-const STATUS_STYLES: Record<
-  string,
-  { label: string; color: string; bg: string }
-> = {
+const STATUS_STYLES: Record<string, { label: string; className: string }> = {
   paid: {
     label: "Paid",
-    color: "rgba(34,197,94,0.85)",
-    bg: "rgba(34,197,94,0.1)",
+    className: "bg-green-50 text-green-700",
   },
   open: {
     label: "Open",
-    color: "rgba(234,179,8,0.9)",
-    bg: "rgba(234,179,8,0.1)",
+    className: "bg-amber-50 text-amber-700",
   },
   void: {
     label: "Void",
-    color: "rgba(251,247,243,0.35)",
-    bg: "rgba(255,255,255,0.05)",
+    className: "bg-muted text-muted-foreground",
   },
   uncollectible: {
     label: "Uncollectible",
-    color: "rgba(239,68,68,0.8)",
-    bg: "rgba(239,68,68,0.1)",
+    className: "bg-error-subtle text-destructive",
   },
   draft: {
     label: "Draft",
-    color: "rgba(251,247,243,0.35)",
-    bg: "rgba(255,255,255,0.05)",
+    className: "bg-muted text-muted-foreground",
   },
 };
 
@@ -54,22 +46,16 @@ export function InvoiceHistorySection({ invoices }: { invoices: BillingInvoice[]
 
       {invoices.length === 0 ? (
         <div className="p-8 flex flex-col items-center gap-2 text-center">
-          <Receipt
-            size={28}
-            style={{ color: "rgba(251,247,243,0.15)" }}
-          />
-          <p className="text-[13px]" style={{ color: "rgba(251,247,243,0.35)" }}>
-            No invoices yet
-          </p>
-          <p className="text-[12px]" style={{ color: "rgba(251,247,243,0.22)" }}>
+          <Receipt size={28} className="text-border-strong" />
+          <p className="text-[13px] text-muted-foreground">No invoices yet</p>
+          <p className="text-[12px] text-muted-foreground/60">
             Your billing history will appear here after your first payment.
           </p>
         </div>
       ) : (
-        <div className="divide-y" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+        <div className="divide-y divide-border">
           {invoices.map((inv) => {
-            const st =
-              STATUS_STYLES[inv.status] ?? STATUS_STYLES.void;
+            const st = STATUS_STYLES[inv.status] ?? STATUS_STYLES.void;
             return (
               <div
                 key={inv.id}
@@ -77,60 +63,32 @@ export function InvoiceHistorySection({ invoices }: { invoices: BillingInvoice[]
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="flex flex-col min-w-0">
-                    <p
-                      className="text-[12.5px] font-medium truncate"
-                      style={{
-                        color: "rgba(251,247,243,0.75)",
-                        fontFamily: "var(--font-space-grotesk)",
-                      }}
-                    >
+                    <p className="text-[12.5px] font-medium font-heading truncate text-text-secondary">
                       {inv.description ?? inv.number ?? inv.id.slice(0, 12)}
                     </p>
-                    <p
-                      className="text-[11.5px] tabular-nums"
-                      style={{ color: "rgba(251,247,243,0.35)" }}
-                    >
+                    <p className="text-[11.5px] tabular-nums text-muted-foreground">
                       {format(new Date(inv.date), "MMM d, yyyy")}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 shrink-0">
-                  {/* Amount */}
-                  <span
-                    className="text-[12.5px] font-medium tabular-nums"
-                    style={{
-                      color: "rgba(251,247,243,0.75)",
-                      fontFamily: "var(--font-space-grotesk)",
-                    }}
-                  >
+                  <span className="text-[12.5px] font-medium font-heading tabular-nums text-text-secondary">
                     {formatAmount(inv.amount, inv.currency)}
                   </span>
 
-                  {/* Status badge */}
                   <span
-                    className="hidden sm:inline-flex items-center h-5 px-2 rounded-full text-[10.5px] font-semibold"
-                    style={{
-                      background: st.bg,
-                      color: st.color,
-                      fontFamily: "var(--font-space-grotesk)",
-                    }}
+                    className={`hidden sm:inline-flex items-center h-5 px-2 rounded-full text-[10.5px] font-semibold font-heading ${st.className}`}
                   >
                     {st.label}
                   </span>
 
-                  {/* PDF download */}
                   {inv.pdfUrl ? (
                     <a
                       href={inv.pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors duration-150"
-                      style={{
-                        background: "rgba(255,255,255,0.04)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        color: "rgba(251,247,243,0.45)",
-                      }}
+                      className="flex items-center justify-center w-7 h-7 rounded-lg transition-colors duration-150 bg-muted border border-border text-muted-foreground hover:bg-muted/80"
                       aria-label="Download invoice PDF"
                     >
                       <Download size={12} />

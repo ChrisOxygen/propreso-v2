@@ -13,30 +13,26 @@ type Props = Pick<
 
 const STATUS_CONFIG: Record<
   string,
-  { label: string; color: string; bg: string; icon: typeof CheckCircle2 }
+  { label: string; className: string; icon: typeof CheckCircle2 }
 > = {
   active: {
     label: "Active",
-    color: "rgba(34,197,94,0.9)",
-    bg: "rgba(34,197,94,0.1)",
+    className: "bg-green-50 text-green-700 border border-green-200",
     icon: CheckCircle2,
   },
   trialing: {
     label: "Trial",
-    color: "rgba(234,179,8,0.9)",
-    bg: "rgba(234,179,8,0.1)",
+    className: "bg-amber-50 text-amber-700 border border-amber-200",
     icon: Clock,
   },
   past_due: {
     label: "Past due",
-    color: "rgba(239,68,68,0.9)",
-    bg: "rgba(239,68,68,0.1)",
+    className: "bg-error-subtle text-destructive border border-destructive/20",
     icon: AlertCircle,
   },
   canceled: {
     label: "Canceled",
-    color: "rgba(251,247,243,0.4)",
-    bg: "rgba(255,255,255,0.05)",
+    className: "bg-muted text-muted-foreground border border-border",
     icon: AlertCircle,
   },
 };
@@ -66,33 +62,23 @@ export function CurrentPlanCard({ user, proposalCount, profileCount }: Props) {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-3">
             <div
-              className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0"
-              style={{
-                background: isPro
-                  ? "rgba(200,73,26,0.12)"
-                  : "rgba(255,255,255,0.05)",
-                border: isPro
-                  ? "1px solid rgba(200,73,26,0.25)"
-                  : "1px solid rgba(255,255,255,0.08)",
-              }}
+              className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
+                isPro
+                  ? "bg-primary/10 border border-primary/25"
+                  : "bg-muted border border-border"
+              }`}
             >
               <Zap
                 size={15}
-                fill={isPro ? "#C8491A" : "transparent"}
-                style={{ color: isPro ? "#C8491A" : "rgba(251,247,243,0.35)" }}
+                fill={isPro ? "currentColor" : "none"}
+                className={isPro ? "text-primary" : "text-muted-foreground"}
               />
             </div>
             <div>
-              <p
-                className="text-[14px] font-semibold"
-                style={{
-                  color: "#FBF7F3",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
-              >
+              <p className="text-[14px] font-semibold font-heading text-foreground">
                 {isPro ? "Pro" : "Free"}
               </p>
-              <p className="text-[12px]" style={{ color: "rgba(251,247,243,0.38)" }}>
+              <p className="text-[12px] text-muted-foreground">
                 {isPro
                   ? "Unlimited proposals & profiles"
                   : `${FREE_PROFILE_LIMIT} profiles · ${FREE_PROPOSAL_LIMIT} proposals/month`}
@@ -103,12 +89,7 @@ export function CurrentPlanCard({ user, proposalCount, profileCount }: Props) {
           {/* Status badge — Pro only */}
           {isPro && status && StatusIcon && (
             <span
-              className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold shrink-0"
-              style={{
-                background: status.bg,
-                color: status.color,
-                fontFamily: "var(--font-space-grotesk)",
-              }}
+              className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold font-heading shrink-0 ${status.className}`}
             >
               <StatusIcon size={10} />
               {status.label}
@@ -118,22 +99,11 @@ export function CurrentPlanCard({ user, proposalCount, profileCount }: Props) {
 
         {/* Renewal info — Pro only */}
         {isPro && user.currentPeriodEnd && (
-          <div
-            className="rounded-lg px-4 py-3 flex items-center justify-between gap-2"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.06)",
-            }}
-          >
-            <span className="text-[12px]" style={{ color: "rgba(251,247,243,0.45)" }}>
-              {user.subscriptionStatus === "canceled"
-                ? "Access until"
-                : "Next renewal"}
+          <div className="rounded-lg px-4 py-3 flex items-center justify-between gap-2 bg-muted border border-border">
+            <span className="text-[12px] text-muted-foreground">
+              {user.subscriptionStatus === "canceled" ? "Access until" : "Next renewal"}
             </span>
-            <span
-              className="text-[12.5px] font-medium tabular-nums"
-              style={{ color: "rgba(251,247,243,0.75)" }}
-            >
+            <span className="text-[12.5px] font-medium tabular-nums text-text-secondary">
               {format(new Date(user.currentPeriodEnd), "MMM d, yyyy")}
             </span>
           </div>
@@ -174,41 +144,22 @@ function UsageBar({
 }) {
   const isAtLimit = pct >= 100;
   const isNear = pct >= 80 && !isAtLimit;
-  const fillColor = isAtLimit
-    ? "rgba(239,68,68,0.85)"
-    : isNear
-    ? "rgba(234,179,8,0.85)"
-    : "linear-gradient(90deg, #C8491A 0%, #D45820 100%)";
+
+  const fillClass = isAtLimit ? "bg-destructive" : isNear ? "bg-amber-500" : "bg-primary";
+  const countClass = isAtLimit ? "text-destructive" : isNear ? "text-amber-600" : "text-muted-foreground";
 
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <span
-          className="text-[12px] font-medium"
-          style={{ color: "rgba(251,247,243,0.5)" }}
-        >
-          {label}
-        </span>
-        <span
-          className="text-[11.5px] tabular-nums"
-          style={{
-            color: isAtLimit
-              ? "rgba(239,68,68,0.9)"
-              : isNear
-              ? "rgba(234,179,8,0.9)"
-              : "rgba(251,247,243,0.35)",
-          }}
-        >
+        <span className="text-[12px] font-medium text-text-secondary">{label}</span>
+        <span className={`text-[11.5px] tabular-nums ${countClass}`}>
           {used} / {limit}
         </span>
       </div>
-      <div
-        className="w-full rounded-full overflow-hidden"
-        style={{ height: "4px", background: "rgba(255,255,255,0.07)" }}
-      >
+      <div className="w-full h-1 rounded-full overflow-hidden bg-muted">
         <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, background: fillColor }}
+          className={`h-full rounded-full transition-all duration-500 ${fillClass}`}
+          style={{ width: `${pct}%` }}
         />
       </div>
     </div>

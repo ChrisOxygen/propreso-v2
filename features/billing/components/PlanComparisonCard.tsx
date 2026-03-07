@@ -49,46 +49,24 @@ export function PlanComparisonCard() {
       <div className="p-5 flex flex-col gap-5">
         {/* Billing interval toggle */}
         <div className="flex items-center gap-1 self-start">
-          <div
-            className="flex items-center rounded-lg p-0.5 gap-0.5"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: "1px solid rgba(255,255,255,0.08)",
-            }}
-          >
+          <div className="flex items-center rounded-lg p-0.5 gap-0.5 bg-muted border border-border">
             {(["monthly", "annual"] as const).map((iv) => (
               <button
                 key={iv}
                 type="button"
                 onClick={() => setInterval(iv)}
-                className="h-7 px-3 rounded-md text-[12px] font-medium transition-all duration-150"
-                style={
+                className={`h-7 px-3 rounded-md text-[12px] font-medium font-heading transition-all duration-150 ${
                   interval === iv
-                    ? {
-                        background: "rgba(255,255,255,0.09)",
-                        color: "#FBF7F3",
-                        fontFamily: "var(--font-space-grotesk)",
-                      }
-                    : {
-                        color: "rgba(251,247,243,0.4)",
-                        fontFamily: "var(--font-space-grotesk)",
-                      }
-                }
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-text-secondary"
+                }`}
               >
                 {iv === "monthly" ? "Monthly" : "Annual"}
               </button>
             ))}
           </div>
           {interval === "annual" && (
-            <span
-              className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
-              style={{
-                background: "rgba(200,73,26,0.12)",
-                color: "#E06030",
-                border: "1px solid rgba(200,73,26,0.2)",
-                fontFamily: "var(--font-space-grotesk)",
-              }}
-            >
+            <span className="text-[11px] font-semibold font-heading px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
               Save 20%
             </span>
           )}
@@ -97,134 +75,51 @@ export function PlanComparisonCard() {
         {/* Plan cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* Free card */}
-          <div
-            className="rounded-xl p-4 flex flex-col gap-3"
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid rgba(255,255,255,0.07)",
-            }}
-          >
+          <div className="rounded-xl p-4 flex flex-col gap-3 bg-muted border border-border">
             <div>
-              <p
-                className="text-[12px] font-medium"
-                style={{
-                  color: "rgba(251,247,243,0.4)",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
-              >
-                Free
-              </p>
-              <p
-                className="text-[22px] font-bold tracking-[-0.03em] mt-0.5"
-                style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-              >
+              <p className="text-[12px] font-medium font-heading text-muted-foreground">Free</p>
+              <p className="text-[22px] font-bold tracking-[-0.03em] mt-0.5 font-heading text-foreground">
                 $0
-                <span
-                  className="text-[13px] font-normal ml-1"
-                  style={{ color: "rgba(251,247,243,0.35)" }}
-                >
-                  /mo
-                </span>
+                <span className="text-[13px] font-normal ml-1 text-muted-foreground">/mo</span>
               </p>
             </div>
             <ul className="flex flex-col gap-2">
               {FREE_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-2">
-                  <Check
-                    size={12}
-                    className="mt-0.5 shrink-0"
-                    style={{ color: "rgba(251,247,243,0.3)" }}
-                  />
-                  <span
-                    className="text-[12px]"
-                    style={{ color: "rgba(251,247,243,0.4)" }}
-                  >
-                    {f}
-                  </span>
+                  <Check size={12} className="mt-0.5 shrink-0 text-muted-foreground" />
+                  <span className="text-[12px] text-muted-foreground">{f}</span>
                 </li>
               ))}
             </ul>
-            <div
-              className="mt-auto h-8 rounded-lg flex items-center justify-center text-[12px] font-medium"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                color: "rgba(251,247,243,0.35)",
-                border: "1px solid rgba(255,255,255,0.07)",
-                fontFamily: "var(--font-space-grotesk)",
-              }}
-            >
+            <div className="mt-auto h-8 rounded-lg flex items-center justify-center text-[12px] font-medium font-heading bg-background border border-border text-muted-foreground">
               Current plan
             </div>
           </div>
 
           {/* Pro card */}
-          <div
-            className="rounded-xl p-4 flex flex-col gap-3 relative overflow-hidden"
-            style={{
-              background: "rgba(200,73,26,0.06)",
-              border: "1px solid rgba(200,73,26,0.22)",
-            }}
-          >
-            {/* Subtle glow */}
-            <div
-              className="absolute inset-0 pointer-events-none"
-              style={{
-                background:
-                  "radial-gradient(ellipse at top right, rgba(200,73,26,0.08) 0%, transparent 70%)",
-              }}
-            />
-            <div className="relative">
+          <div className="rounded-xl p-4 flex flex-col gap-3 bg-accent border border-primary/20">
+            <div>
               <div className="flex items-center gap-2">
-                <p
-                  className="text-[12px] font-medium"
-                  style={{
-                    color: "#E06030",
-                    fontFamily: "var(--font-space-grotesk)",
-                  }}
-                >
-                  Pro
-                </p>
-                <span
-                  className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full"
-                  style={{
-                    background: "rgba(200,73,26,0.15)",
-                    color: "#E06030",
-                    border: "1px solid rgba(200,73,26,0.25)",
-                    fontFamily: "var(--font-space-grotesk)",
-                  }}
-                >
+                <p className="text-[12px] font-medium font-heading text-primary">Pro</p>
+                <span className="text-[10px] font-semibold font-heading px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
                   Recommended
                 </span>
               </div>
-              <p
-                className="text-[22px] font-bold tracking-[-0.03em] mt-0.5"
-                style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-              >
+              <p className="text-[22px] font-bold tracking-[-0.03em] mt-0.5 font-heading text-foreground">
                 ${interval === "monthly" ? PRO_MONTHLY_PRICE_USD : PRO_ANNUAL_MONTHLY_USD}
-                <span
-                  className="text-[13px] font-normal ml-1"
-                  style={{ color: "rgba(251,247,243,0.5)" }}
-                >
-                  /mo
-                </span>
+                <span className="text-[13px] font-normal ml-1 text-muted-foreground">/mo</span>
               </p>
               {interval === "annual" && (
-                <p className="text-[11px] mt-0.5" style={{ color: "rgba(251,247,243,0.35)" }}>
+                <p className="text-[11px] mt-0.5 text-muted-foreground">
                   Billed ${PRO_ANNUAL_TOTAL_USD}/year
                 </p>
               )}
             </div>
-            <ul className="flex flex-col gap-2 relative">
+            <ul className="flex flex-col gap-2">
               {PRO_FEATURES.map((f) => (
                 <li key={f} className="flex items-start gap-2">
-                  <Check
-                    size={12}
-                    className="mt-0.5 shrink-0"
-                    style={{ color: "#E06030" }}
-                  />
-                  <span className="text-[12px]" style={{ color: "rgba(251,247,243,0.7)" }}>
-                    {f}
-                  </span>
+                  <Check size={12} className="mt-0.5 shrink-0 text-primary" />
+                  <span className="text-[12px] text-text-secondary">{f}</span>
                 </li>
               ))}
             </ul>
@@ -232,12 +127,7 @@ export function PlanComparisonCard() {
               type="button"
               onClick={handleUpgrade}
               disabled={isPending || !activePriceId}
-              className="relative mt-auto h-8 rounded-lg flex items-center justify-center gap-1.5 text-[12.5px] font-semibold transition-opacity duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{
-                background: "linear-gradient(135deg, #C8491A 0%, #D45820 100%)",
-                color: "#fff",
-                fontFamily: "var(--font-space-grotesk)",
-              }}
+              className="mt-auto h-8 rounded-lg flex items-center justify-center gap-1.5 text-[12.5px] font-semibold font-heading transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed bg-primary text-primary-foreground hover:bg-primary-hover"
             >
               {isPending ? (
                 <Loader2 size={13} className="animate-spin" />

@@ -15,7 +15,7 @@ export function CancelSubscriptionSection() {
       />
       <div className="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <p className="text-[13px]" style={{ color: "rgba(251,247,243,0.55)" }}>
+          <p className="text-[13px] text-muted-foreground">
             You can cancel your subscription at any time. You&apos;ll retain Pro
             access until your current billing period ends.
           </p>
@@ -24,13 +24,7 @@ export function CancelSubscriptionSection() {
           type="button"
           onClick={() => openPortal()}
           disabled={isPending}
-          className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-medium transition-opacity duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{
-            background: "rgba(239,68,68,0.06)",
-            border: "1px solid rgba(239,68,68,0.2)",
-            color: "rgba(239,68,68,0.75)",
-            fontFamily: "var(--font-space-grotesk)",
-          }}
+          className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-medium font-heading transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed bg-error-subtle border border-destructive/20 text-destructive hover:bg-destructive/10"
         >
           {isPending ? (
             <Loader2 size={12} className="animate-spin" />

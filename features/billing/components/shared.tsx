@@ -2,13 +2,7 @@ import type { ReactNode } from "react";
 
 export function SectionCard({ children }: { children: ReactNode }) {
   return (
-    <div
-      className="rounded-xl overflow-hidden"
-      style={{
-        background: "rgba(255,255,255,0.02)",
-        border: "1px solid rgba(255,255,255,0.07)",
-      }}
-    >
+    <div className="rounded-xl overflow-hidden bg-card border border-border">
       {children}
     </div>
   );
@@ -22,20 +16,12 @@ export function SectionHeader({
   description?: string;
 }) {
   return (
-    <div
-      className="px-5 py-4"
-      style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-    >
-      <h2
-        className="text-[13.5px] font-semibold"
-        style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-      >
+    <div className="px-5 py-4 border-b border-border">
+      <h2 className="text-[13.5px] font-semibold font-heading text-foreground">
         {title}
       </h2>
       {description && (
-        <p className="mt-0.5 text-[12px]" style={{ color: "rgba(251,247,243,0.35)" }}>
-          {description}
-        </p>
+        <p className="mt-0.5 text-[12px] text-muted-foreground">{description}</p>
       )}
     </div>
   );

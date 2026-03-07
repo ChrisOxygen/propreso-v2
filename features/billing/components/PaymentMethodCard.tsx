@@ -49,44 +49,25 @@ export function PaymentMethodCard({
       <div className="p-5 flex items-center justify-between gap-4">
         {hasCard ? (
           <div className="flex items-center gap-3 min-w-0">
-            <div
-              className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
-              <CreditCard size={15} style={{ color: "rgba(251,247,243,0.5)" }} />
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 bg-muted border border-border">
+              <CreditCard size={15} className="text-text-secondary" />
             </div>
             <div className="min-w-0">
-              <p
-                className="text-[13px] font-medium truncate"
-                style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-              >
+              <p className="text-[13px] font-medium font-heading truncate text-foreground">
                 {brandLabel ? `${brandLabel} ` : ""}
                 <span className="tabular-nums">•••• {paymentMethodLast4}</span>
               </p>
               {expDisplay && (
-                <p className="text-[12px]" style={{ color: "rgba(251,247,243,0.38)" }}>
-                  Expires {expDisplay}
-                </p>
+                <p className="text-[12px] text-muted-foreground">Expires {expDisplay}</p>
               )}
             </div>
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <div
-              className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0"
-              style={{
-                background: "rgba(255,255,255,0.04)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
-              <CreditCard size={15} style={{ color: "rgba(251,247,243,0.3)" }} />
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 bg-muted border border-border">
+              <CreditCard size={15} className="text-muted-foreground" />
             </div>
-            <p className="text-[13px]" style={{ color: "rgba(251,247,243,0.4)" }}>
-              No payment method on file
-            </p>
+            <p className="text-[13px] text-muted-foreground">No payment method on file</p>
           </div>
         )}
 
@@ -94,13 +75,7 @@ export function PaymentMethodCard({
           type="button"
           onClick={() => openPortal()}
           disabled={isPending}
-          className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-medium transition-opacity duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
-          style={{
-            background: "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "rgba(251,247,243,0.75)",
-            fontFamily: "var(--font-space-grotesk)",
-          }}
+          className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-medium font-heading transition-colors duration-150 disabled:opacity-60 disabled:cursor-not-allowed bg-muted border border-border text-text-secondary hover:bg-muted/80"
         >
           {isPending ? (
             <Loader2 size={12} className="animate-spin" />

@@ -22,23 +22,14 @@ export function BillingView(data: BillingData) {
     <div className="flex flex-col gap-4 max-w-2xl">
       {/* Success banner */}
       {showSuccessBanner && !bannerDismissed && (
-        <div
-          className="rounded-xl px-5 py-4 flex items-start justify-between gap-3"
-          style={{
-            background: "rgba(34,197,94,0.06)",
-            border: "1px solid rgba(34,197,94,0.2)",
-          }}
-        >
+        <div className="rounded-xl px-5 py-4 flex items-start justify-between gap-3 bg-green-50 border border-green-200">
           <div className="flex items-center gap-3">
-            <CheckCircle2 size={16} style={{ color: "rgba(34,197,94,0.85)", flexShrink: 0 }} />
+            <CheckCircle2 size={16} className="text-green-600 shrink-0" />
             <div>
-              <p
-                className="text-[13px] font-semibold"
-                style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-              >
+              <p className="text-[13px] font-semibold font-heading text-green-800">
                 You&apos;re now on Pro!
               </p>
-              <p className="text-[12px] mt-0.5" style={{ color: "rgba(251,247,243,0.45)" }}>
+              <p className="text-[12px] mt-0.5 text-green-700">
                 Unlimited proposals and profiles are now unlocked.
               </p>
             </div>
@@ -46,10 +37,10 @@ export function BillingView(data: BillingData) {
           <button
             type="button"
             onClick={() => setBannerDismissed(true)}
-            className="shrink-0 mt-0.5"
+            className="shrink-0 mt-0.5 text-green-600 hover:text-green-800"
             aria-label="Dismiss"
           >
-            <X size={14} style={{ color: "rgba(251,247,243,0.35)" }} />
+            <X size={14} />
           </button>
         </div>
       )}
