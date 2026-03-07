@@ -24,7 +24,7 @@ export function NavMain({ items, onClose }: NavMainProps) {
           href={href}
           onClick={onClose}
           className={[
-            "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all",
+            "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-all",
             isActive
               ? "bg-primary text-white"
               : "text-text-secondary hover:bg-accent hover:text-foreground",
