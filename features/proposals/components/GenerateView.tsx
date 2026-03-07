@@ -224,14 +224,6 @@ export function GenerateView() {
     }
   }
 
-  function handleBackClick() {
-    if (isDirty) {
-      setShowLeaveDialog(true);
-    } else {
-      router.push("/proposals");
-    }
-  }
-
   const jobDescription = watch("jobDescription");
   const descLength = jobDescription?.length ?? 0;
 

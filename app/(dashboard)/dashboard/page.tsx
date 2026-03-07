@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { createClient } from "@/shared/lib/supabase/server";
 import { prisma } from "@/shared/lib/prisma";
-import { SeedButton } from "@/features/proposals/components/SeedButton";
 import { DashboardRecentProposals } from "@/features/proposals/components/DashboardRecentProposals";
 
 async function getDashboardData(userId: string) {

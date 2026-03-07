@@ -31,7 +31,7 @@ export async function DashboardRecentProposals({ userId }: Props) {
   const proposals = await prisma.proposal.findMany({
     where: { userId },
     orderBy: { createdAt: "desc" },
-    take: 5,
+    take: 8,
     select: {
       id: true,
       jobTitle: true,
