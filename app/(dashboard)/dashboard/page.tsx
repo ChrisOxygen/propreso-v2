@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Plus } from "lucide-react";
+import {
+  FileText,
+  Trophy,
+  TrendingUp,
+  Users,
+  Zap,
+  UserCog,
+} from "lucide-react";
 import { createClient } from "@/shared/lib/supabase/server";
 import { prisma } from "@/shared/lib/prisma";
 import { SeedButton } from "@/features/proposals/components/SeedButton";
@@ -33,117 +40,119 @@ export default async function DashboardPage() {
       ? Math.round(((wonProposals + repliedProposals) / totalProposals) * 100)
       : 0;
 
-  const stats = [
-    {
-      label: "Total Proposals",
-      value: totalProposals,
-      color: "#FBF7F3",
-    },
-    {
-      label: "Won",
-      value: wonProposals,
-      color: "#34D399",
-    },
-    {
-      label: "Response Rate",
-      value: `${responseRate}%`,
-      color: "#FBF7F3",
-    },
-    {
-      label: "Profiles",
-      value: profileCount,
-      color: "#FBF7F3",
-    },
-  ];
-
   return (
-    <div className="px-4 py-6 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 mb-6">
-        <div>
-          <h1
-            className="text-[1.35rem] font-bold tracking-[-0.03em]"
-            style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-          >
-            Dashboard
-          </h1>
-          <p
-            className="mt-0.5 text-[13px]"
-            style={{
-              color: "rgba(251,247,243,0.38)",
-              fontFamily: "var(--font-inter)",
-            }}
-          >
-            Welcome back. Here&apos;s your overview.
-          </p>
+    <div className="px-2 space-y-5">
+      {/* Stat cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Total Proposals */}
+        <div className="rounded-xl p-4 bg-card border border-border flex flex-col gap-3">
+          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+            <FileText size={15} className="text-primary" />
+          </div>
+          <div>
+            <p className="text-[26px] font-bold tracking-tight leading-none text-foreground font-heading">
+              {totalProposals}
+            </p>
+            <p className="text-[12px] mt-1.5 text-muted-foreground">
+              Total Proposals
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0">
-          {process.env.NODE_ENV !== "production" && <SeedButton />}
-          <Link
-            href="/generate"
-            className="flex items-center gap-1.5 h-9 px-4 rounded-lg text-[13px] font-semibold transition-opacity duration-150 hover:opacity-90"
-            style={{
-              background: "#C8491A",
-              color: "#fff",
-              fontFamily: "var(--font-inter)",
-            }}
-          >
-            <Plus size={14} strokeWidth={2.5} />
-            New Proposal
-          </Link>
+        {/* Won */}
+        <div className="rounded-xl p-4 bg-card border border-border flex flex-col gap-3">
+          <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center">
+            <Trophy size={15} className="text-emerald-600" />
+          </div>
+          <div>
+            <p className="text-[26px] font-bold tracking-tight leading-none text-emerald-600 font-heading">
+              {wonProposals}
+            </p>
+            <p className="text-[12px] mt-1.5 text-muted-foreground">Won</p>
+          </div>
+        </div>
+
+        {/* Response Rate */}
+        <div className="rounded-xl p-4 bg-card border border-border flex flex-col gap-3">
+          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+            <TrendingUp size={15} className="text-primary" />
+          </div>
+          <div className="flex-1">
+            <p className="text-[26px] font-bold tracking-tight leading-none text-foreground font-heading">
+              {responseRate}%
+            </p>
+            <p className="text-[12px] mt-1.5 text-muted-foreground">
+              Response Rate
+            </p>
+          </div>
+          <div className="h-1 rounded-full bg-border overflow-hidden">
+            <div
+              className="h-full rounded-full bg-primary"
+              style={{ width: `${responseRate}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Profiles */}
+        <div className="rounded-xl p-4 bg-card border border-border flex flex-col gap-3">
+          <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
+            <Users size={15} className="text-primary" />
+          </div>
+          <div>
+            <p className="text-[26px] font-bold tracking-tight leading-none text-foreground font-heading">
+              {profileCount}
+            </p>
+            <p className="text-[12px] mt-1.5 text-muted-foreground">Profiles</p>
+          </div>
         </div>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
-        {stats.map(({ label, value, color }) => (
-          <div
-            key={label}
-            className="rounded-xl p-4"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.07)",
-            }}
-          >
-            <p
-              className="text-[24px] font-bold tracking-tight leading-none"
-              style={{ color, fontFamily: "var(--font-space-grotesk)" }}
-            >
-              {value}
+      {/* Quick actions */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Link
+          href="/generate"
+          className="rounded-xl p-4 bg-primary flex items-center gap-3 transition-colors hover:bg-primary-hover"
+        >
+          <div className="w-9 h-9 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+            <Zap size={16} className="text-white" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-white font-heading">
+              Generate a Proposal
             </p>
-            <p
-              className="text-[12px] mt-2"
-              style={{
-                color: "rgba(251,247,243,0.35)",
-                fontFamily: "var(--font-inter)",
-              }}
-            >
-              {label}
+            <p className="text-[12px] text-white/65 mt-0.5">
+              Draft a new AI-powered proposal
             </p>
           </div>
-        ))}
+        </Link>
+
+        <Link
+          href="/profiles"
+          className="rounded-xl p-4 bg-card border border-border flex items-center gap-3 transition-colors hover:bg-accent"
+        >
+          <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center shrink-0">
+            <UserCog size={16} className="text-primary" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-foreground font-heading">
+              Manage Profiles
+            </p>
+            <p className="text-[12px] text-muted-foreground mt-0.5">
+              Edit your freelancer profiles
+            </p>
+          </div>
+        </Link>
       </div>
 
       {/* Recent proposals */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2
-            className="text-[13px] font-semibold"
-            style={{
-              color: "rgba(251,247,243,0.6)",
-              fontFamily: "var(--font-space-grotesk)",
-            }}
-          >
+          <h2 className="text-[13px] font-semibold text-text-secondary font-heading">
             Recent Proposals
           </h2>
           <Link
             href="/proposals"
-            className="text-[12px] transition-colors duration-150"
-            style={{
-              color: "rgba(251,247,243,0.3)",
-              fontFamily: "var(--font-inter)",
-            }}
+            className="text-[12px] text-muted-foreground hover:text-text-secondary transition-colors"
           >
             View all →
           </Link>
