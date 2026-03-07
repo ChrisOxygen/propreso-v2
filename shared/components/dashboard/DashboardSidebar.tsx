@@ -1,20 +1,9 @@
 "use client";
 
-import * as React from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { LayoutDashboard, FileText, UserRound } from "lucide-react";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from "@/shared/components/ui/sidebar";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 
@@ -24,14 +13,15 @@ const NAV_ITEMS = [
   { href: "/profiles", icon: UserRound, label: "Profiles" },
 ] as const;
 
-interface DashboardSidebarProps extends React.ComponentProps<typeof Sidebar> {
+export interface DashboardSidebarProps {
   user: {
     name: string;
     email: string;
   };
+  onClose?: () => void;
 }
 
-export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
+export function DashboardSidebar({ user, onClose }: DashboardSidebarProps) {
   const pathname = usePathname();
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
@@ -42,56 +32,43 @@ export function DashboardSidebar({ user, ...props }: DashboardSidebarProps) {
   }));
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <div className="flex flex-col h-full py-4 px-3">
+
       {/* Brand */}
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              asChild
-              className="hover:bg-white/5 active:bg-white/5"
-            >
-              <Link href="/dashboard">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-[#C8491A] shrink-0">
-                  <Image
-                    src="/assets/site-icon-white.svg"
-                    alt="Propreso"
-                    width={11}
-                    height={14}
-                  />
-                </div>
-                <div className="grid flex-1 text-left leading-tight">
-                  <span
-                    className="truncate text-[15px] font-semibold tracking-[-0.025em] text-[#FBF7F3]"
-                    style={{ fontFamily: "var(--font-space-grotesk)" }}
-                  >
-                    Propreso
-                  </span>
-                  <span
-                    className="truncate text-[11px] text-[rgba(251,247,243,0.35)]"
-                    style={{ fontFamily: "var(--font-inter)" }}
-                  >
-                    AI Proposal Generator
-                  </span>
-                </div>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
+      <Link
+        href="/dashboard"
+        onClick={onClose}
+        className="flex items-center gap-2.5 px-2 py-2 mb-5 rounded-xl hover:bg-accent transition-colors"
+      >
+        <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-primary shrink-0">
+          <Image
+            src="/assets/site-icon-white.svg"
+            alt="Propreso"
+            width={11}
+            height={14}
+          />
+        </div>
+        <div className="grid flex-1 text-left leading-tight">
+          <span
+            className="truncate text-[15px] font-semibold tracking-[-0.025em] text-foreground"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            Propreso
+          </span>
+          <span className="truncate text-[11px] text-muted-foreground">
+            AI Proposal Generator
+          </span>
+        </div>
+      </Link>
 
-      {/* Main nav */}
-      <SidebarContent>
-        <NavMain items={navItems} />
-      </SidebarContent>
+      {/* Nav items */}
+      <div className="flex-1">
+        <NavMain items={navItems} onClose={onClose} />
+      </div>
 
-      {/* User footer */}
-      <SidebarFooter>
-        <NavUser user={user} />
-      </SidebarFooter>
+      {/* User */}
+      <NavUser user={user} />
 
-      <SidebarRail />
-    </Sidebar>
+    </div>
   );
 }

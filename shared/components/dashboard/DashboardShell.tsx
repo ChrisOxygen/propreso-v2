@@ -1,12 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { usePathname } from "next/navigation";
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from "@/shared/components/ui/sidebar";
-import { Separator } from "@/shared/components/ui/separator";
+import { Menu, Bell } from "lucide-react";
+import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { DashboardSidebar } from "./DashboardSidebar";
 
 const PAGE_LABELS: Record<string, string> = {
@@ -25,40 +22,72 @@ interface DashboardShellProps {
   };
 }
 
-function ShellHeader() {
+function ShellHeader({ onMenuClick }: { onMenuClick: () => void }) {
   const pathname = usePathname();
   const pageLabel =
-    Object.entries(PAGE_LABELS).find(([key]) => pathname.startsWith(key))?.[1] ??
-    "Propreso";
+    Object.entries(PAGE_LABELS).find(([key]) =>
+      pathname.startsWith(key),
+    )?.[1] ?? "Propreso";
 
   return (
-    <header
-      className="flex h-12 shrink-0 items-center gap-2 px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-10"
-      style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-    >
-      <SidebarTrigger className="-ml-1 text-[rgba(251,247,243,0.5)] hover:text-[rgba(251,247,243,0.9)] hover:bg-white/5" />
-      <Separator
-        orientation="vertical"
-        className="mr-1 h-4 bg-white/10"
-      />
-      <span
-        className="text-[13px] font-medium text-[rgba(251,247,243,0.6)]"
-        style={{ fontFamily: "var(--font-inter)" }}
+    <header className="flex h-14 shrink-0 items-center gap-3 px-5 bg-card rounded-xl border border-border">
+      <button
+        className="lg:hidden p-1.5 rounded-lg hover:bg-accent text-muted-foreground transition-colors"
+        onClick={onMenuClick}
+        aria-label="Open menu"
+      >
+        <Menu size={18} />
+      </button>
+      <h1
+        className="text-[15px] font-semibold text-foreground tracking-[-0.01em]"
+        style={{ fontFamily: "var(--font-space-grotesk)" }}
       >
         {pageLabel}
-      </span>
+      </h1>
+      <div className="ml-auto flex items-center gap-1">
+        <button
+          className="p-2 rounded-lg hover:bg-accent text-muted-foreground hover:text-text-secondary transition-colors"
+          aria-label="Notifications"
+        >
+          <Bell size={16} />
+        </button>
+      </div>
     </header>
   );
 }
 
 export function DashboardShell({ children, user }: DashboardShellProps) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <SidebarProvider>
-      <DashboardSidebar user={user} />
-      <SidebarInset className="min-w-0 overflow-x-hidden">
-        <ShellHeader />
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="flex h-screen bg-background p-2 gap-2">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-foreground/20 backdrop-blur-[2px] lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar — fully rounded, its own card */}
+      <aside
+        className={[
+          "fixed lg:relative z-30 lg:z-auto inset-y-0 left-0",
+          "w-56 shrink-0 flex flex-col bg-card rounded-xl border border-border",
+          "transition-transform duration-200 ease-in-out",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+        ].join(" ")}
+      >
+        <DashboardSidebar user={user} onClose={() => setSidebarOpen(false)} />
+      </aside>
+
+      {/* Main content — accent bg shows as gap between header and page content */}
+      <div className="flex-1 flex flex-col min-w-0  rounded-xl gap-2">
+        <ShellHeader onMenuClick={() => setSidebarOpen(true)} />
+        <ScrollArea className="flex-1 bg-accent rounded-xl">
+          {children}
+        </ScrollArea>
+      </div>
+    </div>
   );
 }

@@ -2,13 +2,6 @@
 
 import Link from "next/link";
 import { type LucideIcon } from "lucide-react";
-import {
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/shared/components/ui/sidebar";
 
 interface NavItem {
   href: string;
@@ -17,33 +10,31 @@ interface NavItem {
   isActive: boolean;
 }
 
-export function NavMain({ items }: { items: NavItem[] }) {
+interface NavMainProps {
+  items: NavItem[];
+  onClose?: () => void;
+}
+
+export function NavMain({ items, onClose }: NavMainProps) {
   return (
-    <SidebarGroup>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map(({ href, label, icon: Icon, isActive }) => (
-            <SidebarMenuItem key={href}>
-              <SidebarMenuButton
-                asChild
-                tooltip={label}
-                isActive={isActive}
-                className="text-[rgba(251,247,243,0.48)] hover:bg-white/5 hover:text-[rgba(251,247,243,0.8)] data-[active=true]:bg-[rgba(200,73,26,0.13)] data-[active=true]:text-[#E85A2C]"
-              >
-                <Link href={href}>
-                  <Icon size={15} strokeWidth={isActive ? 2.1 : 1.6} />
-                  <span
-                    className="text-[13px] font-medium"
-                    style={{ fontFamily: "var(--font-inter)" }}
-                  >
-                    {label}
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroupContent>
-    </SidebarGroup>
+    <nav className="space-y-2">
+      {items.map(({ href, label, icon: Icon, isActive }) => (
+        <Link
+          key={href}
+          href={href}
+          onClick={onClose}
+          className={[
+            "flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all",
+            isActive
+              ? "bg-primary text-white"
+              : "text-text-secondary hover:bg-accent hover:text-foreground",
+          ].join(" ")}
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          <Icon size={15} strokeWidth={isActive ? 2.1 : 1.7} />
+          {label}
+        </Link>
+      ))}
+    </nav>
   );
 }
