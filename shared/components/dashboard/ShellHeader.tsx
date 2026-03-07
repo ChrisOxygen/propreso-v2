@@ -29,7 +29,7 @@ export function ShellHeader({ onMenuClick }: ShellHeaderProps) {
           type="text"
           placeholder="Search…"
           disabled
-          className="w-full h-10 pl-8 pr-3 rounded-lg text-[13px] bg-accent border border-border text-foreground placeholder:text-muted-foreground outline-none cursor-default"
+          className="w-full h-9 pl-8 pr-3 rounded-lg text-[13px] bg-accent border border-border text-foreground placeholder:text-muted-foreground outline-none cursor-default"
         />
       </div>
 
