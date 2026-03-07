@@ -39,7 +39,7 @@ export function AuthBrandPanel() {
               className="shrink-0"
             />
           </div>
-          <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#FBF7F3] [font-family:var(--font-space-grotesk)]">
+          <span className="text-[15px] font-semibold tracking-[-0.02em] text-[#FBF7F3] font-heading">
             Propreso
           </span>
         </div>
@@ -47,7 +47,7 @@ export function AuthBrandPanel() {
         {/* Back to website */}
         <Link
           href="/"
-          className="flex items-center gap-1.5 text-[12.5px] text-white/40 hover:text-white/75 transition-colors duration-150 [font-family:var(--font-space-grotesk)] border border-white/20 hover:border-white/40 rounded-full px-3 py-1"
+          className="flex items-center gap-1.5 text-[12.5px] text-white/40 hover:text-white/75 transition-colors duration-150 font-heading border border-white/20 hover:border-white/40 rounded-full px-3 py-1"
         >
           <ArrowLeft size={13} />
           Back to website
