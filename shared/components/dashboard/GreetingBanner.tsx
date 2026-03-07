@@ -19,7 +19,7 @@ export function GreetingBanner({ name }: GreetingBannerProps) {
 
   return (
     <div className="px-2 flex items-end justify-between gap-4">
-      <p className="text-4xl text-foreground font-heading tracking-[-0.01em]">
+      <p className="text-2xl md:text-4xl text-foreground font-heading tracking-[-0.01em]">
         {text}, <span className="capitalize">{name.split(" ")[0]}</span>
       </p>
       {/* <Breadcrumbs /> */}

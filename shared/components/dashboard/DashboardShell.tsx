@@ -33,7 +33,9 @@ export function DashboardShell({ children, user }: DashboardShellProps) {
           "fixed lg:relative z-30 lg:z-auto inset-y-0 left-0",
           "w-56 shrink-0 flex flex-col bg-card rounded-xl border border-border",
           "transition-transform duration-200 ease-in-out",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
+          sidebarOpen
+            ? "translate-x-0 m-3"
+            : "-translate-x-full lg:translate-x-0",
         ].join(" ")}
       >
         <DashboardSidebar user={user} onClose={() => setSidebarOpen(false)} />
