@@ -5,7 +5,14 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Sparkles, Link as LinkIcon, ArrowLeft } from "lucide-react";
+import { Loader2, Sparkles, ArrowLeft } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/components/ui/select";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport } from "ai";
 import {
@@ -300,25 +307,6 @@ export function GenerateView() {
                 <FieldError msg={errors.jobTitle?.message} />
               </div>
 
-              {/* Job URL */}
-              <div>
-                <label className="block text-[12px] font-medium mb-1.5 text-muted-foreground">
-                  <span className="inline-flex items-center gap-1">
-                    <LinkIcon size={11} />
-                    Job URL
-                    <span className="text-[11px] text-muted-foreground/50">
-                      (optional)
-                    </span>
-                  </span>
-                </label>
-                <input
-                  {...register("jobUrl")}
-                  placeholder="https://www.upwork.com/jobs/..."
-                  className={`${fieldClass(!!errors.jobUrl)} h-9`}
-                />
-                <FieldError msg={errors.jobUrl?.message} />
-              </div>
-
               {/* Job description */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
@@ -337,7 +325,7 @@ export function GenerateView() {
                 </div>
                 <textarea
                   {...register("jobDescription")}
-                  rows={8}
+                  rows={6}
                   placeholder="Paste the full Upwork job description here…"
                   className={`${fieldClass(!!errors.jobDescription)} py-2.5 leading-relaxed resize-none`}
                 />
@@ -351,33 +339,72 @@ export function GenerateView() {
             <div className="flex flex-col gap-4">
               <SectionLabel>Generation Options</SectionLabel>
 
-              {/* Tone */}
-              <div>
-                <label className="block text-[12px] font-medium mb-2 text-muted-foreground">
-                  Tone
-                </label>
-                <Controller
-                  name="tone"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {TONES.map((t) => (
-                        <button
-                          key={t.value}
-                          type="button"
-                          onClick={() => field.onChange(t.value)}
-                          className={`h-8 px-3 rounded-lg text-[12px] font-medium transition-all duration-150 border ${
-                            field.value === t.value
-                              ? "bg-accent border-primary/30 text-primary"
-                              : "bg-background border-border text-muted-foreground hover:bg-accent/50"
-                          }`}
-                        >
-                          {t.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                />
+              {/* Tone + Length row */}
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <label className="block text-[12px] font-medium mb-2 text-muted-foreground">
+                    Tone
+                  </label>
+                  <Controller
+                    name="tone"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="h-9 w-full text-[13px] bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/10">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TONES.map((t) => (
+                            <SelectItem
+                              key={t.value}
+                              value={t.value}
+                              className="text-[13px]"
+                            >
+                              {t.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <label className="block text-[12px] font-medium mb-2 text-muted-foreground">
+                    Length
+                  </label>
+                  <Controller
+                    name="proposalLength"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="h-9 w-full text-[13px] bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/10">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          {LENGTHS.map((l) => (
+                            <SelectItem
+                              key={l.value}
+                              value={l.value}
+                              className="text-[13px] w-full"
+                            >
+                              <span>{l.label}</span>
+                              <span className="ml-2 text-muted-foreground text-[12px]">
+                                {l.sub}
+                              </span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
               </div>
 
               {/* Formula */}
@@ -389,73 +416,27 @@ export function GenerateView() {
                   name="formula"
                   control={control}
                   render={({ field }) => (
-                    <div className="flex flex-col gap-1.5">
-                      {FORMULAS.map((f) => (
-                        <button
-                          key={f.value}
-                          type="button"
-                          onClick={() => field.onChange(f.value)}
-                          className={`flex items-center justify-between px-3 py-2 rounded-lg text-left transition-all duration-150 border ${
-                            field.value === f.value
-                              ? "bg-accent border-primary/30"
-                              : "bg-background border-border hover:bg-accent/50"
-                          }`}
-                        >
-                          <span
-                            className={`text-[12.5px] font-semibold shrink-0 font-heading ${
-                              field.value === f.value
-                                ? "text-primary"
-                                : "text-text-secondary"
-                            }`}
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="h-9 w-full text-[13px] bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/10">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {FORMULAS.map((f) => (
+                          <SelectItem
+                            key={f.value}
+                            value={f.value}
+                            className="text-[13px]"
                           >
-                            {f.label}
-                          </span>
-                          <span className="text-[11px] text-right ml-3 text-muted-foreground">
-                            {f.desc}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                />
-              </div>
-
-              {/* Length */}
-              <div>
-                <label className="block text-[12px] font-medium mb-2 text-muted-foreground">
-                  Length
-                </label>
-                <Controller
-                  name="proposalLength"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="grid grid-cols-3 gap-1.5">
-                      {LENGTHS.map((l) => (
-                        <button
-                          key={l.value}
-                          type="button"
-                          onClick={() => field.onChange(l.value)}
-                          className={`flex flex-col items-center py-2 px-1 rounded-lg transition-all duration-150 border ${
-                            field.value === l.value
-                              ? "bg-accent border-primary/30"
-                              : "bg-background border-border hover:bg-accent/50"
-                          }`}
-                        >
-                          <span
-                            className={`text-[12.5px] font-semibold ${
-                              field.value === l.value
-                                ? "text-primary"
-                                : "text-text-secondary"
-                            }`}
-                          >
-                            {l.label}
-                          </span>
-                          <span className="text-[10px] mt-0.5 text-muted-foreground">
-                            {l.sub}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                            <span className="font-semibold font-heading">
+                              {f.label}
+                            </span>
+                            <span className="ml-2 text-muted-foreground text-[12px]">
+                              — {f.desc}
+                            </span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   )}
                 />
               </div>
