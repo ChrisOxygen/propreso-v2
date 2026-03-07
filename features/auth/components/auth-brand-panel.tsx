@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { AuthBrandTagline } from "./auth-brand-tagline";
 
 export function AuthBrandPanel() {
   return (
@@ -53,24 +54,8 @@ export function AuthBrandPanel() {
         </Link>
       </div>
 
-      {/* ── Center area — floating stat cards ─────────────────── */}
-
       {/* ── Bottom tagline ────────────────────────────────────── */}
-      <div className="relative z-10 px-8 pb-10 mt-auto text-center">
-        <p className="text-[1.15rem] font-semibold leading-snug tracking-[-0.02em] text-[#FBF7F3] [font-family:var(--font-space-grotesk)]">
-          Craft Winning Proposals,
-        </p>
-        <p className="text-[1.15rem] italic leading-snug mt-0.5 text-[#E06030] [font-family:var(--font-instrument-serif)]">
-          in Minutes, Every Time.
-        </p>
-
-        {/* Carousel indicators */}
-        <div className="flex items-center justify-center gap-1.5 mt-5">
-          <div className="w-5 h-0.75 rounded-full bg-white opacity-25" />
-          <div className="w-5 h-0.75 rounded-full bg-white opacity-25" />
-          <div className="w-9 h-0.75 rounded-full bg-[#C8491A] opacity-70" />
-        </div>
-      </div>
+      <AuthBrandTagline />
     </div>
   );
 }

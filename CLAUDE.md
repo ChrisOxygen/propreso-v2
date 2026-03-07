@@ -125,6 +125,21 @@ IMPORTANT: Use `useChat()` from `@ai-sdk/react` — NOT `useCompletion()` which 
 
 IMPORTANT: All styling must be done with Tailwind utility classes in the `className` prop — never use the `style` prop.
 
+IMPORTANT: Never hardcode brand hex values in components. Always use the semantic Tailwind tokens defined in `globals.css`:
+- `bg-primary` / `text-primary` / `border-primary` → Deep Ember `#C85438`
+- `hover:bg-primary-hover` / `hover:text-primary-hover` → Char Ember `#AE4529`
+- `active:bg-primary-active` → Smoldering `#964020`
+- `bg-accent` → Ember Tint `#FDF0EC` (subtle primary tint, used for page backgrounds)
+- `bg-background` → Warm Canvas `#FDF8F6` (root page background)
+- `bg-card` → Pure White `#FFFFFF` (inputs, cards, surfaces)
+- `text-foreground` → Rich Ink `#1A1412`
+- `text-text-secondary` → Warm Slate `#5A4E4A`
+- `text-muted-foreground` → Dusty Ash `#9C8E8A`
+- `border-border` → Warm Stroke `#EDE7E4`
+- `border-border-strong` → Defined Stroke `#C9BCB8`
+- `text-destructive` / `bg-error-subtle` → Cinnabar / Blush Fade
+- The auth brand panel (`auth-brand-panel.tsx`) is the only exception — its dark overlay colors (`#160A04`, flame gradient, `#FBF7F3`) have no light-theme token equivalents and stay hardcoded.
+
 ## Architecture
 
 ### Auth Flow
