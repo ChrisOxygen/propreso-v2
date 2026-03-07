@@ -27,6 +27,11 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-active: var(--primary-active);
+  --color-text-secondary: var(--text-secondary);
+  --color-border-strong: var(--border-strong);
+  --color-error-subtle: var(--error-subtle);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -89,6 +94,17 @@
   --border: oklch(0.916 0.012 55);
   --input: oklch(0.916 0.012 55);
   --ring: oklch(0.553 0.185 37);
+
+  /* Primary hover: Char Ember #AE4529 */
+  --primary-hover: oklch(0.483 0.175 37);
+  /* Primary active: Smoldering #964020 */
+  --primary-active: oklch(0.430 0.155 37);
+  /* Secondary text: Warm Slate #5A4E4A */
+  --text-secondary: oklch(0.358 0.018 50);
+  /* Strong border: Defined Stroke #C9BCB8 */
+  --border-strong: oklch(0.780 0.015 50);
+  /* Error subtle: Blush Fade #FDECEE */
+  --error-subtle: oklch(0.963 0.015 10);
 
   /* Charts */
   --chart-1: oklch(0.553 0.185 37);   /* Deep Ember   #C85438 */
