@@ -20,7 +20,7 @@ export function ShellHeader({ onMenuClick }: ShellHeaderProps) {
       </button>
 
       {/* Search bar */}
-      <div className="relative flex-1 max-w-xs">
+      <div className="relative flex-1 max-w-xs hidden md:block">
         <Search
           size={13}
           className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
