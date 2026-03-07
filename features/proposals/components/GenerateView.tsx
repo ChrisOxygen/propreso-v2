@@ -262,7 +262,7 @@ export function GenerateView() {
       {/* ── Layout ── */}
       <div className="flex flex-col lg:grid lg:grid-cols-[420px_1fr] gap-6 items-start">
         {/* ── LEFT: Config form ── */}
-        <div className="w-full rounded-xl bg-card border border-border">
+        <div className="w-full rounded-xl  bg-card border border-border">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-5 p-5"
@@ -291,7 +291,7 @@ export function GenerateView() {
             <div className="h-px bg-border" />
 
             {/* Job details */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               <SectionLabel>Job Details</SectionLabel>
 
               {/* Job title */}
@@ -325,7 +325,7 @@ export function GenerateView() {
                 </div>
                 <textarea
                   {...register("jobDescription")}
-                  rows={6}
+                  rows={8}
                   placeholder="Paste the full Upwork job description here…"
                   className={`${fieldClass(!!errors.jobDescription)} py-2.5 leading-relaxed resize-none`}
                 />
