@@ -70,37 +70,23 @@ export function ProposalsFilters() {
   return (
     <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center sm:justify-between">
       {/* Search input */}
-      <div className="relative w-full sm:w-[260px]">
+      <div className="relative w-full sm:w-65">
         <Search
           size={13}
-          className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-          style={{ color: "rgba(251,247,243,0.3)" }}
+          className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground"
         />
         <input
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder="Search proposals…"
-          className="w-full h-9 pl-8 pr-8 rounded-lg text-[13px] outline-none transition-colors duration-150"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "#FBF7F3",
-            fontFamily: "var(--font-inter)",
-          }}
-          onFocus={(e) =>
-            (e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)")
-          }
-          onBlur={(e) =>
-            (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")
-          }
+          className="w-full h-9 pl-8 pr-8 rounded-lg text-[13px] outline-none transition-colors duration-150 bg-card border border-border focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
         />
         {inputValue && (
           <button
             type="button"
             onClick={clearSearch}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 transition-colors duration-100"
-            style={{ color: "rgba(251,247,243,0.3)" }}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 transition-colors duration-100 text-muted-foreground hover:text-text-secondary"
           >
             <X size={13} />
           </button>
@@ -117,12 +103,11 @@ export function ProposalsFilters() {
               type="button"
               onClick={() => setStatus(value)}
               className={cn(
-                "h-7 px-3 rounded-full text-[12px] font-medium transition-colors duration-150 whitespace-nowrap",
+                "h-7 px-3 rounded-full text-[12px] font-medium transition-colors duration-150 whitespace-nowrap border",
                 active
-                  ? "bg-[rgba(200,73,26,0.15)] text-[#E85A2C] border border-[rgba(200,73,26,0.35)]"
-                  : "text-[rgba(251,247,243,0.45)] border border-[rgba(255,255,255,0.07)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[rgba(251,247,243,0.7)]"
+                  ? "bg-accent border-primary/30 text-primary"
+                  : "text-muted-foreground border-border hover:bg-accent hover:text-text-secondary",
               )}
-              style={{ fontFamily: "var(--font-inter)" }}
             >
               {label}
             </button>

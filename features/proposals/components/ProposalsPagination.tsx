@@ -43,10 +43,7 @@ export function ProposalsPagination({ pagination }: ProposalsPaginationProps) {
   return (
     <div className="flex items-center justify-between gap-4 pt-2">
       {/* Count */}
-      <span
-        className="text-[12px] shrink-0"
-        style={{ color: "rgba(251,247,243,0.3)", fontFamily: "var(--font-inter)" }}
-      >
+      <span className="text-[12px] shrink-0 text-muted-foreground">
         {from}–{to} of {total}
       </span>
 
@@ -57,8 +54,7 @@ export function ProposalsPagination({ pagination }: ProposalsPaginationProps) {
           type="button"
           disabled={page === 1}
           onClick={() => goToPage(page - 1)}
-          className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-100 disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:bg-[rgba(255,255,255,0.06)]"
-          style={{ color: "rgba(251,247,243,0.5)" }}
+          className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-100 disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:bg-accent text-text-secondary"
         >
           <ChevronLeft size={15} />
         </button>
@@ -68,8 +64,7 @@ export function ProposalsPagination({ pagination }: ProposalsPaginationProps) {
           p === "…" ? (
             <span
               key={`ellipsis-${i}`}
-              className="w-8 h-8 flex items-center justify-center text-[12px]"
-              style={{ color: "rgba(251,247,243,0.22)", fontFamily: "var(--font-inter)" }}
+              className="w-8 h-8 flex items-center justify-center text-[12px] text-muted-foreground"
             >
               …
             </span>
@@ -81,14 +76,13 @@ export function ProposalsPagination({ pagination }: ProposalsPaginationProps) {
               className={cn(
                 "w-8 h-8 flex items-center justify-center rounded-lg text-[12px] font-medium transition-colors duration-100",
                 p === page
-                  ? "bg-[rgba(200,73,26,0.15)] text-[#E85A2C] border border-[rgba(200,73,26,0.35)]"
-                  : "text-[rgba(251,247,243,0.45)] hover:bg-[rgba(255,255,255,0.05)] hover:text-[rgba(251,247,243,0.7)]"
+                  ? "bg-accent border border-primary/30 text-primary"
+                  : "text-muted-foreground hover:bg-accent hover:text-text-secondary",
               )}
-              style={{ fontFamily: "var(--font-inter)" }}
             >
               {p}
             </button>
-          )
+          ),
         )}
 
         {/* Next */}
@@ -96,8 +90,7 @@ export function ProposalsPagination({ pagination }: ProposalsPaginationProps) {
           type="button"
           disabled={page === totalPages}
           onClick={() => goToPage(page + 1)}
-          className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-100 disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:bg-[rgba(255,255,255,0.06)]"
-          style={{ color: "rgba(251,247,243,0.5)" }}
+          className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors duration-100 disabled:opacity-30 disabled:cursor-not-allowed hover:enabled:bg-accent text-text-secondary"
         >
           <ChevronRight size={15} />
         </button>

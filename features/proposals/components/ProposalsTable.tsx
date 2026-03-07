@@ -21,33 +21,22 @@ const LENGTH_LABELS: Record<string, string> = {
   LONG: "Long",
 };
 
-const STATUS_CONFIG: Record<
-  string,
-  { label: string; color: string; bg: string; border: string }
-> = {
+const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   WON: {
     label: "Won",
-    color: "#34D399",
-    bg: "rgba(52,211,153,0.1)",
-    border: "rgba(52,211,153,0.28)",
+    className: "bg-emerald-50 border-emerald-200 text-emerald-700",
   },
   REPLIED: {
     label: "Replied",
-    color: "#60A5FA",
-    bg: "rgba(96,165,250,0.1)",
-    border: "rgba(96,165,250,0.28)",
+    className: "bg-blue-50 border-blue-200 text-blue-700",
   },
   NO_RESPONSE: {
     label: "No Response",
-    color: "rgba(251,247,243,0.45)",
-    bg: "rgba(255,255,255,0.05)",
-    border: "rgba(255,255,255,0.12)",
+    className: "bg-muted border-border text-muted-foreground",
   },
   PENDING: {
     label: "Pending",
-    color: "rgba(251,247,243,0.32)",
-    bg: "rgba(255,255,255,0.03)",
-    border: "rgba(255,255,255,0.07)",
+    className: "bg-background border-border text-muted-foreground",
   },
 };
 
@@ -72,10 +61,7 @@ export function ProposalsTable({
   const router = useRouter();
 
   return (
-    <div
-      className="rounded-xl overflow-hidden relative"
-      style={{ border: "1px solid rgba(255,255,255,0.07)" }}
-    >
+    <div className="rounded-xl overflow-hidden relative bg-card border border-border">
       {/* Spinner shown while a page/filter transition is in-flight */}
       {isFetching && (
         <div className="absolute top-3 right-3 z-10">
@@ -87,10 +73,9 @@ export function ProposalsTable({
       <div className="overflow-x-auto">
         <table
           className={cn(
-            "w-full border-collapse min-w-170  transition-opacity duration-150",
+            "w-full border-collapse min-w-170 table-fixed transition-opacity duration-150",
             isFetching && "opacity-60",
           )}
-          style={{ tableLayout: "fixed" }}
         >
           <colgroup>
             {COLUMNS.map(({ label, width }) => (
@@ -99,21 +84,10 @@ export function ProposalsTable({
           </colgroup>
 
           <thead>
-            <tr
-              style={{
-                background: "rgba(255,255,255,0.025)",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
-              }}
-            >
+            <tr className="bg-accent border-b border-border">
               {COLUMNS.map(({ label }) => (
                 <th key={label} className="px-4 py-2.5 text-left">
-                  <span
-                    className="text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap"
-                    style={{
-                      color: "rgba(251,247,243,0.28)",
-                      fontFamily: "var(--font-space-grotesk)",
-                    }}
-                  >
+                  <span className="text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap text-muted-foreground font-heading">
                     {label}
                   </span>
                 </th>
@@ -132,23 +106,15 @@ export function ProposalsTable({
                 <tr
                   key={proposal.id}
                   onClick={() => router.push(`/proposals/${proposal.id}`)}
-                  className="cursor-pointer transition-colors duration-100 hover:bg-[rgba(255,255,255,0.025)]"
-                  style={{
-                    borderBottom: isLast
-                      ? "none"
-                      : "1px solid rgba(255,255,255,0.05)",
-                  }}
+                  className={cn(
+                    "cursor-pointer transition-colors duration-100 hover:bg-accent",
+                    !isLast && "border-b border-border",
+                  )}
                 >
                   {/* Job Title — max-w-0 forces truncation within the fixed column */}
                   <td className="px-4 py-3 max-w-0">
                     <div className="flex items-center gap-1.5">
-                      <span
-                        className="text-[13px] font-medium truncate"
-                        style={{
-                          color: "#FBF7F3",
-                          fontFamily: "var(--font-space-grotesk)",
-                        }}
-                      >
+                      <span className="text-[13px] font-medium truncate text-foreground font-heading">
                         {proposal.jobTitle}
                       </span>
                       {proposal.jobUrl && (
@@ -157,16 +123,7 @@ export function ProposalsTable({
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="shrink-0 transition-colors duration-100"
-                          style={{ color: "rgba(251,247,243,0.2)" }}
-                          onMouseEnter={(e) =>
-                            (e.currentTarget.style.color =
-                              "rgba(251,247,243,0.55)")
-                          }
-                          onMouseLeave={(e) =>
-                            (e.currentTarget.style.color =
-                              "rgba(251,247,243,0.2)")
-                          }
+                          className="shrink-0 transition-colors duration-100 text-muted-foreground hover:text-text-secondary"
                         >
                           <ExternalLink size={11} />
                         </a>
@@ -176,41 +133,21 @@ export function ProposalsTable({
 
                   {/* Profile */}
                   <td className="px-4 py-3 max-w-0">
-                    <span
-                      className="text-[12.5px] truncate block whitespace-nowrap"
-                      style={{
-                        color: "rgba(251,247,243,0.48)",
-                        fontFamily: "var(--font-inter)",
-                      }}
-                    >
+                    <span className="text-[12.5px] truncate block whitespace-nowrap text-text-secondary">
                       {proposal.profile.name}
                     </span>
                   </td>
 
                   {/* Formula */}
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span
-                      className="inline-block px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wide"
-                      style={{
-                        background: "rgba(200,73,26,0.1)",
-                        border: "1px solid rgba(200,73,26,0.22)",
-                        color: "rgba(200,73,26,0.85)",
-                        fontFamily: "var(--font-space-grotesk)",
-                      }}
-                    >
+                    <span className="inline-block px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wide bg-accent border border-primary/20 text-primary font-heading">
                       {FORMULA_LABELS[proposal.formula] ?? proposal.formula}
                     </span>
                   </td>
 
                   {/* Length */}
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span
-                      className="text-[12px]"
-                      style={{
-                        color: "rgba(251,247,243,0.42)",
-                        fontFamily: "var(--font-inter)",
-                      }}
-                    >
+                    <span className="text-[12px] text-muted-foreground">
                       {LENGTH_LABELS[proposal.proposalLength] ??
                         proposal.proposalLength}
                     </span>
@@ -219,13 +156,10 @@ export function ProposalsTable({
                   {/* Status */}
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span
-                      className="inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium"
-                      style={{
-                        background: statusCfg.bg,
-                        border: `1px solid ${statusCfg.border}`,
-                        color: statusCfg.color,
-                        fontFamily: "var(--font-inter)",
-                      }}
+                      className={cn(
+                        "inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium border",
+                        statusCfg.className,
+                      )}
                     >
                       {statusCfg.label}
                     </span>
@@ -233,13 +167,7 @@ export function ProposalsTable({
 
                   {/* Date */}
                   <td className="px-4 py-3 whitespace-nowrap">
-                    <span
-                      className="text-[11.5px]"
-                      style={{
-                        color: "rgba(251,247,243,0.25)",
-                        fontFamily: "var(--font-inter)",
-                      }}
-                    >
+                    <span className="text-[11.5px] text-muted-foreground">
                       {formatDistanceToNow(new Date(proposal.createdAt), {
                         addSuffix: true,
                       })}

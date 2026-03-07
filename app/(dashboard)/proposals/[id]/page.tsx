@@ -53,12 +53,7 @@ export default async function ProposalDetailPage({ params }: Props) {
       {/* Back link */}
       <Link
         href="/proposals"
-        className="inline-flex items-center gap-1.5 text-[12.5px] mb-5 transition-colors duration-150"
-        style={{
-          color: "rgba(251,247,243,0.38)",
-          fontFamily: "var(--font-inter)",
-        }}
-        onMouseEnter={undefined}
+        className="inline-flex items-center gap-1.5 text-[12.5px] mb-5 transition-colors duration-150 text-muted-foreground hover:text-text-secondary"
       >
         <ArrowLeft size={13} />
         Back to proposals
@@ -66,10 +61,7 @@ export default async function ProposalDetailPage({ params }: Props) {
 
       {/* Title + link */}
       <div className="flex items-start gap-3 mb-1">
-        <h1
-          className="text-[1.35rem] font-bold tracking-[-0.03em] leading-snug flex-1"
-          style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-        >
+        <h1 className="text-[1.35rem] font-bold tracking-[-0.03em] leading-snug flex-1 text-foreground font-heading">
           {proposal.jobTitle}
         </h1>
         {proposal.jobUrl && (
@@ -77,8 +69,7 @@ export default async function ProposalDetailPage({ params }: Props) {
             href={proposal.jobUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-1 shrink-0 transition-colors duration-150"
-            style={{ color: "rgba(251,247,243,0.25)" }}
+            className="mt-1 shrink-0 transition-colors duration-150 text-muted-foreground hover:text-text-secondary"
           >
             <ExternalLink size={15} />
           </a>
@@ -86,46 +77,19 @@ export default async function ProposalDetailPage({ params }: Props) {
       </div>
 
       {/* Meta row */}
-      <div
-        className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5 text-[12px]"
-        style={{ color: "rgba(251,247,243,0.38)", fontFamily: "var(--font-inter)" }}
-      >
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5 text-[12px] text-muted-foreground">
         <span>{proposal.profile.name}</span>
-        <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
-        <span
-          className="px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wide"
-          style={{
-            background: "rgba(200,73,26,0.1)",
-            border: "1px solid rgba(200,73,26,0.22)",
-            color: "rgba(200,73,26,0.85)",
-            fontFamily: "var(--font-space-grotesk)",
-          }}
-        >
+        <span className="text-border-strong">·</span>
+        <span className="px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wide bg-accent border border-primary/20 text-primary font-heading">
           {FORMULA_LABELS[proposal.formula] ?? proposal.formula}
         </span>
-        <span
-          className="px-2 py-0.5 rounded text-[10.5px] font-medium"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "rgba(251,247,243,0.38)",
-            fontFamily: "var(--font-space-grotesk)",
-          }}
-        >
+        <span className="px-2 py-0.5 rounded text-[10.5px] font-medium bg-muted border border-border text-muted-foreground font-heading">
           {LENGTH_LABELS[proposal.proposalLength] ?? proposal.proposalLength}
         </span>
-        <span
-          className="px-2 py-0.5 rounded text-[10.5px] font-medium"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "rgba(251,247,243,0.38)",
-            fontFamily: "var(--font-space-grotesk)",
-          }}
-        >
+        <span className="px-2 py-0.5 rounded text-[10.5px] font-medium bg-muted border border-border text-muted-foreground font-heading">
           {TONE_LABELS[proposal.tone] ?? proposal.tone}
         </span>
-        <span style={{ color: "rgba(255,255,255,0.15)" }}>·</span>
+        <span className="text-border-strong">·</span>
         <span title={format(new Date(proposal.createdAt), "PPpp")}>
           {formatDistanceToNow(new Date(proposal.createdAt), { addSuffix: true })}
         </span>
@@ -138,29 +102,11 @@ export default async function ProposalDetailPage({ params }: Props) {
       />
 
       {/* Proposal content */}
-      <div
-        className="mt-5 rounded-xl p-5 sm:p-6"
-        style={{
-          background: "rgba(255,255,255,0.03)",
-          border: "1px solid rgba(255,255,255,0.07)",
-        }}
-      >
-        <p
-          className="text-[11px] font-semibold uppercase tracking-widest mb-4"
-          style={{
-            color: "rgba(251,247,243,0.28)",
-            fontFamily: "var(--font-space-grotesk)",
-          }}
-        >
+      <div className="mt-5 rounded-xl p-5 sm:p-6 bg-card border border-border">
+        <p className="text-[11px] font-semibold uppercase tracking-widest mb-4 text-muted-foreground font-heading">
           Proposal Content
         </p>
-        <div
-          className="text-[14px] leading-relaxed whitespace-pre-wrap"
-          style={{
-            color: "rgba(251,247,243,0.82)",
-            fontFamily: "var(--font-inter)",
-          }}
-        >
+        <div className="text-[14px] leading-relaxed whitespace-pre-wrap text-foreground">
           {content}
         </div>
       </div>

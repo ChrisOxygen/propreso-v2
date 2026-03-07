@@ -7,7 +7,7 @@ interface SpinnerProps {
 export function Spinner({
   size = 16,
   color = "#E85A2C",
-  trackColor = "rgba(255,255,255,0.1)",
+  trackColor = "rgba(0,0,0,0.08)",
 }: SpinnerProps) {
   return (
     <div
