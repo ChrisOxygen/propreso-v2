@@ -16,10 +16,10 @@ interface GenerateOutputProps {
   hasGenerated: boolean;
 }
 
-function charCountColor(count: number) {
-  if (count >= UPWORK_CHAR_LIMIT) return "rgba(239,68,68,0.9)";
-  if (count >= 4500) return "rgba(234,179,8,0.9)";
-  return "rgba(251,247,243,0.3)";
+function charCountClass(count: number) {
+  if (count >= UPWORK_CHAR_LIMIT) return "text-destructive";
+  if (count >= 4500) return "text-amber-500";
+  return "text-muted-foreground/60";
 }
 
 export function GenerateOutput({
@@ -63,29 +63,14 @@ export function GenerateOutput({
   // Empty state
   if (!hasGenerated) {
     return (
-      <div
-        className="flex flex-col items-center justify-center h-full min-h-[340px] rounded-xl"
-        style={{
-          background: "rgba(255,255,255,0.015)",
-          border: "1px dashed rgba(255,255,255,0.1)",
-        }}
-      >
-        <div
-          className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-          style={{ background: "rgba(200,73,26,0.1)" }}
-        >
-          <Sparkles size={18} style={{ color: "#C8491A" }} />
+      <div className="flex flex-col items-center justify-center h-full min-h-85 rounded-xl bg-accent/40 border border-dashed border-border-strong">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-accent border border-primary/20">
+          <Sparkles size={18} className="text-primary" />
         </div>
-        <p
-          className="text-[13px] font-medium mb-1"
-          style={{ color: "rgba(251,247,243,0.5)" }}
-        >
+        <p className="text-[13px] font-medium mb-1 text-text-secondary">
           Your proposal will appear here
         </p>
-        <p
-          className="text-[12px] text-center max-w-[240px]"
-          style={{ color: "rgba(251,247,243,0.25)" }}
-        >
+        <p className="text-[12px] text-center max-w-60 text-muted-foreground">
           Fill in the job details and click Generate to get started.
         </p>
       </div>
@@ -95,28 +80,12 @@ export function GenerateOutput({
   return (
     <div className="flex flex-col gap-3 h-full">
       {/* Output box */}
-      <div
-        className="relative flex-1 rounded-xl overflow-hidden"
-        style={{
-          background: "rgba(255,255,255,0.025)",
-          border: "1px solid rgba(255,255,255,0.08)",
-          minHeight: "340px",
-        }}
-      >
+      <div className="relative flex-1 rounded-xl overflow-hidden bg-card border border-border min-h-85">
         <div className="h-full overflow-y-auto p-5">
-          <p
-            className="text-[13.5px] leading-[1.8] whitespace-pre-wrap"
-            style={{
-              color: "#FBF7F3",
-              fontFamily: "var(--font-inter)",
-            }}
-          >
+          <p className="text-[13.5px] leading-[1.8] whitespace-pre-wrap text-foreground">
             {content}
             {isStreaming && (
-              <span
-                className="inline-block w-[2px] h-[14px] ml-0.5 align-middle animate-pulse"
-                style={{ background: "#C8491A" }}
-              />
+              <span className="inline-block w-0.5 h-3.5 ml-0.5 align-middle animate-pulse bg-primary" />
             )}
           </p>
           <div ref={bottomRef} />
@@ -125,16 +94,10 @@ export function GenerateOutput({
 
       {/* Unsaved banner */}
       {isDirty && (
-        <div
-          className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg"
-          style={{
-            background: "rgba(200,73,26,0.08)",
-            border: "1px solid rgba(200,73,26,0.2)",
-          }}
-        >
+        <div className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg bg-accent border border-primary/20">
           <div className="flex items-center gap-2">
-            <AlertTriangle size={13} style={{ color: "rgba(200,73,26,0.8)", flexShrink: 0 }} />
-            <p className="text-[12px]" style={{ color: "rgba(251,247,243,0.5)" }}>
+            <AlertTriangle size={13} className="text-primary/70 shrink-0" />
+            <p className="text-[12px] text-text-secondary">
               Unsaved — navigate away and this proposal will be lost.
             </p>
           </div>
@@ -142,13 +105,7 @@ export function GenerateOutput({
             type="button"
             onClick={onSave}
             disabled={isSaving}
-            className="shrink-0 inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[11.5px] font-semibold transition-all duration-150 disabled:opacity-50"
-            style={{
-              background: "rgba(200,73,26,0.15)",
-              border: "1px solid rgba(200,73,26,0.3)",
-              color: "#E06030",
-              fontFamily: "var(--font-space-grotesk)",
-            }}
+            className="shrink-0 inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[11.5px] font-semibold font-heading transition-all duration-150 disabled:opacity-50 bg-primary/10 border border-primary/25 text-primary hover:bg-primary/15"
           >
             {isSaving ? <Loader2 size={11} className="animate-spin" /> : <BookmarkPlus size={11} />}
             Save now
@@ -160,22 +117,11 @@ export function GenerateOutput({
       <div className="flex items-center justify-between gap-3 flex-wrap">
         {/* Counts */}
         <div className="flex items-center gap-3">
-          <span
-            className="text-[11.5px] tabular-nums transition-colors duration-200"
-            style={{ color: charCountColor(charCount) }}
-          >
+          <span className={`text-[11.5px] tabular-nums transition-colors duration-200 ${charCountClass(charCount)}`}>
             {charCount.toLocaleString()} / {UPWORK_CHAR_LIMIT.toLocaleString()} chars
           </span>
-          <span
-            className="text-[11.5px]"
-            style={{ color: "rgba(255,255,255,0.12)" }}
-          >
-            ·
-          </span>
-          <span
-            className="text-[11.5px]"
-            style={{ color: "rgba(251,247,243,0.28)" }}
-          >
+          <span className="text-[11.5px] text-border-strong">·</span>
+          <span className="text-[11.5px] text-muted-foreground/60">
             {wordCount} words
           </span>
         </div>
@@ -186,12 +132,7 @@ export function GenerateOutput({
             type="button"
             onClick={onRegenerate}
             disabled={isStreaming || isSaving}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12px] font-medium transition-all duration-150 disabled:opacity-40"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.09)",
-              color: "rgba(251,247,243,0.65)",
-            }}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12px] font-medium transition-all duration-150 disabled:opacity-40 bg-background border border-border text-text-secondary hover:bg-accent"
           >
             <Sparkles size={12} />
             Regenerate
@@ -201,16 +142,11 @@ export function GenerateOutput({
             type="button"
             onClick={handleCopy}
             disabled={!content || isStreaming}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12px] font-medium transition-all duration-150 disabled:opacity-40"
-            style={{
-              background: copied
-                ? "rgba(34,197,94,0.12)"
-                : "rgba(255,255,255,0.05)",
-              border: copied
-                ? "1px solid rgba(34,197,94,0.25)"
-                : "1px solid rgba(255,255,255,0.09)",
-              color: copied ? "rgba(34,197,94,0.9)" : "rgba(251,247,243,0.65)",
-            }}
+            className={`inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-[12px] font-medium transition-all duration-150 disabled:opacity-40 border ${
+              copied
+                ? "bg-green-50 border-green-200 text-green-700"
+                : "bg-background border-border text-text-secondary hover:bg-accent"
+            }`}
           >
             {copied ? <Check size={12} /> : <Copy size={12} />}
             {copied ? "Copied!" : "Copy"}
@@ -220,13 +156,7 @@ export function GenerateOutput({
             type="button"
             onClick={onSave}
             disabled={isStreaming || isSaving || !content}
-            className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-semibold transition-all duration-150 disabled:opacity-40"
-            style={{
-              background: "linear-gradient(135deg, #C8491A 0%, #D45820 100%)",
-              color: "#fff",
-              boxShadow: isStreaming || isSaving ? "none" : "0 0 16px rgba(200,73,26,0.25)",
-              fontFamily: "var(--font-space-grotesk)",
-            }}
+            className="inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-semibold font-heading transition-all duration-150 disabled:opacity-40 bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active shadow-[0_2px_8px_rgba(200,84,56,0.2)] disabled:shadow-none"
           >
             {isSaving ? (
               <Loader2 size={12} className="animate-spin" />

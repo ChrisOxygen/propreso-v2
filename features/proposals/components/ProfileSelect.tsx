@@ -37,33 +37,21 @@ export function ProfileSelect({
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between gap-2 h-10 px-3.5 rounded-lg text-[13px] transition-all duration-150"
-        style={{
-          background: "rgba(255,255,255,0.04)",
-          border: error
-            ? "1px solid rgba(200,73,26,0.5)"
+        className={`w-full flex items-center justify-between gap-2 h-10 px-3.5 rounded-lg text-[13px] transition-all duration-150 bg-background border outline-none ${
+          error
+            ? "border-destructive"
             : open
-            ? "1px solid rgba(200,73,26,0.5)"
-            : "1px solid rgba(255,255,255,0.09)",
-          color: selected ? "#FBF7F3" : "rgba(251,247,243,0.35)",
-          boxShadow: open ? "0 0 0 3px rgba(200,73,26,0.08)" : "none",
-          outline: "none",
-        }}
+            ? "border-primary ring-2 ring-primary/10"
+            : "border-border hover:border-border-strong"
+        } ${selected ? "text-foreground" : "text-muted-foreground"}`}
       >
         <span className="flex items-center gap-2 min-w-0">
-          <UserCircle2 size={14} style={{ color: "rgba(251,247,243,0.35)", flexShrink: 0 }} />
+          <UserCircle2 size={14} className="text-muted-foreground shrink-0" />
           <span className="truncate">
             {selected ? selected.name : "Select a profile…"}
           </span>
           {selected?.isDefault && (
-            <span
-              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold shrink-0"
-              style={{
-                background: "rgba(200,73,26,0.15)",
-                color: "#E06030",
-                border: "1px solid rgba(200,73,26,0.25)",
-              }}
-            >
+            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold shrink-0 bg-accent border border-primary/20 text-primary">
               <Zap size={8} strokeWidth={2.5} />
               DEFAULT
             </span>
@@ -71,29 +59,14 @@ export function ProfileSelect({
         </span>
         <ChevronDown
           size={14}
-          style={{
-            color: "rgba(251,247,243,0.4)",
-            flexShrink: 0,
-            transform: open ? "rotate(180deg)" : "rotate(0deg)",
-            transition: "transform 150ms",
-          }}
+          className={`text-muted-foreground shrink-0 transition-transform duration-150 ${open ? "rotate-180" : "rotate-0"}`}
         />
       </button>
 
       {open && (
-        <div
-          className="absolute top-full left-0 right-0 mt-1.5 rounded-lg overflow-hidden z-20"
-          style={{
-            background: "#1A1410",
-            border: "1px solid rgba(255,255,255,0.1)",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
-          }}
-        >
+        <div className="absolute top-full left-0 right-0 mt-1.5 rounded-lg overflow-hidden z-20 bg-card border border-border shadow-lg">
           {profiles.length === 0 ? (
-            <div
-              className="px-4 py-3 text-[12.5px]"
-              style={{ color: "rgba(251,247,243,0.35)" }}
-            >
+            <div className="px-4 py-3 text-[12.5px] text-muted-foreground">
               No profiles yet. Create one first.
             </div>
           ) : (
@@ -105,38 +78,23 @@ export function ProfileSelect({
                   onChange(profile.id);
                   setOpen(false);
                 }}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 text-left transition-colors duration-100 hover:bg-white/[0.04]"
-                style={{
-                  background:
-                    profile.id === value ? "rgba(200,73,26,0.08)" : undefined,
-                }}
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 text-left transition-colors duration-100 hover:bg-accent ${
+                  profile.id === value ? "bg-accent/60" : ""
+                }`}
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span
-                      className="text-[13px] font-medium truncate"
-                      style={{ color: "#FBF7F3" }}
-                    >
+                    <span className="text-[13px] font-medium truncate text-foreground">
                       {profile.name}
                     </span>
                     {profile.isDefault && (
-                      <span
-                        className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold shrink-0"
-                        style={{
-                          background: "rgba(200,73,26,0.15)",
-                          color: "#E06030",
-                          border: "1px solid rgba(200,73,26,0.25)",
-                        }}
-                      >
+                      <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-semibold shrink-0 bg-accent border border-primary/20 text-primary">
                         <Zap size={8} strokeWidth={2.5} />
                         DEFAULT
                       </span>
                     )}
                   </div>
-                  <p
-                    className="text-[11.5px] truncate mt-0.5"
-                    style={{ color: "rgba(251,247,243,0.35)" }}
-                  >
+                  <p className="text-[11.5px] truncate mt-0.5 text-muted-foreground">
                     {profile.skills.slice(0, 3).join(", ")}
                     {profile.skills.length > 3 &&
                       ` +${profile.skills.length - 3} more`}
@@ -149,12 +107,7 @@ export function ProfileSelect({
       )}
 
       {error && (
-        <p
-          className="mt-1.5 text-[11.5px]"
-          style={{ color: "rgba(200,73,26,0.9)" }}
-        >
-          {error}
-        </p>
+        <p className="mt-1.5 text-[11.5px] text-destructive">{error}</p>
       )}
     </div>
   );
