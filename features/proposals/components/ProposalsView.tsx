@@ -23,7 +23,14 @@ function TableSkeleton() {
           </colgroup>
           <thead>
             <tr className="bg-accent border-b border-border">
-              {["Job Title", "Profile", "Formula", "Length", "Status", "Date"].map((h) => (
+              {[
+                "Job Title",
+                "Profile",
+                "Formula",
+                "Length",
+                "Status",
+                "Date",
+              ].map((h) => (
                 <th key={h} className="px-4 py-2.5 text-left">
                   <span className="text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap text-muted-foreground font-heading">
                     {h}
@@ -34,13 +41,28 @@ function TableSkeleton() {
           </thead>
           <tbody>
             {Array.from({ length: 6 }).map((_, i) => (
-              <tr key={i} className="animate-pulse border-b border-border last:border-0">
-                <td className="px-4 py-3.5"><div className="h-3.5 rounded w-[70%] bg-muted" /></td>
-                <td className="px-4 py-3.5"><div className="h-3.5 rounded w-[60%] bg-muted" /></td>
-                <td className="px-4 py-3.5"><div className="h-5 rounded w-10 bg-muted" /></td>
-                <td className="px-4 py-3.5"><div className="h-3.5 rounded w-10 bg-muted" /></td>
-                <td className="px-4 py-3.5"><div className="h-5 rounded-full w-16 bg-muted" /></td>
-                <td className="px-4 py-3.5"><div className="h-3.5 rounded w-14 bg-muted" /></td>
+              <tr
+                key={i}
+                className="animate-pulse border-b border-border last:border-0"
+              >
+                <td className="px-4 py-3.5">
+                  <div className="h-3.5 rounded w-[70%] bg-muted" />
+                </td>
+                <td className="px-4 py-3.5">
+                  <div className="h-3.5 rounded w-[60%] bg-muted" />
+                </td>
+                <td className="px-4 py-3.5">
+                  <div className="h-5 rounded w-10 bg-muted" />
+                </td>
+                <td className="px-4 py-3.5">
+                  <div className="h-3.5 rounded w-10 bg-muted" />
+                </td>
+                <td className="px-4 py-3.5">
+                  <div className="h-5 rounded-full w-16 bg-muted" />
+                </td>
+                <td className="px-4 py-3.5">
+                  <div className="h-3.5 rounded w-14 bg-muted" />
+                </td>
               </tr>
             ))}
           </tbody>
@@ -78,13 +100,20 @@ export function ProposalsViewSkeleton() {
         <div className="h-9 rounded-lg w-full sm:w-65 animate-pulse bg-card border border-border" />
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-7 rounded-full w-16 animate-pulse bg-muted" />
+            <div
+              key={i}
+              className="h-7 rounded-full w-16 animate-pulse bg-muted"
+            />
           ))}
         </div>
       </div>
-      <div className="hidden md:block"><TableSkeleton /></div>
+      <div className="hidden md:block">
+        <TableSkeleton />
+      </div>
       <div className="md:hidden space-y-3">
-        {[1, 2, 3].map((i) => <CardSkeleton key={i} />)}
+        {[1, 2, 3].map((i) => (
+          <CardSkeleton key={i} />
+        ))}
       </div>
     </div>
   );

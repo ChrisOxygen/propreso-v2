@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { ShellHeader } from "./ShellHeader";
+import { GreetingBanner } from "./GreetingBanner";
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -39,8 +40,9 @@ export function DashboardShell({ children, user }: DashboardShellProps) {
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col min-w-0 rounded-xl gap-2">
+      <div className="flex-1 flex flex-col min-w-0 rounded-xl gap-4">
         <ShellHeader onMenuClick={() => setSidebarOpen(true)} />
+        <GreetingBanner name={user.name} />
         <ScrollArea className="flex-1 rounded-xl">{children}</ScrollArea>
       </div>
     </div>
