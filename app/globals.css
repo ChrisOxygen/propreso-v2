@@ -49,116 +49,63 @@
   --radius-4xl: calc(var(--radius) + 16px);
 }
 
-/* ─── Light Mode — Propreso Warm Palette ─────────────────────────── */
+/* ─── Propreso Brand Palette — Light Theme ───────────────────────── */
 :root {
   --radius: 0.5rem;
 
-  /* Page background: Linen #F9F7F2 */
-  --background: oklch(0.976 0.008 72);
-  /* Primary text: Dark Espresso ~#1C0A02 */
-  --foreground: oklch(0.11 0.028 45);
+  /* Page background: Warm Canvas #FDF8F6 */
+  --background: oklch(0.978 0.007 50);
+  /* Primary text: Rich Ink #1A1412 */
+  --foreground: oklch(0.115 0.020 40);
 
-  /* Cards: Pure White */
+  /* Cards/surfaces: Pure White */
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.11 0.028 45);
+  --card-foreground: oklch(0.115 0.020 40);
 
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.11 0.028 45);
+  --popover-foreground: oklch(0.115 0.020 40);
 
-  /* Primary CTA: Burnt Orange #E85A2C */
-  --primary: oklch(0.617 0.197 37);
+  /* Primary CTA: Deep Ember #C85438 — 4.5:1 on white (AA) */
+  --primary: oklch(0.553 0.185 37);
   --primary-foreground: oklch(1 0 0);
 
-  /* Secondary: Warm Cream */
-  --secondary: oklch(0.944 0.020 68);
-  --secondary-foreground: oklch(0.11 0.028 45);
+  /* Secondary: white surface, dark text */
+  --secondary: oklch(1 0 0);
+  --secondary-foreground: oklch(0.115 0.020 40);
 
-  /* Muted: Warm Cream */
-  --muted: oklch(0.944 0.020 68);
-  /* Muted text: Warm Stone ~#8C6D54 */
-  --muted-foreground: oklch(0.51 0.058 50);
+  /* Muted: warm light fill #F0E7E3 */
+  --muted: oklch(0.934 0.018 50);
+  /* Muted text: Dusty Ash #9C8E8A */
+  --muted-foreground: oklch(0.607 0.018 50);
 
-  /* Accent: Peach Blush */
-  --accent: oklch(0.882 0.058 42);
-  --accent-foreground: oklch(0.11 0.028 45);
+  /* Accent: Ember Tint #FDF0EC — hover/selected states */
+  --accent: oklch(0.955 0.025 43);
+  --accent-foreground: oklch(0.115 0.020 40);
 
-  /* Destructive: Deep Rust */
-  --destructive: oklch(0.42 0.140 38);
+  /* Destructive: Cinnabar #C93A4B */
+  --destructive: oklch(0.513 0.190 15);
 
-  /* Borders & inputs: warm neutral */
-  --border: oklch(0.910 0.015 68);
-  --input: oklch(0.910 0.015 68);
-  --ring: oklch(0.617 0.197 37);
-
-  /* Charts */
-  --chart-1: oklch(0.617 0.197 37);   /* Burnt Orange */
-  --chart-2: oklch(0.882 0.058 42);   /* Peach Blush */
-  --chart-3: oklch(0.51 0.058 50);    /* Warm Stone */
-  --chart-4: oklch(0.42 0.140 38);    /* Deep Rust */
-  --chart-5: oklch(0.72 0.120 55);    /* Warm mid */
-
-  /* Sidebar */
-  --sidebar: oklch(0.976 0.008 72);
-  --sidebar-foreground: oklch(0.11 0.028 45);
-  --sidebar-primary: oklch(0.617 0.197 37);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.944 0.020 68);
-  --sidebar-accent-foreground: oklch(0.11 0.028 45);
-  --sidebar-border: oklch(0.910 0.015 68);
-  --sidebar-ring: oklch(0.617 0.197 37);
-}
-
-/* ─── Dark Mode — Espresso Palette ───────────────────────────────── */
-.dark {
-  /* Page background: Dark Espresso */
-  --background: oklch(0.11 0.028 45);
-  /* Primary text: Warm Cream */
-  --foreground: oklch(0.944 0.020 68);
-
-  /* Cards: slightly lighter espresso */
-  --card: oklch(0.17 0.028 45);
-  --card-foreground: oklch(0.944 0.020 68);
-
-  --popover: oklch(0.17 0.028 45);
-  --popover-foreground: oklch(0.944 0.020 68);
-
-  /* Primary CTA: Burnt Orange stays */
-  --primary: oklch(0.617 0.197 37);
-  --primary-foreground: oklch(1 0 0);
-
-  --secondary: oklch(0.22 0.025 45);
-  --secondary-foreground: oklch(0.944 0.020 68);
-
-  --muted: oklch(0.22 0.025 45);
-  /* Muted text: lighter warm stone */
-  --muted-foreground: oklch(0.65 0.055 52);
-
-  --accent: oklch(0.22 0.025 45);
-  --accent-foreground: oklch(0.944 0.020 68);
-
-  /* Destructive: lighter rust for dark bg contrast */
-  --destructive: oklch(0.55 0.160 35);
-
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.617 0.197 37);
+  /* Borders & inputs: Warm Stroke #EDE7E4 */
+  --border: oklch(0.916 0.012 55);
+  --input: oklch(0.916 0.012 55);
+  --ring: oklch(0.553 0.185 37);
 
   /* Charts */
-  --chart-1: oklch(0.617 0.197 37);
-  --chart-2: oklch(0.882 0.058 42);
-  --chart-3: oklch(0.65 0.055 52);
-  --chart-4: oklch(0.55 0.160 35);
-  --chart-5: oklch(0.75 0.120 55);
+  --chart-1: oklch(0.553 0.185 37);   /* Deep Ember   #C85438 */
+  --chart-2: oklch(0.820 0.175 85);   /* Saffron Gold #FFBF40 */
+  --chart-3: oklch(0.648 0.120 47);   /* Warm Sienna  #D4865A */
+  --chart-4: oklch(0.524 0.110 155);  /* Sage Green   #2E8A5C */
+  --chart-5: oklch(0.547 0.130 240);  /* Slate Blue   #3A7CC8 */
 
   /* Sidebar */
-  --sidebar: oklch(0.14 0.028 45);
-  --sidebar-foreground: oklch(0.944 0.020 68);
-  --sidebar-primary: oklch(0.617 0.197 37);
+  --sidebar: oklch(1 0 0);
+  --sidebar-foreground: oklch(0.115 0.020 40);
+  --sidebar-primary: oklch(0.553 0.185 37);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.22 0.025 45);
-  --sidebar-accent-foreground: oklch(0.944 0.020 68);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.617 0.197 37);
+  --sidebar-accent: oklch(0.955 0.025 43);
+  --sidebar-accent-foreground: oklch(0.115 0.020 40);
+  --sidebar-border: oklch(0.916 0.012 55);
+  --sidebar-ring: oklch(0.553 0.185 37);
 }
 
 @layer base {
@@ -207,30 +154,3 @@
 .delay-500 { animation-delay: 500ms; }
 .delay-700 { animation-delay: 700ms; }
 
-/* ─── Portal dark-mode overrides ─────────────────────────────────────
-   Radix portals (Sheet, DropdownMenu, etc.) render at document.body and
-   sit outside the <div class="dark"> dashboard wrapper, so they inherit
-   :root (light) CSS variables.  We force the dark palette here via
-   data-attributes shadcn adds to each portal root.              ──── */
-
-/* Mobile sidebar sheet */
-[data-sidebar="sidebar"][data-mobile="true"] {
-  --sidebar:                   oklch(0.14 0.028 45);
-  --sidebar-foreground:        oklch(0.944 0.020 68);
-  --sidebar-accent:            oklch(0.22 0.025 45);
-  --sidebar-accent-foreground: oklch(0.944 0.020 68);
-  --sidebar-border:            oklch(1 0 0 / 10%);
-  --sidebar-ring:              oklch(0.617 0.197 37);
-  --sidebar-primary:           oklch(0.617 0.197 37);
-  --sidebar-primary-foreground:oklch(1 0 0);
-  /* also fix generic tokens consumed inside the sheet */
-  --background:   oklch(0.14 0.028 45);
-  --foreground:   oklch(0.944 0.020 68);
-  --border:       oklch(1 0 0 / 10%);
-  --input:        oklch(1 0 0 / 15%);
-  --ring:         oklch(0.617 0.197 37);
-  --muted:        oklch(0.22 0.025 45);
-  --muted-foreground: oklch(0.65 0.055 52);
-  --accent:            oklch(0.22 0.025 45);
-  --accent-foreground: oklch(0.944 0.020 68);
-}

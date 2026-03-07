@@ -32,10 +32,8 @@ export default async function DashboardLayout({
     "User";
 
   return (
-    <div className="dark" style={{ background: "#0E0E0F" }}>
-      <DashboardShell user={{ name: displayName, email: user.email ?? "" }}>
-        {children}
-      </DashboardShell>
-    </div>
+    <DashboardShell user={{ name: displayName, email: user.email ?? "" }}>
+      {children}
+    </DashboardShell>
   );
 }
