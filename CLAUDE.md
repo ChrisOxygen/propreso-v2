@@ -123,6 +123,8 @@ IMPORTANT: Never trust `userId` from a request body. Always extract it from the 
 
 IMPORTANT: Use `useChat()` from `@ai-sdk/react` — NOT `useCompletion()` which is deprecated in AI SDK v6. Streaming UI must be in a Client Component.
 
+IMPORTANT: All styling must be done with Tailwind utility classes in the `className` prop — never use the `style` prop.
+
 ## Architecture
 
 ### Auth Flow
