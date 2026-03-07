@@ -24,39 +24,30 @@ function UsageBar({
   const isNearLimit = pct >= 80;
   const isAtLimit = pct >= 100;
 
-  const fillColor = isAtLimit
-    ? "rgba(239,68,68,0.85)"
+  const fillClass = isAtLimit
+    ? "bg-destructive"
     : isNearLimit
-    ? "rgba(234,179,8,0.85)"
-    : "linear-gradient(90deg, #C8491A 0%, #D45820 100%)";
+    ? "bg-amber-500"
+    : "bg-primary";
+
+  const countClass = isAtLimit
+    ? "text-destructive"
+    : isNearLimit
+    ? "text-amber-600"
+    : "text-muted-foreground";
 
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[12.5px] font-medium" style={{ color: "rgba(251,247,243,0.6)" }}>
-          {label}
-        </span>
-        <span
-          className="text-[12px] tabular-nums font-medium"
-          style={{
-            color: isAtLimit
-              ? "rgba(239,68,68,0.9)"
-              : isNearLimit
-              ? "rgba(234,179,8,0.9)"
-              : "rgba(251,247,243,0.4)",
-          }}
-        >
+        <span className="text-[12.5px] font-medium text-text-secondary">{label}</span>
+        <span className={`text-[12px] tabular-nums font-medium ${countClass}`}>
           {used} / {limit}
         </span>
       </div>
-      {/* Track */}
-      <div
-        className="w-full rounded-full overflow-hidden"
-        style={{ height: "5px", background: "rgba(255,255,255,0.07)" }}
-      >
+      <div className="w-full h-1.5 rounded-full overflow-hidden bg-muted">
         <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, background: fillColor }}
+          className={`h-full rounded-full transition-all duration-500 ${fillClass}`}
+          style={{ width: `${pct}%` }}
         />
       </div>
     </div>
@@ -81,27 +72,16 @@ export function UsageSection({ plan, proposalCount, profileCount }: UsageSection
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span
-              className="inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold"
-              style={
+              className={`inline-flex items-center gap-1.5 h-6 px-2.5 rounded-full text-[11px] font-semibold font-heading ${
                 isPro
-                  ? {
-                      background: "rgba(200,73,26,0.15)",
-                      border: "1px solid rgba(200,73,26,0.3)",
-                      color: "#E06030",
-                      fontFamily: "var(--font-space-grotesk)",
-                    }
-                  : {
-                      background: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "rgba(251,247,243,0.5)",
-                      fontFamily: "var(--font-space-grotesk)",
-                    }
-              }
+                  ? "bg-primary/10 text-primary border border-primary/20"
+                  : "bg-muted text-muted-foreground border border-border"
+              }`}
             >
               {isPro && <Zap size={10} fill="currentColor" />}
               {isPro ? "Pro" : "Free"}
             </span>
-            <span className="text-[12px]" style={{ color: "rgba(251,247,243,0.3)" }}>
+            <span className="text-[12px] text-muted-foreground">
               {isPro ? "Unlimited proposals & profiles" : "2 profiles · 10 proposals/month"}
             </span>
           </div>
@@ -125,32 +105,18 @@ export function UsageSection({ plan, proposalCount, profileCount }: UsageSection
 
         {/* Upgrade CTA — FREE only */}
         {!isPro && (
-          <div
-            className="rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
-            style={{
-              background: "rgba(200,73,26,0.07)",
-              border: "1px solid rgba(200,73,26,0.18)",
-            }}
-          >
+          <div className="rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-accent border border-primary/20">
             <div>
-              <p
-                className="text-[13px] font-semibold"
-                style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
-              >
+              <p className="text-[13px] font-semibold font-heading text-foreground">
                 Upgrade to Pro
               </p>
-              <p className="text-[12px] mt-0.5" style={{ color: "rgba(251,247,243,0.4)" }}>
+              <p className="text-[12px] mt-0.5 text-muted-foreground">
                 Unlimited proposals, unlimited profiles, priority AI.
               </p>
             </div>
             <Link
               href="/billing"
-              className="shrink-0 inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12.5px] font-semibold"
-              style={{
-                background: "linear-gradient(135deg, #C8491A 0%, #D45820 100%)",
-                color: "#fff",
-                fontFamily: "var(--font-space-grotesk)",
-              }}
+              className="shrink-0 inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12.5px] font-semibold font-heading bg-primary text-primary-foreground hover:bg-primary-hover transition-colors duration-150"
             >
               <Zap size={12} fill="currentColor" />
               Upgrade to Pro

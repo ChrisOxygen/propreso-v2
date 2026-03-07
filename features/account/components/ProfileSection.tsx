@@ -11,7 +11,7 @@ import {
   type ZUpdateDisplayName,
 } from "@/features/account/schemas/account-schema";
 import { useUpdateDisplayName } from "@/features/account/hooks/use-update-display-name";
-import { SectionCard, SectionHeader, inputStyle, FieldError } from "./shared";
+import { SectionCard, SectionHeader, fieldClass, FieldError } from "./shared";
 
 interface ProfileSectionProps {
   email: string;
@@ -52,66 +52,34 @@ export function ProfileSection({ email, fullName, createdAt }: ProfileSectionPro
       <form onSubmit={handleSubmit(onSubmit)} className="p-5 flex flex-col gap-4">
         {/* Display name */}
         <div>
-          <label
-            className="block text-[12px] font-medium mb-1.5"
-            style={{ color: "rgba(251,247,243,0.45)" }}
-          >
+          <label className="block text-[12px] font-medium mb-1.5 text-muted-foreground">
             Display name
           </label>
           <input
             {...register("fullName")}
             placeholder="Your name"
-            className="w-full h-9 px-3.5 rounded-lg text-[13px] transition-all duration-150"
-            style={inputStyle(!!errors.fullName)}
-            onFocus={(e) => {
-              e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)";
-              e.currentTarget.style.boxShadow = "0 0 0 3px rgba(200,73,26,0.08)";
-            }}
-            onBlur={(e) => {
-              if (!errors.fullName) {
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.09)";
-                e.currentTarget.style.boxShadow = "none";
-              }
-            }}
+            className={`${fieldClass(!!errors.fullName)} h-9`}
           />
           <FieldError msg={errors.fullName?.message} />
         </div>
 
         {/* Email (read-only) */}
         <div>
-          <label
-            className="block text-[12px] font-medium mb-1.5"
-            style={{ color: "rgba(251,247,243,0.45)" }}
-          >
+          <label className="block text-[12px] font-medium mb-1.5 text-muted-foreground">
             Email
           </label>
-          <div
-            className="w-full h-9 px-3.5 rounded-lg text-[13px] flex items-center"
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid rgba(255,255,255,0.07)",
-              color: "rgba(251,247,243,0.4)",
-            }}
-          >
+          <div className="w-full h-9 px-3.5 rounded-lg text-[13px] flex items-center bg-muted border border-border text-muted-foreground">
             {email}
           </div>
-          <p className="mt-1 text-[11px]" style={{ color: "rgba(251,247,243,0.25)" }}>
+          <p className="mt-1 text-[11px] text-muted-foreground/60">
             Email is managed by your auth provider and cannot be changed here.
           </p>
         </div>
 
         {/* Member since */}
-        <div
-          className="flex items-center justify-between py-3 px-3.5 rounded-lg"
-          style={{
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          <span className="text-[12px]" style={{ color: "rgba(251,247,243,0.35)" }}>
-            Member since
-          </span>
-          <span className="text-[12px] font-medium" style={{ color: "rgba(251,247,243,0.55)" }}>
+        <div className="flex items-center justify-between py-3 px-3.5 rounded-lg bg-muted border border-border">
+          <span className="text-[12px] text-muted-foreground">Member since</span>
+          <span className="text-[12px] font-medium text-text-secondary">
             {format(new Date(createdAt), "MMMM d, yyyy")}
           </span>
         </div>
@@ -121,16 +89,11 @@ export function ProfileSection({ email, fullName, createdAt }: ProfileSectionPro
           <button
             type="submit"
             disabled={!isDirty || updateName.isPending}
-            className="inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12.5px] font-semibold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{
-              background: saved
-                ? "rgba(34,197,94,0.12)"
-                : "linear-gradient(135deg, #C8491A 0%, #D45820 100%)",
-              border: saved ? "1px solid rgba(34,197,94,0.25)" : "none",
-              color: saved ? "rgba(34,197,94,0.9)" : "#fff",
-              boxShadow: updateName.isPending || saved ? "none" : "0 0 12px rgba(200,73,26,0.25)",
-              fontFamily: "var(--font-space-grotesk)",
-            }}
+            className={`inline-flex items-center gap-1.5 h-8 px-4 rounded-lg text-[12.5px] font-semibold font-heading transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed ${
+              saved
+                ? "bg-green-50 border border-green-200 text-green-700"
+                : "bg-primary text-primary-foreground hover:bg-primary-hover"
+            }`}
           >
             {updateName.isPending ? (
               <Loader2 size={12} className="animate-spin" />

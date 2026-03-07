@@ -40,35 +40,20 @@ export function DangerZoneSection() {
   return (
     <>
       <AlertDialog open={open} onOpenChange={setOpen}>
-        <AlertDialogContent
-          style={{
-            background: "#1A1410",
-            border: "1px solid rgba(200,73,26,0.25)",
-          }}
-        >
+        <AlertDialogContent className="bg-card border border-destructive/20">
           <AlertDialogHeader>
-            <AlertDialogTitle style={{ color: "#FBF7F3" }}>
+            <AlertDialogTitle className="text-foreground font-heading">
               Delete your account?
             </AlertDialogTitle>
-            <AlertDialogDescription
-              className="flex flex-col gap-3"
-              style={{ color: "rgba(251,247,243,0.45)" }}
-            >
+            <AlertDialogDescription className="flex flex-col gap-3 text-muted-foreground">
               <span>
                 This will permanently delete your account, all your freelancer profiles, and your
                 entire proposal history. This action{" "}
-                <span style={{ color: "rgba(251,247,243,0.7)" }}>cannot be undone.</span>
+                <span className="text-foreground font-medium">cannot be undone.</span>
               </span>
               <span>
                 Type{" "}
-                <span
-                  className="font-mono text-[12px] px-1.5 py-0.5 rounded"
-                  style={{
-                    background: "rgba(200,73,26,0.12)",
-                    color: "#E06030",
-                    border: "1px solid rgba(200,73,26,0.2)",
-                  }}
-                >
+                <span className="font-mono text-[12px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">
                   DELETE
                 </span>{" "}
                 to confirm.
@@ -80,15 +65,9 @@ export function DangerZoneSection() {
             value={confirmText}
             onChange={(e) => setConfirmText(e.target.value)}
             placeholder="Type DELETE to confirm"
-            className="w-full h-9 px-3.5 rounded-lg text-[13px] font-mono mt-1"
-            style={{
-              background: "rgba(255,255,255,0.04)",
-              border: canConfirm
-                ? "1px solid rgba(200,73,26,0.4)"
-                : "1px solid rgba(255,255,255,0.09)",
-              color: "#FBF7F3",
-              outline: "none",
-            }}
+            className={`w-full h-9 px-3.5 rounded-lg text-[13px] font-mono mt-1 bg-background text-foreground outline-none border transition-colors duration-150 placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/10 ${
+              canConfirm ? "border-primary" : "border-border"
+            }`}
           />
 
           <AlertDialogFooter>
@@ -98,12 +77,7 @@ export function DangerZoneSection() {
                 setOpen(false);
                 setConfirmText("");
               }}
-              className="inline-flex items-center justify-center h-9 px-4 rounded-lg text-[12.5px] font-medium transition-all duration-150"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "rgba(251,247,243,0.7)",
-              }}
+              className="inline-flex items-center justify-center h-9 px-4 rounded-lg text-[12.5px] font-medium transition-all duration-150 bg-background border border-border text-text-secondary hover:bg-muted"
             >
               Cancel
             </button>
@@ -111,13 +85,7 @@ export function DangerZoneSection() {
               type="button"
               onClick={handleDelete}
               disabled={!canConfirm || deleteAccount.isPending}
-              className="inline-flex items-center gap-1.5 justify-center h-9 px-4 rounded-lg text-[12.5px] font-semibold transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{
-                background: "rgba(239,68,68,0.15)",
-                border: "1px solid rgba(239,68,68,0.3)",
-                color: "rgba(239,68,68,0.9)",
-                fontFamily: "var(--font-space-grotesk)",
-              }}
+              className="inline-flex items-center gap-1.5 justify-center h-9 px-4 rounded-lg text-[12.5px] font-semibold font-heading transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed bg-error-subtle border border-destructive/30 text-destructive hover:bg-destructive/10"
             >
               {deleteAccount.isPending ? (
                 <Loader2 size={12} className="animate-spin" />
@@ -131,45 +99,26 @@ export function DangerZoneSection() {
       </AlertDialog>
 
       {/* Danger Zone card */}
-      <div
-        className="rounded-xl overflow-hidden"
-        style={{
-          background: "rgba(200,73,26,0.03)",
-          border: "1px solid rgba(200,73,26,0.2)",
-        }}
-      >
-        <div
-          className="px-5 py-4"
-          style={{ borderBottom: "1px solid rgba(200,73,26,0.12)" }}
-        >
-          <h2
-            className="text-[13.5px] font-semibold"
-            style={{ color: "rgba(239,68,68,0.85)", fontFamily: "var(--font-space-grotesk)" }}
-          >
+      <div className="rounded-xl overflow-hidden bg-error-subtle border border-destructive/20">
+        <div className="px-5 py-4 border-b border-destructive/15">
+          <h2 className="text-[13.5px] font-semibold font-heading text-destructive">
             Danger zone
           </h2>
-          <p className="mt-0.5 text-[12px]" style={{ color: "rgba(251,247,243,0.35)" }}>
+          <p className="mt-0.5 text-[12px] text-muted-foreground">
             Irreversible and destructive actions.
           </p>
         </div>
         <div className="p-5 flex items-center justify-between gap-4">
           <div>
-            <p className="text-[13px] font-medium" style={{ color: "#FBF7F3" }}>
-              Delete account
-            </p>
-            <p className="text-[12px] mt-0.5" style={{ color: "rgba(251,247,243,0.35)" }}>
+            <p className="text-[13px] font-medium text-foreground">Delete account</p>
+            <p className="text-[12px] mt-0.5 text-muted-foreground">
               Permanently removes your account, all profiles, and all proposals.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-medium transition-all duration-150"
-            style={{
-              background: "rgba(239,68,68,0.08)",
-              border: "1px solid rgba(239,68,68,0.2)",
-              color: "rgba(239,68,68,0.8)",
-            }}
+            className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3.5 rounded-lg text-[12px] font-medium transition-all duration-150 bg-error-subtle border border-destructive/25 text-destructive hover:bg-destructive/10"
           >
             <Trash2 size={12} />
             Delete account
