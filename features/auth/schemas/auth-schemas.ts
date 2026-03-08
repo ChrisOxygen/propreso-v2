@@ -25,3 +25,24 @@ export const ZSignInSchema = z.object({
 });
 
 export type ZSignIn = z.infer<typeof ZSignInSchema>;
+
+export const ZForgotPasswordSchema = z.object({
+  email: z.string().min(1, "Email is required").email("Invalid email address"),
+});
+
+export type ZForgotPassword = z.infer<typeof ZForgotPasswordSchema>;
+
+export const ZResetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .max(72, "Password is too long"),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ZResetPassword = z.infer<typeof ZResetPasswordSchema>;

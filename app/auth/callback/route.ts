@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  const type = searchParams.get("type");
   const next = searchParams.get("next") ?? "/dashboard";
 
   // Guard against open redirect — only allow relative paths
@@ -14,6 +15,11 @@ export async function GET(request: Request) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
+      // Password recovery — skip user sync and go straight to reset page
+      if (type === "recovery") {
+        return NextResponse.redirect(`${origin}/reset-password`);
+      }
+
       // Sync the Supabase user into the Prisma User table.
       // The Postgres trigger handles the initial INSERT, but this upsert
       // picks up OAuth metadata (fullName) that the trigger cannot access.
