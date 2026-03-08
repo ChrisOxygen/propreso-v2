@@ -1,8 +1,10 @@
 import { stripe } from "@/shared/lib/stripe";
 import { prisma } from "@/shared/lib/prisma";
 import { NextResponse } from "next/server";
-import type { Plan } from "@/shared/lib/generated/prisma/enums";
+import type { Plan, BillingInterval } from "@/shared/lib/generated/prisma/enums";
 import type Stripe from "stripe";
+
+const PRO_MONTHLY_TOKENS = 200;
 
 // POST /api/billing/webhook — handle Stripe webhook events
 export async function POST(request: Request) {
@@ -61,12 +63,55 @@ export async function POST(request: Request) {
           where: { id: userId },
           data: {
             plan: "FREE" as Plan,
+            billingInterval: null,
             stripeSubscriptionId: null,
             stripePriceId: null,
             subscriptionStatus: "canceled",
             currentPeriodEnd: null,
+            // tokenBalance intentionally not reset — user keeps remaining tokens
           },
         });
+        break;
+      }
+
+      case "invoice.paid": {
+        const inv = event.data.object as Stripe.Invoice;
+        // Only handle subscription invoices
+        const billingReason = inv.billing_reason;
+        if (
+          billingReason !== "subscription_create" &&
+          billingReason !== "subscription_cycle"
+        ) break;
+
+        const userId = await _getUserIdFromCustomer(inv.customer as string);
+        if (!userId) break;
+
+        if (billingReason === "subscription_create") {
+          // First payment on upgrade: keep existing tokens and add 200
+          await prisma.user.update({
+            where: { id: userId },
+            data: { tokenBalance: { increment: PRO_MONTHLY_TOKENS } },
+          });
+        } else if (billingReason === "subscription_cycle") {
+          // Monthly renewal: reset to 200. Yearly renewal: add 200 (rollover).
+          const dbUser = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { billingInterval: true },
+          });
+          if (!dbUser) break;
+
+          if (dbUser.billingInterval === "YEARLY") {
+            await prisma.user.update({
+              where: { id: userId },
+              data: { tokenBalance: { increment: PRO_MONTHLY_TOKENS } },
+            });
+          } else {
+            await prisma.user.update({
+              where: { id: userId },
+              data: { tokenBalance: PRO_MONTHLY_TOKENS },
+            });
+          }
+        }
         break;
       }
 
@@ -109,11 +154,15 @@ async function _syncSubscription(subscriptionId: string, userId: string) {
   const sub = await stripe.subscriptions.retrieve(subscriptionId);
   const priceId = sub.items.data[0]?.price?.id ?? null;
   const isActive = sub.status === "active" || sub.status === "trialing";
+  const interval = sub.items.data[0]?.price?.recurring?.interval;
+  const billingInterval: BillingInterval | null =
+    interval === "year" ? "YEARLY" : interval === "month" ? "MONTHLY" : null;
 
   await prisma.user.update({
     where: { id: userId },
     data: {
       plan: (isActive ? "PRO" : "FREE") as Plan,
+      billingInterval,
       stripeSubscriptionId: sub.id,
       stripePriceId: priceId,
       subscriptionStatus: sub.status,

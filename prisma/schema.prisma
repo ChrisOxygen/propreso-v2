@@ -21,6 +21,16 @@ enum Plan {
   PRO
 }
 
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+}
+
+enum GenerationStatus {
+  COMPLETED
+  FAILED
+}
+
 enum Tone {
   PROFESSIONAL
   CONVERSATIONAL
@@ -49,18 +59,21 @@ enum ProposalStatus {
 }
 
 model User {
-  id                   String    @id
-  email                String    @unique
+  id                   String           @id
+  email                String           @unique
   fullName             String?
-  plan                 Plan      @default(FREE)
-  stripeCustomerId     String?   @unique
-  stripeSubscriptionId String?   @unique
+  plan                 Plan             @default(FREE)
+  tokenBalance         Int              @default(10)
+  billingInterval      BillingInterval?
+  stripeCustomerId     String?          @unique
+  stripeSubscriptionId String?          @unique
   stripePriceId        String?
   currentPeriodEnd     DateTime?
   subscriptionStatus   String?
-  createdAt            DateTime  @default(now())
+  createdAt            DateTime         @default(now())
   profiles             FreelancerProfile[]
   proposals            Proposal[]
+  generationEvents     GenerationEvent[]
 }
 
 model FreelancerProfile {
@@ -97,5 +110,16 @@ model Proposal {
   createdAt        DateTime  @default(now())
 
   @@index([userId])
+  @@index([userId, createdAt])
+}
+
+model GenerationEvent {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status    GenerationStatus @default(COMPLETED)
+  jobTitle  String?
+  createdAt DateTime         @default(now())
+
   @@index([userId, createdAt])
 }

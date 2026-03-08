@@ -4,14 +4,11 @@ import { streamText, convertToModelMessages, type UIMessage } from "ai";
 import { openrouter } from "@/shared/lib/openrouter";
 import { prisma } from "@/shared/lib/prisma";
 import { buildSystemPrompt } from "@/shared/lib/prompt-builder";
-import { startOfMonth } from "date-fns";
 import type {
   Tone,
   ProposalFormula,
   ProposalLength,
 } from "@/shared/lib/generated/prisma/enums";
-
-const FREE_PROPOSAL_LIMIT = 10;
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -43,47 +40,34 @@ export async function POST(request: NextRequest) {
     jobTitle: string;
   } = body;
 
-  // Check monthly proposal limit for FREE users
-  const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-  if (!dbUser) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
-  }
-
-  if (dbUser.plan === "FREE") {
-    console.log(`User ${user.id} is on FREE plan. Checking proposal limit...`);
-    const monthlyCount = await prisma.proposal.count({
-      where: {
-        userId: user.id,
-        createdAt: { gte: startOfMonth(new Date()) },
-      },
-    });
-
-    console.log(
-      `User ${user.id} has generated ${monthlyCount} proposals this month.`,
-    );
-
-    if (monthlyCount >= FREE_PROPOSAL_LIMIT) {
-      return NextResponse.json(
-        { error: "proposal_limit_reached" },
-        { status: 403 },
-      );
-    }
-  }
-
-  console.log("Generating proposal with params:", {
-    profileId,
-    tone,
-    formula,
-    proposalLength,
-    upworkOpener,
-    jobTitle,
+  // Atomic check-and-decrement: only succeeds if tokenBalance > 0
+  const deducted = await prisma.user.updateMany({
+    where: { id: user.id, tokenBalance: { gt: 0 } },
+    data: { tokenBalance: { decrement: 1 } },
   });
+
+  if (deducted.count === 0) {
+    // Distinguish between user-not-found and out-of-tokens
+    const exists = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { id: true },
+    });
+    if (!exists) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+    return NextResponse.json({ error: "token_limit_reached" }, { status: 403 });
+  }
 
   // Verify profile ownership and fetch context
   const profile = await prisma.freelancerProfile.findFirst({
     where: { id: profileId, userId: user.id },
   });
   if (!profile) {
+    // Refund the token — profile not found means we shouldn't charge
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { tokenBalance: { increment: 1 } },
+    });
     return NextResponse.json({ error: "Profile not found" }, { status: 404 });
   }
 
@@ -120,6 +104,15 @@ export async function POST(request: NextRequest) {
     model: openrouter("openai/gpt-4o-mini"),
     system: systemPrompt,
     messages: modelMessages,
+    onFinish: async () => {
+      try {
+        await prisma.generationEvent.create({
+          data: { userId: user.id, status: "COMPLETED", jobTitle },
+        });
+      } catch (err) {
+        console.error("Failed to record generation event:", err);
+      }
+    },
   });
 
   // TextStreamChatTransport on the client expects a plain text stream
