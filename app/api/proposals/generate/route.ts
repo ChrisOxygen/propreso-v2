@@ -1,14 +1,23 @@
 import { createClient } from "@/shared/lib/supabase/server";
 import { NextResponse, type NextRequest } from "next/server";
-import { streamText, convertToModelMessages, type UIMessage } from "ai";
+import { streamText, generateText, type UIMessage } from "ai";
 import { openrouter } from "@/shared/lib/openrouter";
 import { prisma } from "@/shared/lib/prisma";
-import { buildSystemPrompt } from "@/shared/lib/prompt-builder";
+import {
+  ANALYZER_SYSTEM_PROMPT,
+  buildAnalyzerUserMessage,
+} from "@/shared/constants/analyzer-prompts";
+import {
+  buildGeneratorSystemPrompt,
+  buildGeneratorUserMessage,
+} from "@/shared/constants/generator-prompts";
 import type {
   Tone,
   ProposalFormula,
   ProposalLength,
 } from "@/shared/lib/generated/prisma/enums";
+
+const MODEL = "anthropic/claude-sonnet-4.6";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -30,6 +39,7 @@ export async function POST(request: NextRequest) {
     proposalLength,
     upworkOpener,
     jobTitle,
+    jobDescription,
   }: {
     messages: UIMessage[];
     profileId: string;
@@ -38,6 +48,7 @@ export async function POST(request: NextRequest) {
     proposalLength: ProposalLength;
     upworkOpener: boolean;
     jobTitle: string;
+    jobDescription: string;
   } = body;
 
   // Atomic check-and-decrement: only succeeds if tokenBalance > 0
@@ -47,7 +58,6 @@ export async function POST(request: NextRequest) {
   });
 
   if (deducted.count === 0) {
-    // Distinguish between user-not-found and out-of-tokens
     const exists = await prisma.user.findUnique({
       where: { id: user.id },
       select: { id: true },
@@ -63,7 +73,6 @@ export async function POST(request: NextRequest) {
     where: { id: profileId, userId: user.id },
   });
   if (!profile) {
-    // Refund the token — profile not found means we shouldn't charge
     await prisma.user.update({
       where: { id: user.id },
       data: { tokenBalance: { increment: 1 } },
@@ -83,8 +92,25 @@ export async function POST(request: NextRequest) {
     }
   })();
 
-  const systemPrompt = buildSystemPrompt({
-    profile: {
+  // ── Step 1: Analyze the job post ────────────────────────────────────────
+  const analysis = await generateText({
+    model: openrouter(MODEL),
+    system: ANALYZER_SYSTEM_PROMPT,
+    messages: [
+      {
+        role: "user",
+        content: buildAnalyzerUserMessage(jobTitle, jobDescription, {
+          name: profile.name,
+          skills: profile.skills,
+          bio: profile.bio,
+        }),
+      },
+    ],
+  });
+
+  // ── Step 2: Generate the proposal (streaming) ────────────────────────────
+  const systemPrompt = buildGeneratorSystemPrompt(
+    {
       name: profile.name,
       bio: profile.bio,
       skills: profile.skills,
@@ -93,17 +119,23 @@ export async function POST(request: NextRequest) {
     tone,
     formula,
     proposalLength,
-    upworkOpener,
-    jobTitle,
-  });
+    upworkOpener
+  );
 
-  // Convert v6 UIMessage[] → CoreMessage[] for streamText
-  const modelMessages = await convertToModelMessages(messages);
+  // Build the user message from the original job post + intelligence report.
+  // We discard the UIMessage history and construct a clean single-turn input
+  // so the generator always has the full context in one structured message.
+  void messages; // acknowledged — not used in single-turn generation
+  const userMessage = buildGeneratorUserMessage(
+    jobTitle,
+    jobDescription,
+    analysis.text
+  );
 
   const result = streamText({
-    model: openrouter("openai/gpt-4o-mini"),
+    model: openrouter(MODEL),
     system: systemPrompt,
-    messages: modelMessages,
+    messages: [{ role: "user", content: userMessage }],
     onFinish: async () => {
       try {
         await prisma.generationEvent.create({
@@ -115,6 +147,5 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  // TextStreamChatTransport on the client expects a plain text stream
   return result.toTextStreamResponse();
 }

@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Copy, Check, BookmarkPlus, Loader2, Sparkles, AlertTriangle } from "lucide-react";
+import { Copy, Check, BookmarkPlus, Loader2, Sparkles, AlertTriangle, ScanText } from "lucide-react";
 
 const UPWORK_CHAR_LIMIT = 5000;
 
 interface GenerateOutputProps {
   content: string;
+  isAnalyzing: boolean;
   isStreaming: boolean;
   isSaving: boolean;
   isDirty: boolean;
@@ -24,6 +25,7 @@ function charCountClass(count: number) {
 
 export function GenerateOutput({
   content,
+  isAnalyzing,
   isStreaming,
   isSaving,
   isDirty,
@@ -58,6 +60,23 @@ export function GenerateOutput({
         },
       });
     }
+  }
+
+  // Analyzing state
+  if (isAnalyzing) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full min-h-85 rounded-xl bg-accent/40 border border-dashed border-border-strong">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-accent border border-primary/20">
+          <ScanText size={18} className="text-primary animate-pulse" />
+        </div>
+        <p className="text-[13px] font-medium mb-1 text-text-secondary">
+          Analyzing job post…
+        </p>
+        <p className="text-[12px] text-center max-w-60 text-muted-foreground">
+          Reading the post and building a strategy before writing.
+        </p>
+      </div>
+    );
   }
 
   // Empty state

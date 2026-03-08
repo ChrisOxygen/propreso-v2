@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Sparkles, ArrowLeft } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -144,6 +144,7 @@ export function GenerateView() {
     proposalLength: formValues.proposalLength,
     upworkOpener: formValues.upworkOpener,
     jobTitle: formValues.jobTitle,
+    jobDescription: formValues.jobDescription,
   };
 
   const transport = useMemo(
@@ -159,7 +160,9 @@ export function GenerateView() {
     transport,
   });
 
-  const isStreaming = status === "streaming" || status === "submitted";
+  const isAnalyzing = status === "submitted";
+  const isGenerating = status === "streaming";
+  const isStreaming = isAnalyzing || isGenerating;
   const lastAssistantMsg = [...messages]
     .reverse()
     .find((m) => m.role === "assistant");
@@ -485,7 +488,12 @@ export function GenerateView() {
               disabled={isStreaming}
               className="w-full h-11 rounded-xl text-[14px] font-semibold font-heading flex items-center justify-center gap-2 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed mt-1 bg-primary text-primary-foreground hover:bg-primary-hover active:bg-primary-active shadow-[0_2px_12px_rgba(200,84,56,0.25)] disabled:shadow-none"
             >
-              {isStreaming ? (
+              {isAnalyzing ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" />
+                  Analyzing…
+                </>
+              ) : isGenerating ? (
                 <>
                   <Loader2 size={15} className="animate-spin" />
                   Generating…
@@ -504,6 +512,7 @@ export function GenerateView() {
         <div className="w-full lg:sticky">
           <GenerateOutput
             content={generatedContent}
+            isAnalyzing={isAnalyzing}
             isStreaming={isStreaming}
             isSaving={saveProposal.isPending}
             isDirty={isDirty}
