@@ -9,12 +9,7 @@ import {
   NavigationMenuList,
 } from "@/shared/components/ui/navigation-menu";
 import { cn } from "@/shared/lib/utils";
-
-const NAV_LINKS = [
-  { href: "#features", label: "Features" },
-  { href: "#how-it-works", label: "How It Works" },
-  { href: "#pricing", label: "Pricing" },
-];
+import { NAV_LINKS } from "@/features/marketing/constants/navigation";
 
 export function HeroNav() {
   return (

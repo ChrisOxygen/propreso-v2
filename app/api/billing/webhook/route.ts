@@ -3,8 +3,7 @@ import { prisma } from "@/shared/lib/prisma";
 import { NextResponse } from "next/server";
 import type { Plan, BillingInterval } from "@/shared/lib/generated/prisma/enums";
 import type Stripe from "stripe";
-
-const PRO_MONTHLY_TOKENS = 200;
+import { PRO_MONTHLY_TOKENS } from "@/features/billing/constants/plans";
 
 // POST /api/billing/webhook — handle Stripe webhook events
 export async function POST(request: Request) {

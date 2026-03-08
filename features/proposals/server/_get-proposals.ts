@@ -1,5 +1,6 @@
 import { prisma } from "@/shared/lib/prisma";
 import { ProposalStatus } from "@/shared/lib/generated/prisma/enums";
+import { PAGE_LIMIT } from "@/features/proposals/constants/pagination";
 
 const proposalSelect = {
   id: true,
@@ -33,7 +34,6 @@ export interface GetProposalsParams {
   search?: string | null;
 }
 
-const PAGE_LIMIT = 10;
 
 export async function _getProposals(
   userId: string,

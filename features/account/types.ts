@@ -1,6 +1,3 @@
-export const FREE_PROPOSAL_LIMIT = 10;
-export const FREE_PROFILE_LIMIT = 2;
-
 export interface AccountData {
   user: {
     id: string;

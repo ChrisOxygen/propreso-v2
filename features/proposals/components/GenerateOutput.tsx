@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Copy, Check, BookmarkPlus, Loader2, Sparkles, AlertTriangle, ScanText } from "lucide-react";
-
-const UPWORK_CHAR_LIMIT = 5000;
+import { UPWORK_CHAR_LIMIT } from "@/features/proposals/constants/generation";
 
 interface GenerateOutputProps {
   content: string;

@@ -1,7 +1,6 @@
 import { prisma } from "@/shared/lib/prisma";
 import type { ZCreateProfile } from "@/features/profiles/schemas/profile-schemas";
-
-const FREE_PROFILE_LIMIT = 2;
+import { FREE_PROFILE_LIMIT } from "@/features/billing/constants/plans";
 
 export async function _createProfile(userId: string, data: ZCreateProfile) {
   const count = await prisma.freelancerProfile.count({ where: { userId } });

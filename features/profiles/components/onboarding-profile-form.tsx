@@ -7,24 +7,12 @@ import {
   ArrowRight,
   ArrowLeft,
   Loader2,
+  Plus,
+  Trash2,
   Briefcase,
   Sparkles,
   BookOpen,
   FolderOpen,
-  Plus,
-  Trash2,
-  Code2,
-  Monitor,
-  Server,
-  Smartphone,
-  Layers,
-  PenTool,
-  Target,
-  BarChart2,
-  GitBranch,
-  FileText,
-  Search,
-  Film,
 } from "lucide-react";
 import Image from "next/image";
 import {
@@ -33,35 +21,12 @@ import {
 } from "@/features/profiles/schemas/profile-schemas";
 import { useCreateProfile } from "@/features/profiles/hooks/use-create-profile";
 import { useRoleSkills } from "@/features/profiles/hooks/use-role-skills";
-
-// ── Constants ──────────────────────────────────────────────────────────────
-
-const STEPS = [
-  { id: 1, label: "Role", Icon: Briefcase },
-  { id: 2, label: "Skills", Icon: Sparkles },
-  { id: 3, label: "About", Icon: BookOpen },
-  { id: 4, label: "Portfolio", Icon: FolderOpen },
-];
-
-const POPULAR_ROLES = [
-  { label: "Full Stack Developer", Icon: Code2 },
-  { label: "Frontend Developer", Icon: Monitor },
-  { label: "Backend Developer", Icon: Server },
-  { label: "Mobile Developer", Icon: Smartphone },
-  { label: "UI/UX Designer", Icon: Layers },
-  { label: "Graphic Designer", Icon: PenTool },
-  { label: "Product Manager", Icon: Target },
-  { label: "Data Analyst", Icon: BarChart2 },
-  { label: "DevOps Engineer", Icon: GitBranch },
-  { label: "Content Writer", Icon: FileText },
-  { label: "SEO Specialist", Icon: Search },
-  { label: "Video Editor", Icon: Film },
-];
-
-// Deterministic widths for skeleton badges (avoids re-render jitter)
-const SKELETON_WIDTHS = [72, 90, 64, 96, 80, 106, 76, 88, 68, 92, 74, 84, 98, 66, 80, 88, 72, 94];
-
-const MAX_SKILLS = 10;
+import {
+  STEPS,
+  POPULAR_ROLES,
+  SKELETON_WIDTHS,
+  MAX_SKILLS,
+} from "@/features/profiles/constants/form";
 
 // ── Shared style helpers ───────────────────────────────────────────────────
 

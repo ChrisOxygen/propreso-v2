@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Zap } from "lucide-react";
-import { FREE_PROPOSAL_LIMIT, FREE_PROFILE_LIMIT } from "@/features/account/types";
+import { FREE_PROPOSAL_LIMIT, FREE_PROFILE_LIMIT } from "@/features/billing/constants/plans";
 import { SectionCard, SectionHeader } from "./shared";
 
 interface UsageSectionProps {

@@ -4,8 +4,7 @@ import Link from "next/link";
 import { Plus, UserCircle2 } from "lucide-react";
 import { useProfiles } from "@/features/profiles/hooks/use-profiles";
 import { ProfileCard } from "@/features/profiles/components/ProfileCard";
-
-const FREE_PROFILE_LIMIT = 2;
+import { FREE_PROFILE_LIMIT } from "@/features/billing/constants/plans";
 
 export function ProfilesList() {
   const { data: profiles, isPending, isError } = useProfiles();

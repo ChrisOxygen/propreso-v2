@@ -4,14 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Search, X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
-
-const STATUS_OPTIONS = [
-  { value: "ALL", label: "All" },
-  { value: "PENDING", label: "Pending" },
-  { value: "REPLIED", label: "Replied" },
-  { value: "WON", label: "Won" },
-  { value: "NO_RESPONSE", label: "No Response" },
-] as const;
+import { STATUS_OPTIONS } from "@/features/proposals/constants/display";
 
 export function ProposalsFilters() {
   const router = useRouter();

@@ -8,22 +8,9 @@ import {
   PRO_MONTHLY_PRICE_USD,
   PRO_ANNUAL_MONTHLY_USD,
   PRO_ANNUAL_TOTAL_USD,
-} from "@/features/billing/types";
-
-const FREE_FEATURES = [
-  "10 proposals per month",
-  "2 freelancer profiles",
-  "All 5 AI writing formulas",
-  "All tone options",
-];
-
-const PRO_FEATURES = [
-  "Unlimited proposals",
-  "Unlimited profiles",
-  "All 5 AI writing formulas",
-  "All tone options",
-  "Priority support",
-];
+  FREE_FEATURES,
+  PRO_FEATURES,
+} from "@/features/billing/constants/plans";
 
 type Interval = "monthly" | "annual";
 

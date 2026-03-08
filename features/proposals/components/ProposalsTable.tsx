@@ -6,48 +6,12 @@ import { ExternalLink } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { Spinner } from "@/shared/components/Spinner";
 import type { ProposalListItem } from "@/features/proposals/types";
-
-const FORMULA_LABELS: Record<string, string> = {
-  AIDA: "AIDA",
-  PAS: "PAS",
-  BAB: "BAB",
-  STAR: "STAR",
-  DIRECT: "Direct",
-};
-
-const LENGTH_LABELS: Record<string, string> = {
-  SHORT: "Short",
-  MEDIUM: "Medium",
-  LONG: "Long",
-};
-
-const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
-  WON: {
-    label: "Won",
-    className: "bg-emerald-50 border-emerald-200 text-emerald-700",
-  },
-  REPLIED: {
-    label: "Replied",
-    className: "bg-blue-50 border-blue-200 text-blue-700",
-  },
-  NO_RESPONSE: {
-    label: "No Response",
-    className: "bg-muted border-border text-muted-foreground",
-  },
-  PENDING: {
-    label: "Pending",
-    className: "bg-background border-border text-muted-foreground",
-  },
-};
-
-const COLUMNS = [
-  { label: "Job Title", width: "40%" },
-  { label: "Profile", width: "17%" },
-  { label: "Formula", width: "10%" },
-  { label: "Length", width: "9%" },
-  { label: "Status", width: "13%" },
-  { label: "Date", width: "11%" },
-] as const;
+import {
+  FORMULA_LABELS,
+  LENGTH_LABELS,
+  STATUS_CONFIG,
+  PROPOSAL_TABLE_COLUMNS,
+} from "@/features/proposals/constants/display";
 
 interface ProposalsTableProps {
   proposals: ProposalListItem[];
@@ -78,14 +42,14 @@ export function ProposalsTable({
           )}
         >
           <colgroup>
-            {COLUMNS.map(({ label, width }) => (
+            {PROPOSAL_TABLE_COLUMNS.map(({ label, width }) => (
               <col key={label} style={{ width }} />
             ))}
           </colgroup>
 
           <thead>
             <tr className="bg-accent border-b border-border">
-              {COLUMNS.map(({ label }) => (
+              {PROPOSAL_TABLE_COLUMNS.map(({ label }) => (
                 <th key={label} className="px-4 py-2.5 text-left">
                   <span className="text-[11px] font-semibold uppercase tracking-wider whitespace-nowrap text-muted-foreground font-heading">
                     {label}

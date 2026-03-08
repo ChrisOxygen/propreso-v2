@@ -4,7 +4,7 @@ import { Zap, CheckCircle2, AlertCircle, Clock } from "lucide-react";
 import { format } from "date-fns";
 import { SectionCard, SectionHeader } from "./shared";
 import type { BillingData } from "@/features/billing/types";
-import { FREE_PROPOSAL_LIMIT, FREE_PROFILE_LIMIT } from "@/features/billing/types";
+import { FREE_PROPOSAL_LIMIT, FREE_PROFILE_LIMIT } from "@/features/billing/constants/plans";
 
 type Props = Pick<
   BillingData,

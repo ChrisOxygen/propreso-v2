@@ -14,6 +14,7 @@ import {
   AlertDialogTitle,
 } from "@/shared/components/ui/alert-dialog";
 import { useDeleteAccount } from "@/features/account/hooks/use-delete-account";
+import { CONFIRM_DELETE_WORD } from "@/features/account/constants";
 
 export function DangerZoneSection() {
   const router = useRouter();
@@ -21,8 +22,7 @@ export function DangerZoneSection() {
   const [open, setOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
 
-  const CONFIRM_WORD = "DELETE";
-  const canConfirm = confirmText === CONFIRM_WORD;
+  const canConfirm = confirmText === CONFIRM_DELETE_WORD;
 
   async function handleDelete() {
     try {

@@ -14,8 +14,7 @@ import type { FreelancerProfileModel } from "@/shared/lib/generated/prisma/model
 import { useSetDefaultProfile } from "@/features/profiles/hooks/use-set-default-profile";
 import { DeleteProfileDialog } from "@/features/profiles/components/DeleteProfileDialog";
 import { EditProfileSheet } from "@/features/profiles/components/EditProfileSheet";
-
-const MAX_VISIBLE_SKILLS = 5;
+import { MAX_VISIBLE_SKILLS } from "@/features/profiles/constants/form";
 
 interface ProfileCardProps {
   profile: FreelancerProfileModel;

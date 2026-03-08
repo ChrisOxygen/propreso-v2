@@ -16,11 +16,10 @@ import type {
   ProposalFormula,
   ProposalLength,
 } from "@/shared/lib/generated/prisma/enums";
-
-// Step 1 uses Haiku — structured extraction, not creative writing. ~3x cheaper.
-const ANALYZER_MODEL = "anthropic/claude-haiku-4-5";
-// Step 2 uses Sonnet — quality matters for the final output.
-const GENERATOR_MODEL = "anthropic/claude-sonnet-4.6";
+import {
+  ANALYZER_MODEL,
+  GENERATOR_MODEL,
+} from "@/features/proposals/constants/generation";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();

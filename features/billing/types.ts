@@ -1,10 +1,3 @@
-export const PRO_MONTHLY_PRICE_USD = 15;
-export const PRO_ANNUAL_MONTHLY_USD = 12; // displayed as /mo
-export const PRO_ANNUAL_TOTAL_USD = 144; // billed once per year
-
-export const FREE_PROPOSAL_LIMIT = 10;
-export const FREE_PROFILE_LIMIT = 2;
-
 export interface BillingInvoice {
   id: string;
   number: string | null;
