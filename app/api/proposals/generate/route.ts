@@ -17,7 +17,10 @@ import type {
   ProposalLength,
 } from "@/shared/lib/generated/prisma/enums";
 
-const MODEL = "anthropic/claude-sonnet-4.6";
+// Step 1 uses Haiku — structured extraction, not creative writing. ~3x cheaper.
+const ANALYZER_MODEL = "anthropic/claude-haiku-4-5";
+// Step 2 uses Sonnet — quality matters for the final output.
+const GENERATOR_MODEL = "anthropic/claude-sonnet-4.6";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -92,9 +95,9 @@ export async function POST(request: NextRequest) {
     }
   })();
 
-  // ── Step 1: Analyze the job post ────────────────────────────────────────
+  // ── Step 1: Analyze the job post (Haiku — cheap extraction task) ──────────
   const analysis = await generateText({
-    model: openrouter(MODEL),
+    model: openrouter(ANALYZER_MODEL),
     system: ANALYZER_SYSTEM_PROMPT,
     messages: [
       {
@@ -106,9 +109,10 @@ export async function POST(request: NextRequest) {
         }),
       },
     ],
+    maxOutputTokens: 500, // compact JSON output — hard cap prevents verbose responses
   });
 
-  // ── Step 2: Generate the proposal (streaming) ────────────────────────────
+  // ── Step 2: Generate the proposal (Sonnet — streaming) ───────────────────
   const systemPrompt = buildGeneratorSystemPrompt(
     {
       name: profile.name,
@@ -122,18 +126,13 @@ export async function POST(request: NextRequest) {
     upworkOpener
   );
 
-  // Build the user message from the original job post + intelligence report.
-  // We discard the UIMessage history and construct a clean single-turn input
-  // so the generator always has the full context in one structured message.
+  // The intelligence report from Step 1 captures everything the generator needs.
+  // We do NOT re-send the raw job post — it was already distilled into the report.
   void messages; // acknowledged — not used in single-turn generation
-  const userMessage = buildGeneratorUserMessage(
-    jobTitle,
-    jobDescription,
-    analysis.text
-  );
+  const userMessage = buildGeneratorUserMessage(jobTitle, analysis.text);
 
   const result = streamText({
-    model: openrouter(MODEL),
+    model: openrouter(GENERATOR_MODEL),
     system: systemPrompt,
     messages: [{ role: "user", content: userMessage }],
     onFinish: async () => {
