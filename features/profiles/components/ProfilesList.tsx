@@ -4,10 +4,14 @@ import Link from "next/link";
 import { Plus, UserCircle2 } from "lucide-react";
 import { useProfiles } from "@/features/profiles/hooks/use-profiles";
 import { ProfileCard } from "@/features/profiles/components/ProfileCard";
-import { FREE_PROFILE_LIMIT } from "@/features/billing/constants/plans";
+import {
+  FREE_PROFILE_LIMIT,
+  PRO_PROFILE_LIMIT,
+} from "@/features/billing/constants/plans";
 
-export function ProfilesList() {
+export function ProfilesList({ isPro = false }: { isPro?: boolean }) {
   const { data: profiles, isPending, isError } = useProfiles();
+  const profileLimit = isPro ? PRO_PROFILE_LIMIT : FREE_PROFILE_LIMIT;
 
   if (isPending) {
     return (
@@ -62,19 +66,19 @@ export function ProfilesList() {
     );
   }
 
-  const atLimit = profiles.length >= FREE_PROFILE_LIMIT;
+  const atLimit = profiles.length >= profileLimit;
 
   return (
     <div className="space-y-5">
       {/* Usage indicator */}
       <div className="flex items-center justify-between">
         <span className="text-[12px] text-muted-foreground">
-          {profiles.length} of {FREE_PROFILE_LIMIT} profiles used
+          {profiles.length} of {profileLimit} profiles used
         </span>
 
         {/* Progress dots */}
         <div className="flex items-center gap-1.5">
-          {Array.from({ length: FREE_PROFILE_LIMIT }).map((_, i) => (
+          {Array.from({ length: profileLimit }).map((_, i) => (
             <span
               key={i}
               className={`w-5 h-1.5 rounded-full transition-colors duration-300 ${
@@ -114,9 +118,11 @@ export function ProfilesList() {
             <span className="text-[12px] font-medium mb-0.5 text-muted-foreground">
               Profile limit reached
             </span>
-            <span className="text-[11px] text-muted-foreground/60">
-              Upgrade to Pro for unlimited profiles
-            </span>
+            {!isPro && (
+              <span className="text-[11px] text-muted-foreground/60">
+                Upgrade to Pro for more profiles
+              </span>
+            )}
           </div>
         )}
       </div>
