@@ -16,12 +16,16 @@ export function HeroNav() {
           "border border-border",
           "rounded-xl",
           "px-2 py-1.5",
+          "flex-1 sm:flex-0 ",
           "shadow-[0_4px_24px_rgba(26,20,18,0.08),0_1px_4px_rgba(26,20,18,0.04)]",
         )}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 shrink-0 group pr-3 ">
-          <div className="relative w-7 h-7 rounded-[8px] bg-primary flex items-center justify-center transition-all duration-300 shadow-[0_0_12px_rgba(200,84,56,0.3)] group-hover:shadow-[0_0_20px_rgba(200,84,56,0.5)]">
+        <Link
+          href="/"
+          className="flex items-center gap-2 shrink-0 group pr-3 mr-auto "
+        >
+          <div className="relative w-7 h-7 rounded-lg bg-primary flex items-center justify-center transition-all duration-300 shadow-[0_0_12px_rgba(200,84,56,0.3)] group-hover:shadow-[0_0_20px_rgba(200,84,56,0.5)]">
             <Image
               src="/assets/site-icon-white.svg"
               alt="Propreso"
