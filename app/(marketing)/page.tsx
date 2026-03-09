@@ -123,7 +123,7 @@ export default function Home() {
             >
               No credit card required{" "}
               <span className="hidden sm:inline">&nbsp;·&nbsp; </span>
-              <span className=" break-keep">10 free proposals included</span>
+              <span className="break-keep">10 free proposals included</span>
             </p>
           </div>
 
@@ -143,7 +143,7 @@ export default function Home() {
 
             <div className="relative">
               {/* Browser chrome frame */}
-              <div className="rounded-2xl overflow-hidden border-t border-x border-border ">
+              <div className="rounded-2xl overflow-hidden border-t border-x border-border">
                 {/* Chrome top bar */}
                 <div className="flex items-center gap-3 px-4 py-2.5 bg-[#F5F0ED] border-b border-border">
                   {/* Traffic lights */}
@@ -222,25 +222,31 @@ export default function Home() {
                 </div>
 
                 {/* Dashboard screenshot */}
-                <div className="relative ">
+                <div className="relative">
                   <Image
                     src="/assets/propreso-dashboard-faded-down.png"
                     alt="Propreso dashboard — write and send proposals in seconds"
                     width={1280}
                     height={600}
-                    className="w-full block"
+                    className="w-full hidden sm:block"
                     priority
                   />
-
-                  {/* Bottom fade into page background */}
+                  <Image
+                    src="/assets/dashboard-mobile.png"
+                    alt="Propreso dashboard — write and send proposals in seconds"
+                    width={390}
+                    height={600}
+                    className="w-full block sm:hidden"
+                    priority
+                  />
                 </div>
               </div>
             </div>
             <div
-              className="absolute bottom-0  -left-3 w-300 -right-3 h-[70%] pointer-events-none"
+              className="absolute bottom-0 -left-3 w-300 -right-3 h-[70%] pointer-events-none"
               style={{
                 background:
-                  "linear-gradient(to top, #FDF8F6 0%, #FDF8F6  50%, rgba(253,248,246,0.4) 90%, transparent 100%)",
+                  "linear-gradient(to top, #FDF8F6 0%, #FDF8F6 50%, rgba(253,248,246,0.4) 90%, transparent 100%)",
               }}
             />
           </div>
