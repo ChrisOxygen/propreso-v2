@@ -1,208 +1,182 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
+import { Badge } from "@/shared/components/ui/badge";
 import { HeroNav } from "@/features/marketing/components/hero-nav";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Stats
+// ─────────────────────────────────────────────────────────────────────────────
+
+const STATS = [
+  { value: "60s", label: "To write a full proposal" },
+  { value: "3x", label: "More bids sent per day" },
+  { value: "10", label: "Free proposals on sign-up" },
+  { value: "100%", label: "Tailored to your niche" },
+] as const;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Page
+// ─────────────────────────────────────────────────────────────────────────────
 
 export default function Home() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: "#0F0A05" }}>
+    <div className="min-h-screen bg-background">
       <HeroNav />
 
       <main>
         {/* ═══════════════════════════════════════════════════
             HERO SECTION
         ═══════════════════════════════════════════════════ */}
-        <section className="relative min-h-screen flex flex-col items-center overflow-hidden pt-22">
+        <section className="relative min-h-screen flex flex-col items-center overflow-hidden pt-24">
 
           {/* ── Background layers ─────────────────────────── */}
 
-          {/* Dot grid */}
+          {/* Subtle warm radial bloom from top-center */}
           <div
-            className="absolute inset-0 opacity-[0.06] pointer-events-none"
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(200,84,56,0.07) 0%, rgba(200,84,56,0.03) 50%, transparent 100%)",
+            }}
+          />
+
+          {/* Very faint dot grid */}
+          <div
+            className="absolute inset-0 opacity-[0.04] pointer-events-none"
             style={{
               backgroundImage:
-                "radial-gradient(circle, rgba(251,247,243,0.55) 1px, transparent 1px)",
+                "radial-gradient(circle, rgba(26,20,18,0.6) 1px, transparent 1px)",
               backgroundSize: "28px 28px",
             }}
           />
 
-          {/* Noise texture */}
-          <div
-            className="absolute inset-0 opacity-[0.028] pointer-events-none"
-            style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`,
-              backgroundRepeat: "repeat",
-              backgroundSize: "160px 160px",
-            }}
-          />
-
-          {/* Primary radial bloom — warm orange behind headline */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "8%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "860px",
-              height: "520px",
-              borderRadius: "50%",
-              background: "radial-gradient(ellipse, rgba(200,73,26,0.13) 0%, transparent 70%)",
-              filter: "blur(60px)",
-            }}
-          />
-
-          {/* Secondary amber accent bloom */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "4%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: "480px",
-              height: "280px",
-              borderRadius: "50%",
-              background: "radial-gradient(ellipse, rgba(245,160,96,0.07) 0%, transparent 70%)",
-              filter: "blur(40px)",
-            }}
-          />
-
           {/* ── Hero copy ─────────────────────────────────── */}
-          <div className="relative z-10 mx-auto w-full max-w-5xl px-6 flex flex-col items-center text-center pt-20 md:pt-28 gap-5 md:gap-6">
+          <div className="relative z-10 mx-auto w-full max-w-4xl px-6 flex flex-col items-center text-center pt-20 md:pt-28 gap-5 md:gap-6">
 
-            {/* Eyebrow badge */}
-            <div className="animate-fade-up delay-100">
-              <Badge
-                variant="outline"
-                className="border-[#C8491A]/35 bg-[#C8491A]/8 text-[#F5C9A8] px-4 py-1.5 text-[11px] tracking-[0.12em] uppercase rounded-full backdrop-blur-sm"
-                style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-              >
-                ✦&nbsp;&nbsp;AI-Powered Proposals
-              </Badge>
-            </div>
+            {/* Eyebrow */}
+            <Badge
+              variant="outline"
+              className="border-primary/20 bg-accent text-primary px-4 py-1.5 text-[11px] tracking-widest uppercase rounded-full"
+              style={{ fontFamily: "var(--font-jetbrains-mono)" }}
+            >
+              Built for Freelancers
+            </Badge>
 
             {/* Headline */}
-            <div className="animate-fade-up delay-200 flex flex-col items-center gap-0.5 md:gap-1">
+            <div className="flex flex-col items-center gap-0.5">
               <h1
-                className="text-[clamp(2.6rem,7vw,5.25rem)] font-extrabold text-[#FBF7F3] tracking-[-0.035em] leading-none whitespace-nowrap"
+                className="text-[clamp(2.6rem,6.5vw,5rem)] font-extrabold text-foreground tracking-[-0.04em] leading-[1.05]"
                 style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
-                Craft Winning Proposals
+                Stop Losing Bids.
               </h1>
               <h2
-                className="text-[clamp(2.4rem,6.6vw,5rem)] text-[#E06030] tracking-[-0.015em] leading-[1.1] italic"
-                style={{ fontFamily: "var(--font-instrument-serif)" }}
+                className="text-[clamp(2.4rem,6.2vw,4.75rem)] tracking-[-0.02em] leading-[1.1] italic"
+                style={{
+                  fontFamily: "var(--font-instrument-serif)",
+                  background:
+                    "linear-gradient(135deg, #C85438 0%, #D96B32 40%, #F0A558 80%, #F5BA72 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
               >
-                in Minutes, Every Time
+                Start Winning Clients.
               </h2>
             </div>
 
             {/* Subheading */}
             <p
-              className="animate-fade-up delay-300 max-w-130 text-[15px] md:text-[16.5px] text-[#FBF7F3]/45 leading-[1.75]"
+              className="max-w-xl text-[15px] md:text-[16px] text-muted-foreground leading-[1.8]"
               style={{ fontFamily: "var(--font-inter)" }}
             >
-              Propreso reads the job post, knows your niche, and streams a
-              tailored Upwork proposal in seconds. Stop copy-pasting.
-              Start winning.
+              Propreso writes proposals in your voice, using your niche, your skills,
+              and proven copywriting formulas, in under 60 seconds.
             </p>
 
             {/* CTA buttons */}
-            <div className="animate-fade-up delay-400 flex flex-col sm:flex-row items-center gap-3 mt-1">
+            <div className="flex flex-col sm:flex-row items-center gap-3 mt-1">
               <Button
                 asChild
                 size="lg"
-                className="bg-[#C8491A] hover:bg-[#E06030] active:bg-[#9E3610] text-white border-0 h-12 px-8 text-[14.5px] font-semibold tracking-[-0.01em] shadow-[0_0_32px_rgba(200,73,26,0.38)] hover:shadow-[0_0_44px_rgba(200,73,26,0.55)] transition-all duration-200 rounded-full"
+                className="bg-primary hover:bg-primary-hover active:bg-primary-active text-white border-0 h-11 px-7 text-[14.5px] font-semibold tracking-[-0.01em] shadow-[0_4px_20px_rgba(200,84,56,0.3)] hover:shadow-[0_6px_28px_rgba(200,84,56,0.45)] transition-all duration-200 rounded-lg"
                 style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
-                <Link href="/sign-up">Get Started Free</Link>
+                <Link href="/sign-up">Get Started Free &nbsp;→</Link>
               </Button>
+
               <Button
                 asChild
                 variant="outline"
                 size="lg"
-                className="border-[#FBF7F3]/14 bg-white/4 hover:bg-white/8 text-[#FBF7F3]/65 hover:text-[#FBF7F3] h-12 px-8 text-[14.5px] font-medium tracking-[-0.01em] transition-all duration-200 rounded-full backdrop-blur-sm"
+                className="border-border-strong text-text-secondary hover:text-foreground hover:bg-accent h-11 px-7 text-[14px] font-medium tracking-[-0.01em] transition-all duration-200 rounded-lg"
                 style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
-                <Link href="/sign-in">Sign In</Link>
+                <Link href="/demo">Watch 60-sec Demo</Link>
               </Button>
             </div>
 
             {/* Social proof micro-text */}
             <p
-              className="animate-fade-up delay-500 text-[11px] tracking-[0.06em]"
-              style={{
-                fontFamily: "var(--font-jetbrains-mono)",
-                color: "rgba(251,247,243,0.22)",
-              }}
+              className="text-[11px] tracking-[0.06em] text-muted-foreground/60"
+              style={{ fontFamily: "var(--font-jetbrains-mono)" }}
             >
-              No credit card required &nbsp;·&nbsp; 10 free proposals to start
+              No credit card required &nbsp;·&nbsp; 10 free proposals included
             </p>
           </div>
 
           {/* ── Browser mockup ────────────────────────────── */}
-          <div className="animate-fade-up delay-700 relative z-10 mt-16 md:mt-20 w-full max-w-250 mx-auto px-4 md:px-6 pb-0">
+          <div className="relative z-10 mt-16 md:mt-20 w-full max-w-250 mx-auto px-4 md:px-8 pb-0">
 
             {/* Glow halo behind mockup */}
             <div
               className="absolute pointer-events-none"
               style={{
-                inset: "0 8% -20px",
-                background: "radial-gradient(ellipse, rgba(200,73,26,0.16) 0%, transparent 70%)",
-                filter: "blur(64px)",
-                borderRadius: "50%",
+                inset: "0 6% -20px",
+                background:
+                  "radial-gradient(ellipse, rgba(200,84,56,0.1) 0%, transparent 70%)",
+                filter: "blur(56px)",
                 zIndex: -1,
               }}
             />
 
             {/* Browser chrome frame */}
-            <div className="rounded-[14px] overflow-hidden border border-white/7.5 shadow-[0_40px_100px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.04)]">
+            <div className="rounded-2xl overflow-hidden border border-border shadow-[0_32px_80px_rgba(26,20,18,0.12),0_8px_24px_rgba(26,20,18,0.06),0_0_0_1px_rgba(26,20,18,0.04)]">
 
               {/* Chrome top bar */}
-              <div className="flex items-center gap-3 px-4 py-2.75 bg-[#150D08] border-b border-white/6.5">
+              <div className="flex items-center gap-3 px-4 py-2.5 bg-[#F5F0ED] border-b border-border">
 
                 {/* Traffic lights */}
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <div className="w-2.75 h-2.75 rounded-full bg-[#FF5F57]" />
-                  <div className="w-2.75 h-2.75 rounded-full bg-[#FFBD2E]" />
-                  <div className="w-2.75 h-2.75 rounded-full bg-[#27C93F]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F57]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
                 </div>
 
                 {/* Divider */}
-                <div className="w-px h-4 bg-white/10 shrink-0" />
+                <div className="w-px h-4 bg-border-strong/50 shrink-0" />
 
-                {/* Tab — active */}
+                {/* Active tab */}
                 <div
-                  className="flex items-center gap-1.5 bg-[#1E1208] rounded-t-md px-3 py-1 text-[11.5px] text-[#FBF7F3]/55 shrink-0"
+                  className="flex items-center gap-1.5 bg-background rounded-t-md px-3 py-1 text-[11px] text-muted-foreground shrink-0"
                   style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" className="opacity-60">
+                  <svg width="11" height="11" viewBox="0 0 12 12" fill="none" className="opacity-50">
                     <rect x="1" y="1" width="10" height="10" rx="2" stroke="currentColor" strokeWidth="1.2" />
                     <path d="M1 4h10" stroke="currentColor" strokeWidth="1.2" />
                   </svg>
-                  Propreso — Dashboard
+                  Propreso
                 </div>
 
                 {/* Address bar */}
-                <div className="flex-1 flex items-center gap-1.5 bg-[#0F0A05]/70 rounded-md px-3 py-1.25 max-w-70">
-                  {/* Lock icon */}
-                  <svg
-                    width="9"
-                    height="11"
-                    viewBox="0 0 9 11"
-                    fill="none"
-                    className="shrink-0 opacity-30"
-                  >
-                    <rect x="0.5" y="4.5" width="8" height="6" rx="1.5" fill="white" />
-                    <path
-                      d="M2.5 4.5V3A2 2 0 0 1 6.5 3v1.5"
-                      stroke="white"
-                      strokeWidth="1.3"
-                      strokeLinecap="round"
-                    />
+                <div className="flex-1 flex items-center gap-1.5 bg-white border border-border rounded-md px-3 py-1 max-w-64">
+                  <svg width="9" height="11" viewBox="0 0 9 11" fill="none" className="shrink-0 opacity-30">
+                    <rect x="0.5" y="4.5" width="8" height="6" rx="1.5" fill="currentColor" className="text-foreground" />
+                    <path d="M2.5 4.5V3A2 2 0 0 1 6.5 3v1.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" className="text-foreground" />
                   </svg>
                   <span
-                    className="text-[10.5px] text-white/28 select-none truncate"
+                    className="text-[10px] text-muted-foreground/60 select-none truncate"
                     style={{ fontFamily: "var(--font-jetbrains-mono)" }}
                   >
                     app.propreso.ai/dashboard
@@ -211,27 +185,63 @@ export default function Home() {
               </div>
 
               {/* Dashboard screenshot */}
-              <div className="relative bg-[#1A100A]">
+              <div className="relative bg-background">
                 <Image
                   src="/assets/propreso-dashboard.png"
-                  alt="Propreso dashboard — AI proposal generator interface"
+                  alt="Propreso dashboard — write and send Upwork proposals in seconds"
                   width={1280}
                   height={800}
                   className="w-full h-auto block"
                   priority
                 />
 
-                {/* Bottom fade — melts into page bg */}
+                {/* Bottom fade into page background */}
                 <div
-                  className="absolute bottom-0 left-0 right-0 h-[45%] pointer-events-none"
+                  className="absolute bottom-0 left-0 right-0 h-[52%] pointer-events-none"
                   style={{
                     background:
-                      "linear-gradient(to top, #0F0A05 0%, rgba(15,10,5,0.7) 50%, transparent 100%)",
+                      "linear-gradient(to top, #FDF8F6 0%, rgba(253,248,246,0.85) 35%, rgba(253,248,246,0.4) 65%, transparent 100%)",
                   }}
                 />
               </div>
             </div>
           </div>
+
+          {/* ── Stats section ─────────────────────────────── */}
+          <div className="relative z-10 w-full max-w-3xl mx-auto px-6 pt-10 pb-24">
+
+            {/* Section label */}
+            <p
+              className="text-center text-[11px] text-muted-foreground/50 tracking-widest uppercase mb-8"
+              style={{ fontFamily: "var(--font-jetbrains-mono)" }}
+            >
+              Built to get you hired, faster
+            </p>
+
+            {/* Stats row */}
+            <div className="flex flex-col sm:flex-row items-center justify-center divide-y sm:divide-y-0 sm:divide-x divide-border">
+              {STATS.map(({ value, label }) => (
+                <div
+                  key={value}
+                  className="flex flex-col items-center gap-1 px-8 py-5 sm:py-0"
+                >
+                  <span
+                    className="text-[2.25rem] font-extrabold text-foreground tracking-[-0.04em] leading-none"
+                    style={{ fontFamily: "var(--font-space-grotesk)" }}
+                  >
+                    {value}
+                  </span>
+                  <span
+                    className="text-[12px] text-muted-foreground text-center leading-snug max-w-28"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </section>
       </main>
     </div>
