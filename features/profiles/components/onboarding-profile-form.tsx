@@ -15,6 +15,7 @@ import {
   FolderOpen,
 } from "lucide-react";
 import Image from "next/image";
+import { cn } from "@/shared/lib/utils";
 import {
   ZCreateProfileSchema,
   type ZCreateProfile,
@@ -28,24 +29,27 @@ import {
   MAX_SKILLS,
 } from "@/features/profiles/constants/form";
 
-// ── Shared style helpers ───────────────────────────────────────────────────
+// ── Shared input className ─────────────────────────────────────────────────
 
-const inputBase =
-  "w-full px-3.5 rounded-lg text-[13px] outline-none transition-all duration-200";
-
-function fieldBorder(hasError: boolean) {
-  return hasError
-    ? "1px solid rgba(200,73,26,0.5)"
-    : "1px solid rgba(255,255,255,0.1)";
+function inputCn(hasError: boolean) {
+  return cn(
+    "w-full px-3.5 rounded-lg text-[13px] outline-none transition-all duration-200",
+    "bg-card border text-foreground placeholder:text-muted-foreground/50",
+    hasError
+      ? "border-destructive/50 ring-2 ring-destructive/10"
+      : "border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/10",
+  );
 }
 
-// ── Component ─────────────────────────────────────────────────────────────
+// ── Component ──────────────────────────────────────────────────────────────
 
 interface OnboardingProfileFormProps {
   onSuccess?: () => void;
 }
 
-export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps = {}) {
+export function OnboardingProfileForm({
+  onSuccess,
+}: OnboardingProfileFormProps = {}) {
   const [step, setStep] = useState(1);
   const [presetRole, setPresetRole] = useState<string | null>(null);
   const [customRole, setCustomRole] = useState("");
@@ -108,7 +112,6 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
     if (step === 1) {
       if (!effectiveRole) return;
       setValue("name", effectiveRole);
-      // Trigger skills fetch before moving — data may be ready by Step 2
       setActiveRole(effectiveRole);
       setSelectedSkills([]);
       setValue("skills", []);
@@ -133,48 +136,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
   const onSubmit = handleSubmit((data) => mutation.mutate(data));
 
   const handleSkip = () => {
-    // Clear any partially-filled portfolio items so validation passes
     setValue("portfolioItems", []);
     handleSubmit((data) => mutation.mutate({ ...data, portfolioItems: [] }))();
-  };
-
-  // ── Focus/blur style helpers ──
-
-  const focusInput = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    e.currentTarget.style.borderColor = "rgba(200,73,26,0.5)";
-    e.currentTarget.style.boxShadow = "0 0 0 3px rgba(200,73,26,0.1)";
-  };
-
-  const blurInput = (
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-    hasError: boolean
-  ) => {
-    if (!hasError) {
-      e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
-      e.currentTarget.style.boxShadow = "none";
-    }
-  };
-
-  // ── Shared button styles ──
-
-  const primaryBtn = {
-    background: "linear-gradient(135deg, #C8491A 0%, #D45820 100%)",
-    color: "#fff",
-    boxShadow: "0 0 28px rgba(200,73,26,0.35), 0 2px 8px rgba(0,0,0,0.25)",
-    fontFamily: "var(--font-space-grotesk)",
-  };
-
-  const ghostBtn = {
-    background: "rgba(255,255,255,0.04)",
-    border: "1px solid rgba(255,255,255,0.08)",
-    color: "rgba(251,247,243,0.5)",
-    fontFamily: "var(--font-space-grotesk)",
-  };
-
-  const disabledPrimaryBtn = {
-    background: "rgba(255,255,255,0.06)",
-    color: "rgba(251,247,243,0.3)",
-    fontFamily: "var(--font-space-grotesk)",
   };
 
   // ── Render ──
@@ -187,7 +150,7 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
           className="w-8 h-8 rounded-[7px] flex items-center justify-center shrink-0"
           style={{
             background: "linear-gradient(135deg, #C8491A 0%, #E06030 100%)",
-            boxShadow: "0 0 18px rgba(200,73,26,0.4)",
+            boxShadow: "0 0 18px rgba(200,73,26,0.3)",
           }}
         >
           <Image
@@ -198,8 +161,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
           />
         </div>
         <span
-          className="text-[15px] font-semibold tracking-[-0.02em]"
-          style={{ color: "#FBF7F3", fontFamily: "var(--font-space-grotesk)" }}
+          className="text-[15px] font-semibold tracking-[-0.02em] text-foreground"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
         >
           Propreso
         </span>
@@ -211,48 +174,41 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
           <div key={s.id} className="flex items-center flex-1">
             <div className="flex flex-col items-center gap-1.5">
               <div
-                className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-300"
-                style={{
-                  background:
-                    step > s.id
-                      ? "rgba(200,73,26,0.22)"
-                      : step === s.id
-                        ? "linear-gradient(135deg, #C8491A, #E06030)"
-                        : "rgba(255,255,255,0.06)",
-                  border:
-                    step > s.id
-                      ? "1px solid rgba(200,73,26,0.3)"
-                      : "none",
-                  color:
-                    step >= s.id ? "#FBF7F3" : "rgba(251,247,243,0.2)",
-                  boxShadow:
-                    step === s.id ? "0 0 14px rgba(200,73,26,0.5)" : "none",
-                }}
+                className={cn(
+                  "w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-300",
+                  step > s.id
+                    ? "bg-accent border border-primary/30 text-primary"
+                    : step === s.id
+                      ? "text-white"
+                      : "bg-muted/60 text-muted-foreground/40",
+                )}
+                style={
+                  step === s.id
+                    ? {
+                        background: "linear-gradient(135deg, #C8491A, #E06030)",
+                        boxShadow: "0 0 14px rgba(200,73,26,0.4)",
+                      }
+                    : undefined
+                }
               >
                 {step > s.id ? "✓" : s.id}
               </div>
               <span
-                className="text-[10px] font-medium hidden sm:block"
-                style={{
-                  color:
-                    step >= s.id
-                      ? "rgba(251,247,243,0.45)"
-                      : "rgba(251,247,243,0.18)",
-                  fontFamily: "var(--font-inter)",
-                }}
+                className={cn(
+                  "text-[10px] font-medium hidden sm:block",
+                  step >= s.id ? "text-muted-foreground" : "text-muted-foreground/30",
+                )}
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 {s.label}
               </span>
             </div>
             {i < STEPS.length - 1 && (
               <div
-                className="flex-1 mx-3 h-px transition-all duration-500"
-                style={{
-                  background:
-                    step > s.id
-                      ? "rgba(200,73,26,0.35)"
-                      : "rgba(255,255,255,0.07)",
-                }}
+                className={cn(
+                  "flex-1 mx-3 h-px transition-all duration-500",
+                  step > s.id ? "bg-primary/25" : "bg-border",
+                )}
               />
             )}
           </div>
@@ -265,32 +221,23 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
           <div className="space-y-5">
             <div>
               <div className="flex items-center gap-1.5 mb-1.5">
-                <Briefcase size={12} style={{ color: "#C8491A" }} />
+                <Briefcase size={12} className="text-primary" />
                 <span
-                  className="text-[10.5px] font-semibold uppercase tracking-widest"
-                  style={{
-                    color: "rgba(200,73,26,0.75)",
-                    fontFamily: "var(--font-space-grotesk)",
-                  }}
+                  className="text-[10.5px] font-semibold uppercase tracking-widest text-primary/70"
+                  style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
                   Step 1 of 4
                 </span>
               </div>
               <h1
-                className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15]"
-                style={{
-                  color: "#FBF7F3",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
+                className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15] text-foreground"
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 What kind of freelancer are you?
               </h1>
               <p
-                className="mt-1.5 text-[13px] leading-relaxed"
-                style={{
-                  color: "rgba(251,247,243,0.38)",
-                  fontFamily: "var(--font-inter)",
-                }}
+                className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground"
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 Pick a role or type your own below.
               </p>
@@ -305,35 +252,25 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                     key={label}
                     type="button"
                     onClick={() => handlePresetSelect(label)}
-                    className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-lg transition-all duration-150 text-center"
-                    style={{
-                      background: isSelected
-                        ? "rgba(200,73,26,0.13)"
-                        : "rgba(255,255,255,0.03)",
-                      border: isSelected
-                        ? "1px solid rgba(200,73,26,0.4)"
-                        : "1px solid rgba(255,255,255,0.06)",
-                      boxShadow: isSelected
-                        ? "0 0 12px rgba(200,73,26,0.1)"
-                        : "none",
-                    }}
+                    className={cn(
+                      "flex flex-col items-center gap-1.5 py-3 px-2 rounded-lg transition-all duration-150 text-center border",
+                      isSelected
+                        ? "bg-accent border-primary/40 shadow-[0_0_12px_rgba(200,84,56,0.08)]"
+                        : "bg-card border-border hover:bg-accent/50 hover:border-border-strong",
+                    )}
                   >
                     <Icon
                       size={15}
-                      style={{
-                        color: isSelected
-                          ? "#E06030"
-                          : "rgba(251,247,243,0.35)",
-                      }}
+                      className={
+                        isSelected ? "text-primary" : "text-muted-foreground"
+                      }
                     />
                     <span
-                      className="text-[10px] font-medium leading-tight"
-                      style={{
-                        color: isSelected
-                          ? "#FBF7F3"
-                          : "rgba(251,247,243,0.45)",
-                        fontFamily: "var(--font-inter)",
-                      }}
+                      className={cn(
+                        "text-[10px] font-medium leading-tight",
+                        isSelected ? "text-foreground" : "text-muted-foreground",
+                      )}
+                      style={{ fontFamily: "var(--font-inter)" }}
                     >
                       {label}
                     </span>
@@ -345,11 +282,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
             {/* Custom role */}
             <div className="space-y-1.5">
               <label
-                className="text-[12px] font-medium"
-                style={{
-                  color: "rgba(251,247,243,0.38)",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
+                className="text-[12px] font-medium text-muted-foreground"
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 Or type your own role
               </label>
@@ -358,23 +292,13 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                 value={customRole}
                 onChange={(e) => handleCustomRoleChange(e.target.value)}
                 placeholder="e.g. Shopify Expert, WordPress Developer…"
-                className={`${inputBase} h-10`}
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: fieldBorder(false),
-                  color: "#FBF7F3",
-                  fontFamily: "var(--font-inter)",
-                }}
-                onFocus={focusInput}
-                onBlur={(e) => blurInput(e, false)}
+                className={cn(inputCn(false), "h-10")}
+                style={{ fontFamily: "var(--font-inter)" }}
               />
               {effectiveRole && (
                 <p
-                  className="text-[11px]"
-                  style={{
-                    color: "rgba(200,73,26,0.65)",
-                    fontFamily: "var(--font-inter)",
-                  }}
+                  className="text-[11px] text-primary/70"
+                  style={{ fontFamily: "var(--font-inter)" }}
                 >
                   Selected: {effectiveRole}
                 </p>
@@ -385,8 +309,13 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
               type="button"
               onClick={goNext}
               disabled={!effectiveRole}
-              className="w-full h-11 flex items-center justify-center gap-2 rounded-lg text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200"
-              style={effectiveRole ? primaryBtn : disabledPrimaryBtn}
+              className={cn(
+                "w-full h-11 flex items-center justify-center gap-2 rounded-lg text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200",
+                effectiveRole
+                  ? "bg-primary hover:bg-primary-hover active:bg-primary-active text-white shadow-[0_4px_20px_rgba(200,84,56,0.25)] hover:shadow-[0_6px_28px_rgba(200,84,56,0.4)]"
+                  : "bg-muted text-muted-foreground cursor-not-allowed",
+              )}
+              style={{ fontFamily: "var(--font-space-grotesk)" }}
             >
               Continue
               <ArrowRight size={15} />
@@ -399,39 +328,27 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
           <div className="space-y-5">
             <div>
               <div className="flex items-center gap-1.5 mb-1.5">
-                <Sparkles size={12} style={{ color: "#C8491A" }} />
+                <Sparkles size={12} className="text-primary" />
                 <span
-                  className="text-[10.5px] font-semibold uppercase tracking-widest"
-                  style={{
-                    color: "rgba(200,73,26,0.75)",
-                    fontFamily: "var(--font-space-grotesk)",
-                  }}
+                  className="text-[10.5px] font-semibold uppercase tracking-widest text-primary/70"
+                  style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
                   Step 2 of 4
                 </span>
               </div>
               <h1
-                className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15]"
-                style={{
-                  color: "#FBF7F3",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
+                className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15] text-foreground"
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 Pick your top skills
               </h1>
               <p
-                className="mt-1.5 text-[13px] leading-relaxed"
-                style={{
-                  color: "rgba(251,247,243,0.38)",
-                  fontFamily: "var(--font-inter)",
-                }}
+                className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground"
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 Select up to{" "}
-                <span style={{ color: "rgba(251,247,243,0.6)" }}>10 skills</span>{" "}
-                for{" "}
-                <span style={{ color: "rgba(251,247,243,0.65)" }}>
-                  {activeRole}
-                </span>
+                <span className="text-text-secondary">10 skills</span> for{" "}
+                <span className="text-foreground font-medium">{activeRole}</span>
                 . These power every proposal.
               </p>
             </div>
@@ -439,28 +356,26 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
             {/* Counter */}
             <div className="flex items-center justify-between">
               <span
-                className="text-[11.5px]"
-                style={{
-                  color:
-                    selectedSkills.length === MAX_SKILLS
-                      ? "#F5A070"
-                      : "transparent",
-                  fontFamily: "var(--font-inter)",
-                }}
+                className={cn(
+                  "text-[11.5px] transition-opacity",
+                  selectedSkills.length === MAX_SKILLS
+                    ? "text-primary opacity-100"
+                    : "opacity-0 pointer-events-none",
+                )}
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 Limit reached — deselect to swap
               </span>
               <span
-                className="text-[12px] font-semibold tabular-nums"
-                style={{
-                  color:
-                    selectedSkills.length === MAX_SKILLS
-                      ? "#F5A070"
-                      : selectedSkills.length > 0
-                        ? "#E06030"
-                        : "rgba(251,247,243,0.25)",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
+                className={cn(
+                  "text-[12px] font-semibold tabular-nums",
+                  selectedSkills.length === MAX_SKILLS
+                    ? "text-primary"
+                    : selectedSkills.length > 0
+                      ? "text-primary/70"
+                      : "text-muted-foreground/40",
+                )}
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 {selectedSkills.length}/{MAX_SKILLS}
               </span>
@@ -473,10 +388,9 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                   {SKELETON_WIDTHS.map((w, i) => (
                     <div
                       key={i}
-                      className="h-8 rounded-full animate-pulse"
+                      className="h-8 rounded-full bg-muted animate-pulse"
                       style={{
                         width: `${w}px`,
-                        background: "rgba(255,255,255,0.07)",
                         animationDelay: `${i * 40}ms`,
                       }}
                     />
@@ -486,13 +400,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
 
               {skillsQuery.isError && (
                 <div
-                  className="rounded-lg px-4 py-3 text-[13px]"
-                  style={{
-                    background: "rgba(200,73,26,0.1)",
-                    border: "1px solid rgba(200,73,26,0.22)",
-                    color: "#F5A070",
-                    fontFamily: "var(--font-inter)",
-                  }}
+                  className="rounded-lg px-4 py-3 text-[13px] bg-error-subtle border border-destructive/25 text-destructive"
+                  style={{ fontFamily: "var(--font-inter)" }}
                 >
                   Could not load skills. Go back and try again.
                 </div>
@@ -510,26 +419,15 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                         type="button"
                         onClick={() => handleSkillToggle(skill)}
                         disabled={isDisabled}
-                        className="h-8 px-3.5 rounded-full text-[12px] font-medium transition-all duration-150"
-                        style={{
-                          background: isSelected
-                            ? "rgba(200,73,26,0.18)"
-                            : "rgba(255,255,255,0.04)",
-                          border: isSelected
-                            ? "1px solid rgba(200,73,26,0.45)"
-                            : "1px solid rgba(255,255,255,0.09)",
-                          color: isSelected
-                            ? "#F0956A"
+                        className={cn(
+                          "h-8 px-3.5 rounded-full text-[12px] font-medium transition-all duration-150 border",
+                          isSelected
+                            ? "bg-accent border-primary/45 text-primary shadow-[0_0_8px_rgba(200,84,56,0.1)]"
                             : isDisabled
-                              ? "rgba(251,247,243,0.18)"
-                              : "rgba(251,247,243,0.55)",
-                          cursor: isDisabled ? "not-allowed" : "pointer",
-                          opacity: isDisabled ? 0.4 : 1,
-                          fontFamily: "var(--font-inter)",
-                          boxShadow: isSelected
-                            ? "0 0 8px rgba(200,73,26,0.15)"
-                            : "none",
-                        }}
+                              ? "bg-card border-border text-muted-foreground/30 opacity-40 cursor-not-allowed"
+                              : "bg-card border-border text-text-secondary hover:border-border-strong hover:bg-accent/50",
+                        )}
+                        style={{ fontFamily: "var(--font-inter)" }}
                       >
                         {skill}
                       </button>
@@ -541,8 +439,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
 
             {errors.skills && (
               <p
-                className="text-[11px]"
-                style={{ color: "#F5A070", fontFamily: "var(--font-inter)" }}
+                className="text-[11px] text-destructive"
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 {errors.skills.message}
               </p>
@@ -552,8 +450,7 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
               <button
                 type="button"
                 onClick={goBack}
-                className="h-11 w-11 flex items-center justify-center rounded-lg transition-all duration-150 shrink-0"
-                style={ghostBtn}
+                className="h-11 w-11 flex items-center justify-center rounded-lg transition-all duration-150 shrink-0 bg-muted/50 border border-border text-text-secondary hover:bg-muted hover:text-foreground"
               >
                 <ArrowLeft size={15} />
               </button>
@@ -561,10 +458,13 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                 type="button"
                 onClick={goNext}
                 disabled={selectedSkills.length === 0}
-                className="flex-1 h-11 flex items-center justify-center gap-2 rounded-lg text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200"
-                style={
-                  selectedSkills.length > 0 ? primaryBtn : disabledPrimaryBtn
-                }
+                className={cn(
+                  "flex-1 h-11 flex items-center justify-center gap-2 rounded-lg text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200",
+                  selectedSkills.length > 0
+                    ? "bg-primary hover:bg-primary-hover active:bg-primary-active text-white shadow-[0_4px_20px_rgba(200,84,56,0.25)] hover:shadow-[0_6px_28px_rgba(200,84,56,0.4)]"
+                    : "bg-muted text-muted-foreground cursor-not-allowed",
+                )}
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 Continue
                 <ArrowRight size={15} />
@@ -578,32 +478,23 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
           <div className="space-y-5">
             <div>
               <div className="flex items-center gap-1.5 mb-1.5">
-                <BookOpen size={12} style={{ color: "#C8491A" }} />
+                <BookOpen size={12} className="text-primary" />
                 <span
-                  className="text-[10.5px] font-semibold uppercase tracking-widest"
-                  style={{
-                    color: "rgba(200,73,26,0.75)",
-                    fontFamily: "var(--font-space-grotesk)",
-                  }}
+                  className="text-[10.5px] font-semibold uppercase tracking-widest text-primary/70"
+                  style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
                   Step 3 of 4
                 </span>
               </div>
               <h1
-                className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15]"
-                style={{
-                  color: "#FBF7F3",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
+                className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15] text-foreground"
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 Tell us about yourself
               </h1>
               <p
-                className="mt-1.5 text-[13px] leading-relaxed"
-                style={{
-                  color: "rgba(251,247,243,0.38)",
-                  fontFamily: "var(--font-inter)",
-                }}
+                className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground"
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 This is the foundation of every proposal — the AI will draw
                 from it every time.
@@ -614,23 +505,19 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <label
-                  className="text-[12px] font-medium"
-                  style={{
-                    color: "rgba(251,247,243,0.5)",
-                    fontFamily: "var(--font-space-grotesk)",
-                  }}
+                  className="text-[12px] font-medium text-muted-foreground"
+                  style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
                   About you
                 </label>
                 <span
-                  className="text-[11px]"
-                  style={{
-                    color:
-                      bioValue.length > 500
-                        ? "#F5A070"
-                        : "rgba(251,247,243,0.22)",
-                    fontFamily: "var(--font-inter)",
-                  }}
+                  className={cn(
+                    "text-[11px]",
+                    bioValue.length > 500
+                      ? "text-primary"
+                      : "text-muted-foreground/40",
+                  )}
+                  style={{ fontFamily: "var(--font-inter)" }}
                 >
                   {bioValue.length} / 600
                 </span>
@@ -639,21 +526,16 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                 {...register("bio")}
                 rows={5}
                 placeholder="e.g. I'm a full-stack developer with 5 years of experience building SaaS products. Led frontend at a Series A startup, delivered 30+ Upwork projects with a 98% JSS…"
-                className={`${inputBase} py-3 resize-none`}
+                className={cn(inputCn(!!errors.bio), "py-3 resize-none")}
                 style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: fieldBorder(!!errors.bio),
-                  color: "#FBF7F3",
                   fontFamily: "var(--font-inter)",
                   lineHeight: "1.65",
                 }}
-                onFocus={focusInput}
-                onBlur={(e) => blurInput(e, !!errors.bio)}
               />
               {errors.bio && (
                 <p
-                  className="text-[11px]"
-                  style={{ color: "#F5A070", fontFamily: "var(--font-inter)" }}
+                  className="text-[11px] text-destructive"
+                  style={{ fontFamily: "var(--font-inter)" }}
                 >
                   {errors.bio.message}
                 </p>
@@ -664,16 +546,15 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
               <button
                 type="button"
                 onClick={goBack}
-                className="h-11 w-11 flex items-center justify-center rounded-lg transition-all duration-150 shrink-0"
-                style={ghostBtn}
+                className="h-11 w-11 flex items-center justify-center rounded-lg transition-all duration-150 shrink-0 bg-muted/50 border border-border text-text-secondary hover:bg-muted hover:text-foreground"
               >
                 <ArrowLeft size={15} />
               </button>
               <button
                 type="button"
                 onClick={goNext}
-                className="flex-1 h-11 flex items-center justify-center gap-2 rounded-lg text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200"
-                style={primaryBtn}
+                className="flex-1 h-11 flex items-center justify-center gap-2 rounded-lg text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200 bg-primary hover:bg-primary-hover active:bg-primary-active text-white shadow-[0_4px_20px_rgba(200,84,56,0.25)] hover:shadow-[0_6px_28px_rgba(200,84,56,0.4)]"
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 Continue
                 <ArrowRight size={15} />
@@ -687,32 +568,23 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
           <div className="space-y-5">
             <div>
               <div className="flex items-center gap-1.5 mb-1.5">
-                <FolderOpen size={12} style={{ color: "#C8491A" }} />
+                <FolderOpen size={12} className="text-primary" />
                 <span
-                  className="text-[10.5px] font-semibold uppercase tracking-widest"
-                  style={{
-                    color: "rgba(200,73,26,0.75)",
-                    fontFamily: "var(--font-space-grotesk)",
-                  }}
+                  className="text-[10.5px] font-semibold uppercase tracking-widest text-primary/70"
+                  style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
                   Step 4 of 4 · Optional
                 </span>
               </div>
               <h1
-                className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15]"
-                style={{
-                  color: "#FBF7F3",
-                  fontFamily: "var(--font-space-grotesk)",
-                }}
+                className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15] text-foreground"
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 Add your portfolio
               </h1>
               <p
-                className="mt-1.5 text-[13px] leading-relaxed"
-                style={{
-                  color: "rgba(251,247,243,0.38)",
-                  fontFamily: "var(--font-inter)",
-                }}
+                className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground"
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 Up to 5 projects. The AI references these when relevant to a
                 job.
@@ -724,33 +596,19 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
               {portfolioFields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="rounded-xl p-4 space-y-3"
-                  style={{
-                    background: "rgba(255,255,255,0.03)",
-                    border: "1px solid rgba(255,255,255,0.07)",
-                  }}
+                  className="rounded-xl p-4 space-y-3 bg-background border border-border"
                 >
                   <div className="flex items-center justify-between">
                     <span
-                      className="text-[11px] font-semibold"
-                      style={{
-                        color: "rgba(251,247,243,0.3)",
-                        fontFamily: "var(--font-space-grotesk)",
-                      }}
+                      className="text-[11px] font-semibold text-muted-foreground/50"
+                      style={{ fontFamily: "var(--font-space-grotesk)" }}
                     >
                       Project {index + 1}
                     </span>
                     <button
                       type="button"
                       onClick={() => remove(index)}
-                      className="w-6 h-6 rounded flex items-center justify-center transition-colors duration-150"
-                      style={{ color: "rgba(251,247,243,0.28)" }}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.color = "#F5A070")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.color = "rgba(251,247,243,0.28)")
-                      }
+                      className="w-6 h-6 rounded flex items-center justify-center transition-colors duration-150 text-muted-foreground/30 hover:text-destructive"
                     >
                       <Trash2 size={13} />
                     </button>
@@ -759,27 +617,16 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                   <input
                     {...register(`portfolioItems.${index}.url`)}
                     placeholder="https://yourproject.com"
-                    className={`${inputBase} h-9`}
-                    style={{
-                      background: "rgba(255,255,255,0.05)",
-                      border: fieldBorder(
-                        !!errors.portfolioItems?.[index]?.url
-                      ),
-                      color: "#FBF7F3",
-                      fontFamily: "var(--font-inter)",
-                    }}
-                    onFocus={focusInput}
-                    onBlur={(e) =>
-                      blurInput(e, !!errors.portfolioItems?.[index]?.url)
-                    }
+                    className={cn(
+                      inputCn(!!errors.portfolioItems?.[index]?.url),
+                      "h-9",
+                    )}
+                    style={{ fontFamily: "var(--font-inter)" }}
                   />
                   {errors.portfolioItems?.[index]?.url && (
                     <p
-                      className="text-[11px]"
-                      style={{
-                        color: "#F5A070",
-                        fontFamily: "var(--font-inter)",
-                      }}
+                      className="text-[11px] text-destructive"
+                      style={{ fontFamily: "var(--font-inter)" }}
                     >
                       {errors.portfolioItems[index]?.url?.message}
                     </p>
@@ -788,15 +635,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                   <input
                     {...register(`portfolioItems.${index}.description`)}
                     placeholder="Short description — what did you build?"
-                    className={`${inputBase} h-9`}
-                    style={{
-                      background: "rgba(255,255,255,0.05)",
-                      border: fieldBorder(false),
-                      color: "#FBF7F3",
-                      fontFamily: "var(--font-inter)",
-                    }}
-                    onFocus={focusInput}
-                    onBlur={(e) => blurInput(e, false)}
+                    className={cn(inputCn(false), "h-9")}
+                    style={{ fontFamily: "var(--font-inter)" }}
                   />
                 </div>
               ))}
@@ -805,23 +645,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                 <button
                   type="button"
                   onClick={() => append({ url: "", description: "" })}
-                  className="w-full h-10 flex items-center justify-center gap-2 rounded-lg text-[13px] font-medium transition-all duration-150"
-                  style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px dashed rgba(255,255,255,0.1)",
-                    color: "rgba(251,247,243,0.4)",
-                    fontFamily: "var(--font-space-grotesk)",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor =
-                      "rgba(200,73,26,0.28)";
-                    e.currentTarget.style.color = "rgba(200,73,26,0.75)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor =
-                      "rgba(255,255,255,0.1)";
-                    e.currentTarget.style.color = "rgba(251,247,243,0.4)";
-                  }}
+                  className="w-full h-10 flex items-center justify-center gap-2 rounded-lg text-[13px] font-medium transition-all duration-150 bg-card border border-dashed border-border text-muted-foreground hover:border-primary/30 hover:text-primary"
+                  style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
                   <Plus size={14} />
                   Add project
@@ -831,13 +656,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
 
             {mutation.error && (
               <div
-                className="rounded-lg px-4 py-3 text-[13px]"
-                style={{
-                  background: "rgba(200,73,26,0.1)",
-                  border: "1px solid rgba(200,73,26,0.22)",
-                  color: "#F5A070",
-                  fontFamily: "var(--font-inter)",
-                }}
+                className="rounded-lg px-4 py-3 text-[13px] bg-error-subtle border border-destructive/25 text-destructive"
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 {mutation.error.message === "profile_limit_reached"
                   ? "You've reached the free plan limit of 2 profiles."
@@ -850,24 +670,20 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                 type="button"
                 onClick={goBack}
                 disabled={mutation.isPending}
-                className="h-11 w-11 flex items-center justify-center rounded-lg transition-all duration-150 shrink-0"
-                style={ghostBtn}
+                className="h-11 w-11 flex items-center justify-center rounded-lg transition-all duration-150 shrink-0 bg-muted/50 border border-border text-text-secondary hover:bg-muted hover:text-foreground disabled:opacity-50"
               >
                 <ArrowLeft size={15} />
               </button>
               <button
                 type="submit"
                 disabled={mutation.isPending}
-                className="flex-1 h-11 flex items-center justify-center gap-2 rounded-lg text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200"
-                style={
+                className={cn(
+                  "flex-1 h-11 flex items-center justify-center gap-2 rounded-lg text-[14px] font-semibold tracking-[-0.01em] transition-all duration-200",
                   mutation.isPending
-                    ? {
-                        background: "rgba(200,73,26,0.5)",
-                        color: "rgba(255,255,255,0.7)",
-                        fontFamily: "var(--font-space-grotesk)",
-                      }
-                    : primaryBtn
-                }
+                    ? "bg-primary/50 text-white/70 cursor-not-allowed"
+                    : "bg-primary hover:bg-primary-hover active:bg-primary-active text-white shadow-[0_4px_20px_rgba(200,84,56,0.25)] hover:shadow-[0_6px_28px_rgba(200,84,56,0.4)]",
+                )}
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 {mutation.isPending ? (
                   <>
@@ -889,17 +705,8 @@ export function OnboardingProfileForm({ onSuccess }: OnboardingProfileFormProps 
                 type="button"
                 onClick={handleSkip}
                 disabled={mutation.isPending}
-                className="text-[12.5px] transition-colors duration-150"
-                style={{
-                  color: "rgba(251,247,243,0.28)",
-                  fontFamily: "var(--font-inter)",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = "rgba(251,247,243,0.55)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = "rgba(251,247,243,0.28)")
-                }
+                className="text-[12.5px] text-muted-foreground/50 hover:text-text-secondary transition-colors duration-150 disabled:opacity-50"
+                style={{ fontFamily: "var(--font-inter)" }}
               >
                 Skip portfolio for now
               </button>
