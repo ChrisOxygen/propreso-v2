@@ -1,4 +1,5 @@
 import { prisma } from "@/shared/lib/prisma";
+import { NotFoundError } from "@/shared/lib/api-error";
 
 export async function _deleteProfile(profileId: string, userId: string) {
   const profile = await prisma.freelancerProfile.findFirst({
@@ -6,7 +7,7 @@ export async function _deleteProfile(profileId: string, userId: string) {
   });
 
   if (!profile) {
-    throw new Error("not_found");
+    throw new NotFoundError();
   }
 
   await prisma.freelancerProfile.delete({ where: { id: profileId } });

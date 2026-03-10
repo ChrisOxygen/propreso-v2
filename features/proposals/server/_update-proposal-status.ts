@@ -1,5 +1,6 @@
 import { prisma } from "@/shared/lib/prisma";
 import type { ZUpdateProposalStatus } from "@/features/proposals/schemas/proposal-schemas";
+import { NotFoundError } from "@/shared/lib/api-error";
 
 export async function _updateProposalStatus(
   userId: string,
@@ -12,7 +13,7 @@ export async function _updateProposalStatus(
   });
 
   if (!proposal) {
-    throw new Error("not_found");
+    throw new NotFoundError();
   }
 
   return prisma.proposal.update({

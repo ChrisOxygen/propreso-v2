@@ -8,12 +8,12 @@ export function useSetDefaultProfile() {
 
   return useMutation({
     mutationFn: async (profileId: string) => {
-      const res = await fetch(`/api/profiles/${profileId}/default`, {
+      const res = await fetch(`/api/v1/profiles/${profileId}/default`, {
         method: "PATCH",
       });
       if (!res.ok && res.status !== 204) {
         const err = await res.json();
-        throw new Error(err.error ?? "Failed to set default profile");
+        throw new Error(err.error?.message ?? "Failed to set default profile");
       }
     },
     onMutate: async (profileId) => {

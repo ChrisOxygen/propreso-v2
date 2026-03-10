@@ -3,10 +3,10 @@
 import { useMutation } from "@tanstack/react-query";
 
 async function openPortal(): Promise<{ url: string }> {
-  const res = await fetch("/api/billing/portal", { method: "POST" });
+  const res = await fetch("/api/v1/billing/portal", { method: "POST" });
   if (!res.ok) {
     const { error } = await res.json();
-    throw new Error(error ?? "Failed to open billing portal");
+    throw new Error(error?.message ?? "Failed to open billing portal");
   }
   return res.json();
 }

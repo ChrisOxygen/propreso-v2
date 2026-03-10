@@ -125,7 +125,7 @@ export function GenerateView() {
   const transport = useMemo(
     () =>
       new TextStreamChatTransport({
-        api: "/api/proposals/generate",
+        api: "/api/v1/generations",
         body: () => extraBodyRef.current,
       }),
     [],

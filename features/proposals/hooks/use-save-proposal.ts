@@ -8,7 +8,7 @@ export interface SaveProposalPayload extends ZGenerateProposal {
 }
 
 async function saveProposal(payload: SaveProposalPayload): Promise<{ id: string }> {
-  const res = await fetch("/api/proposals", {
+  const res = await fetch("/api/v1/proposals", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -16,7 +16,7 @@ async function saveProposal(payload: SaveProposalPayload): Promise<{ id: string 
 
   if (!res.ok) {
     const err = await res.json();
-    throw new Error(err.error ?? "Failed to save proposal");
+    throw new Error(err.error?.message ?? "Failed to save proposal");
   }
 
   return res.json();

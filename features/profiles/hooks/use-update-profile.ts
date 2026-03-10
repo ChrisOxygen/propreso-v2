@@ -15,14 +15,14 @@ export function useUpdateProfile() {
       profileId: string;
       data: ZUpdateProfile;
     }): Promise<FreelancerProfileModel> => {
-      const res = await fetch(`/api/profiles/${profileId}`, {
+      const res = await fetch(`/api/v1/profiles/${profileId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error ?? "Failed to update profile");
+        throw new Error(err.error?.message ?? "Failed to update profile");
       }
       return res.json();
     },

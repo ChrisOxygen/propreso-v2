@@ -10,7 +10,7 @@ export function useCreateProfile(options?: { onSuccess?: () => void }) {
 
   return useMutation({
     mutationFn: async (data: ZCreateProfile) => {
-      const res = await fetch("/api/profiles", {
+      const res = await fetch("/api/v1/profiles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -18,7 +18,7 @@ export function useCreateProfile(options?: { onSuccess?: () => void }) {
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error ?? "Failed to create profile");
+        throw new Error(err.error?.message ?? "Failed to create profile");
       }
 
       return res.json();

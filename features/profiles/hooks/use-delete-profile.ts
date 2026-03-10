@@ -7,12 +7,12 @@ export function useDeleteProfile() {
 
   return useMutation({
     mutationFn: async (profileId: string) => {
-      const res = await fetch(`/api/profiles/${profileId}`, {
+      const res = await fetch(`/api/v1/profiles/${profileId}`, {
         method: "DELETE",
       });
       if (!res.ok && res.status !== 204) {
         const err = await res.json();
-        throw new Error(err.error ?? "Failed to delete profile");
+        throw new Error(err.error?.message ?? "Failed to delete profile");
       }
     },
     onSuccess: () => {

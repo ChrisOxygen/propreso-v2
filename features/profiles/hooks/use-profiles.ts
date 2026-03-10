@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { FreelancerProfileModel } from "@/shared/lib/generated/prisma/models";
 
 async function fetchProfiles(): Promise<FreelancerProfileModel[]> {
-  const res = await fetch("/api/profiles");
+  const res = await fetch("/api/v1/profiles");
   if (!res.ok) throw new Error("Failed to fetch profiles");
   return res.json();
 }

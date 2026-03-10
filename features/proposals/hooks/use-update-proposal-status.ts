@@ -14,14 +14,14 @@ export function useUpdateProposalStatus() {
 
   return useMutation({
     mutationFn: async ({ proposalId, status }: UpdateStatusPayload) => {
-      const res = await fetch(`/api/proposals/${proposalId}/status`, {
+      const res = await fetch(`/api/v1/proposals/${proposalId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status }),
       });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error ?? "Failed to update status");
+        throw new Error(err.error?.message ?? "Failed to update status");
       }
       return res.json();
     },

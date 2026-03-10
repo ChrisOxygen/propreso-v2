@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 async function fetchRoleSkills(role: string): Promise<string[]> {
   const res = await fetch(
-    `/api/profiles/skills?role=${encodeURIComponent(role)}`
+    `/api/v1/profiles/skills?role=${encodeURIComponent(role)}`
   );
   if (!res.ok) throw new Error("Failed to fetch skills");
   const data = await res.json();

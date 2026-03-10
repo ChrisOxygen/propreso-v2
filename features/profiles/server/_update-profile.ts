@@ -1,5 +1,6 @@
 import { prisma } from "@/shared/lib/prisma";
 import type { ZUpdateProfile } from "@/features/profiles/schemas/profile-schemas";
+import { NotFoundError } from "@/shared/lib/api-error";
 
 export async function _updateProfile(
   profileId: string,
@@ -11,7 +12,7 @@ export async function _updateProfile(
   });
 
   if (!profile) {
-    throw new Error("not_found");
+    throw new NotFoundError();
   }
 
   return prisma.freelancerProfile.update({

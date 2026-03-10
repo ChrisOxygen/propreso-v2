@@ -4,7 +4,7 @@ import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import type { ProposalsData, ProposalsQueryParams } from "@/features/proposals/types";
 
 async function fetchProposals(params: ProposalsQueryParams): Promise<ProposalsData> {
-  const url = new URL("/api/proposals", window.location.origin);
+  const url = new URL("/api/v1/proposals", window.location.origin);
   if (params.page && params.page > 1) url.searchParams.set("page", String(params.page));
   if (params.status && params.status !== "ALL") url.searchParams.set("status", params.status);
   if (params.search?.trim()) url.searchParams.set("q", params.search.trim());

@@ -23,7 +23,7 @@ export async function GET(request: Request) {
       // Sync the Supabase user into the Prisma User table.
       // The Postgres trigger handles the initial INSERT, but this upsert
       // picks up OAuth metadata (fullName) that the trigger cannot access.
-      await fetch(`${origin}/api/auth/sync`, {
+      await fetch(`${origin}/api/v1/auth/sync`, {
         method: "POST",
         headers: { Cookie: request.headers.get("cookie") ?? "" },
       });

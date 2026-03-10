@@ -4,6 +4,7 @@ import type {
   ProposalFormula,
   ProposalLength,
 } from "@/shared/lib/generated/prisma/enums";
+import { NotFoundError } from "@/shared/lib/api-error";
 
 export interface SaveProposalInput {
   profileId: string;
@@ -26,7 +27,7 @@ export async function _saveProposal(
     where: { id: input.profileId, userId },
   });
   if (!profile) {
-    throw Object.assign(new Error("Profile not found"), { status: 404 });
+    throw new NotFoundError("Profile not found");
   }
 
   return prisma.proposal.create({
