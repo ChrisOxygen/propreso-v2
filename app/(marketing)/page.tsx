@@ -5,6 +5,7 @@ import { HowItWorksSection } from "@/features/marketing/components/how-it-works-
 import { FeaturesSection } from "@/features/marketing/components/features-section";
 import { TestimonialsSection } from "@/features/marketing/components/testimonials-section";
 import { ComparisonSection } from "@/features/marketing/components/comparison-section";
+import { FoundersQuoteSection } from "@/features/marketing/components/founders-quote-section";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
         <FeaturesSection />
         <TestimonialsSection />
         <ComparisonSection />
+        <FoundersQuoteSection />
       </main>
     </div>
   );
