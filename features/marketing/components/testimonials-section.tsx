@@ -14,7 +14,7 @@ const sliderB = p3s.slice(5, 10);
 
 export function TestimonialsSection() {
   return (
-    <section className="relative bg-background py-20 md:py-28 overflow-hidden">
+    <section className="relative bg-background/5 py-20 md:py-28 overflow-hidden">
       {/* ── Background decorations ────────────────────────── */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Dot grid */}
@@ -129,6 +129,15 @@ export function TestimonialsSection() {
             />
           </div>
         </div>
+
+        {/* ── Social proof bar ──────────────────────────────── */}
+        <p
+          className="text-center text-[12px] text-muted-foreground/50 mt-10 tracking-wide"
+          style={{ fontFamily: "var(--font-inter)" }}
+        >
+          50+ downloads on the Chrome Web Store &nbsp;·&nbsp; Used on 1,000+
+          Upwork proposals
+        </p>
       </div>
     </section>
   );
