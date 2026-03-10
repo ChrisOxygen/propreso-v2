@@ -4,6 +4,7 @@ import { PainPointSection } from "@/features/marketing/components/pain-point-sec
 import { HowItWorksSection } from "@/features/marketing/components/how-it-works-section";
 import { FeaturesSection } from "@/features/marketing/components/features-section";
 import { TestimonialsSection } from "@/features/marketing/components/testimonials-section";
+import { ComparisonSection } from "@/features/marketing/components/comparison-section";
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
         <HowItWorksSection />
         <FeaturesSection />
         <TestimonialsSection />
+        <ComparisonSection />
       </main>
     </div>
   );
