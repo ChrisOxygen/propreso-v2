@@ -6,7 +6,7 @@ import { FeaturesSection } from "@/features/marketing/components/features-sectio
 import { TestimonialsSection } from "@/features/marketing/components/testimonials-section";
 import { ComparisonSection } from "@/features/marketing/components/comparison-section";
 import { FoundersQuoteSection } from "@/features/marketing/components/founders-quote-section";
-import { SiteFooter } from "@/features/marketing/components/site-footer";
+import { FooterV2 } from "@/features/marketing/components/site-footer-v2";
 
 export default function Home() {
   return (
@@ -21,7 +21,7 @@ export default function Home() {
         <ComparisonSection />
         <FoundersQuoteSection />
       </main>
-      <SiteFooter />
+      <FooterV2 />
     </div>
   );
 }

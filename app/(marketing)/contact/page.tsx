@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { HeroNav } from "@/features/marketing/components/hero-nav";
 import { ContactSection } from "@/features/marketing/components/contact-section";
-import { SiteFooter } from "@/features/marketing/components/site-footer";
+import { FooterV2 } from "@/features/marketing/components/site-footer-v2";
 
 export const metadata: Metadata = {
   title: "Contact — Propreso",
@@ -16,7 +16,7 @@ export default function ContactPage() {
       <main>
         <ContactSection />
       </main>
-      <SiteFooter showCta={false} />
+      <FooterV2 />
     </div>
   );
 }
