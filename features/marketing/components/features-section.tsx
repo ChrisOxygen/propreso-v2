@@ -263,7 +263,7 @@ function CTACard() {
 
 export function FeaturesSection() {
   return (
-    <section>
+    <section id="features">
       {/* ── Primary zone: heading ────────────────────────── */}
       <div className="relative bg-primary pt-20 md:pt-28 w-full h-[460px] sm:h-[520px] md:h-[560px] lg:h-[640px]">
         {/* Decorative background pattern */}

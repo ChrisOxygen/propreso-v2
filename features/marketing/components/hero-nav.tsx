@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/lib/utils";
 import { NAV_LINKS } from "@/features/marketing/constants/navigation";
 
 export function HeroNav() {
+  const pathname = usePathname();
   return (
     <header className="fixed top-5 inset-x-0 z-50 flex justify-center px-4">
       <nav
@@ -47,21 +49,28 @@ export function HeroNav() {
 
         {/* Center nav links */}
         <div className="hidden md:flex items-center">
-          {NAV_LINKS.map(({ href, label }) => (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                "text-[13px] text-muted-foreground hover:text-foreground",
-                "hover:bg-accent rounded-lg",
-                "px-3.5 py-1.5 transition-colors duration-150",
-                "inline-flex items-center select-none whitespace-nowrap",
-              )}
-              style={{ fontFamily: "var(--font-space-grotesk)" }}
-            >
-              {label}
-            </Link>
-          ))}
+          {NAV_LINKS.map(({ href, label }) => {
+            // Anchor links (/#features) are active only on home; page links match pathname
+            const isActive = href.startsWith("/#")
+              ? pathname === "/"
+              : pathname === href;
+            return (
+              <Link
+                key={href}
+                href={href}
+                className={cn(
+                  "text-[13px] rounded-lg px-3.5 py-1.5 transition-colors duration-150",
+                  "inline-flex items-center select-none whitespace-nowrap",
+                  isActive
+                    ? "bg-accent text-foreground font-medium"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                )}
+                style={{ fontFamily: "var(--font-space-grotesk)" }}
+              >
+                {label}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Divider */}

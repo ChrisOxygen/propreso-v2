@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Data
@@ -27,6 +30,7 @@ const LEGAL_LINKS = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function FooterV2() {
+  const pathname = usePathname();
   return (
     <footer className="bg-card border-t border-border relative overflow-hidden">
       {/* ── Background decorations ───────────────────────────── */}
@@ -84,16 +88,25 @@ export function FooterV2() {
 
           {/* Nav links — hidden on mobile, visible md+ */}
           <nav className="hidden md:flex items-center gap-6">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-[13px] text-text-secondary hover:text-foreground transition-colors duration-150"
-                style={{ fontFamily: "var(--font-inter)" }}
-              >
-                {link.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((link) => {
+              const isActive = link.href.startsWith("/#")
+                ? pathname === "/"
+                : pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={
+                    isActive
+                      ? "text-[13px] text-foreground font-medium transition-colors duration-150"
+                      : "text-[13px] text-text-secondary hover:text-foreground transition-colors duration-150"
+                  }
+                  style={{ fontFamily: "var(--font-inter)" }}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Social icons */}
