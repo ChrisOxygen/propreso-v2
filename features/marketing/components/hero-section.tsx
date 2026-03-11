@@ -169,11 +169,7 @@ export function HeroSection() {
                     stroke="currentColor"
                     strokeWidth="1.2"
                   />
-                  <path
-                    d="M1 4h10"
-                    stroke="currentColor"
-                    strokeWidth="1.2"
-                  />
+                  <path d="M1 4h10" stroke="currentColor" strokeWidth="1.2" />
                 </svg>
                 Propreso
               </div>
@@ -220,15 +216,7 @@ export function HeroSection() {
                 alt="Propreso dashboard — write and send proposals in seconds"
                 width={1280}
                 height={600}
-                className="w-full hidden sm:block"
-                priority
-              />
-              <Image
-                src="/assets/dashboard-mobile.png"
-                alt="Propreso dashboard — write and send proposals in seconds"
-                width={390}
-                height={600}
-                className="w-full block sm:hidden"
+                className="w-full block"
                 priority
               />
             </div>
