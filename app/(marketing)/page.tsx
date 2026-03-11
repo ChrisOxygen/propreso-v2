@@ -6,12 +6,13 @@ import { FeaturesSection } from "@/features/marketing/components/features-sectio
 import { TestimonialsSection } from "@/features/marketing/components/testimonials-section";
 import { ComparisonSection } from "@/features/marketing/components/comparison-section";
 import { FoundersQuoteSection } from "@/features/marketing/components/founders-quote-section";
+import { SiteFooter } from "@/features/marketing/components/site-footer";
 
 export default function Home() {
   return (
     <div className="min-h-screen ">
       <HeroNav />
-      <main>
+      <main className="relative z-0">
         <HeroSection />
         <PainPointSection />
         <HowItWorksSection />
@@ -20,6 +21,7 @@ export default function Home() {
         <ComparisonSection />
         <FoundersQuoteSection />
       </main>
+      <SiteFooter />
     </div>
   );
 }
