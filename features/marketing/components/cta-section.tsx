@@ -1,209 +1,262 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/shared/components/ui/button";
-import { Badge } from "@/shared/components/ui/badge";
-import { CheckCircle2, Zap, TrendingUp, Clock } from "lucide-react";
+import { ArrowRight, Star } from "lucide-react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CtaSection
 // ─────────────────────────────────────────────────────────────────────────────
 
+const AVATARS = [
+  { initials: "JK", hue: "rgba(255,255,255,0.30)" },
+  { initials: "ML", hue: "rgba(255,255,255,0.22)" },
+  { initials: "SR", hue: "rgba(255,255,255,0.16)" },
+  { initials: "TP", hue: "rgba(255,255,255,0.24)" },
+  { initials: "AK", hue: "rgba(255,255,255,0.18)" },
+];
+
 export function CtaSection() {
   return (
-    <section className="relative overflow-hidden bg-background py-24 md:py-36">
-      {/* ── Background layers ──────────────────────────────────────── */}
+    <section className="relative overflow-hidden bg-primary py-24 md:py-36">
+      {/* ── Decorative layers ──────────────────────────────────────── */}
 
-      {/* Radial warm bloom from bottom-center */}
+      {/* Radial highlight — top center */}
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 90% 60% at 50% 110%, rgba(200,84,56,0.13) 0%, rgba(200,84,56,0.05) 55%, transparent 100%)",
+            "radial-gradient(ellipse, rgba(255,255,255,0.12) 0%, transparent 70%)",
         }}
       />
 
-      {/* Very subtle dot grid */}
+      {/* Radial shadow — bottom center */}
+      <div
+        className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse, rgba(0,0,0,0.12) 0%, transparent 70%)",
+        }}
+      />
+
+      {/* Dashboard screenshot — subtle image overlay */}
+      <div className="absolute inset-0 pointer-events-none">
+        <Image
+          src="/assets/helping-freelancers.webp"
+          alt=""
+          fill
+          className="object-cover object-top opacity-[0.20] mix-blend-luminosity"
+          priority
+          aria-hidden="true"
+        />
+      </div>
+
+      {/* Dot grid — white, very faint */}
       <div
         className="absolute inset-0 opacity-[0.06] pointer-events-none"
         style={{
           backgroundImage:
-            "radial-gradient(circle, rgba(26,20,18,1) 1px, transparent 1px)",
+            "radial-gradient(circle, rgba(255,255,255,1) 1px, transparent 1px)",
           backgroundSize: "28px 28px",
         }}
       />
 
-      {/* Edge glow rings */}
-      <div className="absolute -bottom-40 -left-40 w-[520px] h-[520px] rounded-full border border-primary/6 pointer-events-none" />
-      <div className="absolute -bottom-20 -left-20 w-[320px] h-[320px] rounded-full border border-primary/5 pointer-events-none" />
-      <div className="absolute -top-36 -right-36 w-[440px] h-[440px] rounded-full border border-primary/5 pointer-events-none" />
+      {/* Large decorative ring — top right */}
+      <div
+        className="absolute -top-24 -right-24 w-[480px] h-[480px] rounded-full border pointer-events-none"
+        style={{ borderColor: "rgba(255,255,255,0.08)" }}
+      />
+      <div
+        className="absolute -top-10 -right-10 w-[320px] h-[320px] rounded-full border pointer-events-none"
+        style={{ borderColor: "rgba(255,255,255,0.05)" }}
+      />
+
+      {/* Large decorative ring — bottom left */}
+      <div
+        className="absolute -bottom-32 -left-32 w-[520px] h-[520px] rounded-full border pointer-events-none"
+        style={{ borderColor: "rgba(255,255,255,0.06)" }}
+      />
 
       {/* ── Content ────────────────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto max-w-5xl px-6 flex flex-col items-center text-center">
-        {/* Eyebrow badge */}
-        <Badge
-          variant="outline"
-          className="border-primary/20 bg-accent text-primary px-4 py-1.5 text-[11px] tracking-widest uppercase rounded-full mb-7"
-          style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-        >
-          Start for free today
-        </Badge>
-
-        {/* Headline */}
-        <div className="flex flex-col items-center gap-1 mb-6">
-          <h2
-            className="text-[clamp(2.4rem,5.5vw,4.2rem)] font-extrabold text-foreground tracking-[-0.04em] leading-[1.05]"
-            style={{ fontFamily: "var(--font-space-grotesk)" }}
-          >
-            Write Proposals That
-          </h2>
-          <h2
-            className="text-[clamp(2.4rem,5.5vw,4.2rem)] tracking-[-0.025em] leading-[1.1] italic"
+      <div className="relative z-10 mx-auto max-w-3xl px-6 flex flex-col items-center text-center">
+        {/* Logo lockup */}
+        <div className="flex items-center gap-2 mb-10">
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center"
             style={{
-              fontFamily: "var(--font-instrument-serif)",
-              background:
-                "linear-gradient(135deg, #C85438 0%, #D96B32 40%, #F0A558 80%, #F5BA72 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(4px)",
             }}
           >
-            Actually Win Clients.
-          </h2>
+            <Image
+              src="/assets/site-icon-white.svg"
+              alt="Propreso"
+              width={11}
+              height={14}
+            />
+          </div>
+          <span
+            className="text-[13px] font-semibold text-white/70 tracking-[-0.02em]"
+            style={{ fontFamily: "var(--font-space-grotesk)" }}
+          >
+            Propreso
+          </span>
         </div>
 
-        {/* Subtitle */}
-        <p
-          className="max-w-lg text-[15px] md:text-[16px] text-muted-foreground leading-[1.8] mb-10"
-          style={{ fontFamily: "var(--font-inter)" }}
+        {/* Headline */}
+        <h2
+          className="text-[clamp(2.6rem,6.5vw,5rem)] font-extrabold tracking-[-0.045em] leading-[0.97] text-white mb-6"
+          style={{ fontFamily: "var(--font-space-grotesk)" }}
         >
-          10 free proposals on sign-up. No credit card required.
-          Cancel&nbsp;anytime.
+          Proposals that{" "}
+          <span
+            className="italic font-normal"
+            style={{
+              fontFamily: "var(--font-instrument-serif)",
+              color: "rgba(255,255,255,0.65)",
+            }}
+          >
+            actually get replies.
+          </span>
+        </h2>
+
+        {/* Sub-copy */}
+        <p
+          className="text-[15px] md:text-[16px] leading-[1.75] mb-10 max-w-[36ch]"
+          style={{
+            fontFamily: "var(--font-inter)",
+            color: "rgba(255,255,255,0.60)",
+          }}
+        >
+          AI-drafted proposals tailored to your niche. Start free — no credit
+          card required.
         </p>
 
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row items-center gap-3">
+          {/* Primary — white */}
           <Button
             asChild
             size="lg"
-            className="bg-primary hover:bg-primary-hover active:bg-primary-active text-white border-0 h-11 px-8 text-[14.5px] font-semibold tracking-[-0.01em] shadow-[0_4px_20px_rgba(200,84,56,0.3)] hover:shadow-[0_6px_28px_rgba(200,84,56,0.45)] transition-all duration-200 rounded-lg"
-            style={{ fontFamily: "var(--font-space-grotesk)" }}
+            className="group h-12 px-8 text-[14.5px] font-semibold rounded-xl border-0 text-primary transition-all duration-200 hover:scale-[1.02] active:scale-[0.99]"
+            style={{
+              background: "rgba(255,255,255,1)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
           >
-            <Link href="/sign-up">Get Started Free &nbsp;→</Link>
+            <Link href="/sign-up" className="flex items-center gap-2">
+              Get Started Free
+              <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+            </Link>
           </Button>
 
+          {/* Secondary — ghost */}
           <Button
             asChild
             size="lg"
-            variant="outline"
-            className="h-11 px-8 text-[14.5px] font-semibold tracking-[-0.01em] border-border-strong text-foreground hover:bg-accent hover:border-primary/30 transition-all duration-200 rounded-lg"
-            style={{ fontFamily: "var(--font-space-grotesk)" }}
+            className="h-12 px-8 text-[14.5px] font-semibold rounded-xl text-white/80 hover:text-white transition-all duration-200"
+            style={{
+              background: "rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.18)",
+              fontFamily: "var(--font-space-grotesk)",
+            }}
           >
             <Link href="/pricing">See Pricing</Link>
           </Button>
         </div>
 
-        {/* ── Product mockup ──────────────────────────────────────── */}
-        {/* pb-0 + overflow-hidden so the bottom fade clips the mockup cleanly */}
-        <div className="relative mt-16 w-full max-w-3xl mx-auto overflow-hidden pb-0">
-          {/* ── Floating stat cards ─────────────────────────── */}
-
-          {/* Left card — proposals sent */}
-          <div className="absolute -left-4 sm:-left-10 top-[22%] z-20 bg-card border border-border shadow-[0_8px_24px_rgba(0,0,0,0.08)] rounded-xl px-4 py-3 flex items-center gap-3 w-[160px]">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span
-                className="text-[11px] text-muted-foreground leading-none mb-0.5"
-                style={{ fontFamily: "var(--font-inter)" }}
-              >
-                Proposals sent
-              </span>
-              <span
-                className="text-[15px] font-bold text-foreground tracking-tight"
-                style={{ fontFamily: "var(--font-space-grotesk)" }}
-              >
-                3,241
-              </span>
-            </div>
-          </div>
-
-          {/* Left card — time */}
-          <div className="absolute -left-4 sm:-left-10 top-[48%] z-20 bg-card border border-border shadow-[0_8px_24px_rgba(0,0,0,0.08)] rounded-xl px-4 py-3 flex items-center gap-3 w-[160px]">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shrink-0">
-              <Clock className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span
-                className="text-[11px] text-muted-foreground leading-none mb-0.5"
-                style={{ fontFamily: "var(--font-inter)" }}
-              >
-                Written in
-              </span>
-              <span
-                className="text-[15px] font-bold text-foreground tracking-tight"
-                style={{ fontFamily: "var(--font-space-grotesk)" }}
-              >
-                &lt; 60 sec
-              </span>
-            </div>
-          </div>
-
-          {/* Right card — win rate */}
-          <div className="absolute -right-4 sm:-right-10 top-[22%] z-20 bg-card border border-border shadow-[0_8px_24px_rgba(0,0,0,0.08)] rounded-xl px-4 py-3 flex items-center gap-3 w-[160px]">
-            <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center shrink-0">
-              <TrendingUp className="w-4 h-4 text-primary" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span
-                className="text-[11px] text-muted-foreground leading-none mb-0.5"
-                style={{ fontFamily: "var(--font-inter)" }}
-              >
-                Response rate
-              </span>
-              <span
-                className="text-[15px] font-bold text-foreground tracking-tight"
-                style={{ fontFamily: "var(--font-space-grotesk)" }}
-              >
-                +47%
-              </span>
-            </div>
-          </div>
-
-          {/* Right card — AI */}
-          <div className="absolute -right-4 sm:-right-10 top-[48%] z-20 bg-card border border-border shadow-[0_8px_24px_rgba(0,0,0,0.08)] rounded-xl px-4 py-3 flex items-center gap-3 w-[160px]">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(200,84,56,0.35)]">
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span
-                className="text-[11px] text-muted-foreground leading-none mb-0.5"
-                style={{ fontFamily: "var(--font-inter)" }}
-              >
-                AI drafting
-              </span>
-              <div className="flex items-center gap-1 mt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                <span
-                  className="text-[12px] font-semibold text-primary tracking-tight"
-                  style={{ fontFamily: "var(--font-space-grotesk)" }}
-                >
-                  Live
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* ── Dashboard image ──────────────────────────── */}
-          <Image
-            src="/assets/propreso-dashboard-faded-down.png"
-            alt="Propreso dashboard — generate a proposal in under 60 seconds"
-            width={1200}
-            height={800}
-            className="relative w-full rounded-2xl border border-border-strong shadow-[0_24px_80px_rgba(0,0,0,0.13),0_4px_16px_rgba(0,0,0,0.06)]"
-            priority
+        {/* Trust micro-line */}
+        <div className="flex items-center gap-2 mt-5">
+          <span
+            className="text-[10.5px] tracking-[0.12em] uppercase"
+            style={{
+              fontFamily: "var(--font-jetbrains-mono)",
+              color: "rgba(255,255,255,0.35)",
+            }}
+          >
+            No credit card
+          </span>
+          <span
+            className="w-1 h-1 rounded-full"
+            style={{ background: "rgba(255,255,255,0.2)" }}
           />
+          <span
+            className="text-[10.5px] tracking-[0.12em] uppercase"
+            style={{
+              fontFamily: "var(--font-jetbrains-mono)",
+              color: "rgba(255,255,255,0.35)",
+            }}
+          >
+            Cancel anytime
+          </span>
+          <span
+            className="w-1 h-1 rounded-full"
+            style={{ background: "rgba(255,255,255,0.2)" }}
+          />
+          <span
+            className="text-[10.5px] tracking-[0.12em] uppercase"
+            style={{
+              fontFamily: "var(--font-jetbrains-mono)",
+              color: "rgba(255,255,255,0.35)",
+            }}
+          >
+            10 free proposals
+          </span>
+        </div>
 
+        {/* Divider */}
+        <div
+          className="w-full mt-14 mb-8 h-px"
+          style={{ background: "rgba(255,255,255,0.10)" }}
+        />
+
+        {/* Social proof — avatars + stars */}
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex -space-x-2.5">
+            {AVATARS.map((a, i) => (
+              <div
+                key={i}
+                className="w-8 h-8 rounded-full border-2 flex items-center justify-center text-[9px] font-bold text-white shrink-0"
+                style={{
+                  borderColor: "rgba(200,84,56,0.6)",
+                  background: a.hue,
+                  zIndex: AVATARS.length - i,
+                  backdropFilter: "blur(4px)",
+                }}
+              >
+                {a.initials}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-col items-center sm:items-start gap-1">
+            <div className="flex items-center gap-0.5">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className="w-3.5 h-3.5"
+                  style={{
+                    fill: "rgba(255,255,255,0.9)",
+                    color: "rgba(255,255,255,0.9)",
+                  }}
+                />
+              ))}
+            </div>
+            <span
+              className="text-[12px] leading-none"
+              style={{
+                fontFamily: "var(--font-inter)",
+                color: "rgba(255,255,255,0.45)",
+              }}
+            >
+              Trusted by{" "}
+              <span
+                style={{ color: "rgba(255,255,255,0.75)", fontWeight: 500 }}
+              >
+                2,400+ Upwork freelancers
+              </span>
+            </span>
+          </div>
         </div>
       </div>
     </section>
