@@ -6,7 +6,7 @@
 export function FoundersQuoteSection() {
   return (
     <section
-      className="relative flex items-center justify-center min-h-screen bg-fixed bg-cover bg-center"
+      className="relative flex items-center justify-center min-h-[500px] bg-fixed bg-cover bg-center"
       style={{ backgroundImage: "url('/assets/founder-q-bg.webp')" }}
     >
       {/* ── Layered scrim ─────────────────────────────────────────────── */}
