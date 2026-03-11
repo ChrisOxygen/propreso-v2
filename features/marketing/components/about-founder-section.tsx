@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 // ─── About Founder Section ─────────────────────────────────────────────────────
 // Two-column editorial layout: left = long-form prose story, right = founder
 // identity card. Pull quotes are highlighted in the ember accent colour.
@@ -38,17 +40,20 @@ export function AboutFounderSection() {
 
               <p>
                 Every application started the same: stare at the job post, try
-                to figure out what they{" "}
-                <span className="italic">really</span> want, write something
-                that sounds personal but doesn&apos;t take forever, send it
-                off, and wait. Sometimes it worked. Most times, it didn&apos;t.
+                to figure out what they <span className="italic">really</span>{" "}
+                want, write something that sounds personal but doesn&apos;t take
+                forever, send it off, and wait. Sometimes it worked. Most times,
+                it didn&apos;t.
               </p>
 
               {/* Pull quote — amber highlighted */}
               <blockquote className="relative pl-5 border-l-2 border-primary my-2">
                 <p
                   className="text-foreground text-[17px] leading-[1.65]"
-                  style={{ fontFamily: "var(--font-instrument-serif)", fontStyle: "italic" }}
+                  style={{
+                    fontFamily: "var(--font-instrument-serif)",
+                    fontStyle: "italic",
+                  }}
                 >
                   I started using AI to help. ChatGPT was okay — but it
                   didn&apos;t know me. It didn&apos;t know my niche, my stack,
@@ -86,46 +91,21 @@ export function AboutFounderSection() {
 
           {/* ── Right: founder card ───────────────────────────── */}
           <div className="lg:sticky lg:top-32 flex flex-col gap-4">
-            {/* Photo placeholder */}
-            <div className="relative rounded-2xl overflow-hidden border border-border bg-accent aspect-[3/4] flex items-end">
-              {/* Warm gradient background to simulate photo */}
-              <div
-                className="absolute inset-0"
-                style={{
-                  background:
-                    "linear-gradient(160deg, #FDF0EC 0%, #F5D8CE 40%, #E8B9A6 100%)",
-                }}
+            {/* Founder photo */}
+            <div className="relative rounded-2xl overflow-hidden border border-border aspect-[3/4]">
+              <Image
+                src="/assets/founders-chris-and-juliet.webp"
+                alt="Christopher Okafor — Founder of Propreso"
+                fill
+                className="object-cover object-top scale-200"
               />
-
-              {/* Faint dot pattern for texture */}
-              <div
-                className="absolute inset-0 opacity-[0.15]"
-                style={{
-                  backgroundImage:
-                    "radial-gradient(circle, rgba(200,84,56,0.4) 1px, transparent 1px)",
-                  backgroundSize: "20px 20px",
-                }}
-              />
-
-              {/* Large initials */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span
-                  className="text-[clamp(5rem,14vw,7rem)] font-extrabold tracking-[-0.06em] select-none"
-                  style={{
-                    fontFamily: "var(--font-space-grotesk)",
-                    color: "rgba(200,84,56,0.18)",
-                  }}
-                >
-                  CO
-                </span>
-              </div>
 
               {/* Bottom name tag */}
               <div
-                className="relative z-10 w-full px-5 py-5"
+                className="absolute bottom-0 left-0 right-0 z-10 px-5 py-5"
                 style={{
                   background:
-                    "linear-gradient(to top, rgba(26,20,18,0.55) 0%, transparent 100%)",
+                    "linear-gradient(to top, rgba(26,20,18,0.65) 0%, transparent 100%)",
                 }}
               >
                 <p
@@ -141,19 +121,6 @@ export function AboutFounderSection() {
                   Founder · Propreso
                 </p>
               </div>
-
-              {/* Image placeholder notice */}
-              <div
-                className="absolute top-3.5 right-3.5 px-2.5 py-1 rounded-md text-[9.5px] tracking-[0.1em] uppercase"
-                style={{
-                  fontFamily: "var(--font-jetbrains-mono)",
-                  background: "rgba(200,84,56,0.12)",
-                  color: "rgba(200,84,56,0.7)",
-                  border: "1px solid rgba(200,84,56,0.2)",
-                }}
-              >
-                Photo coming soon
-              </div>
             </div>
 
             {/* Caption card */}
@@ -168,9 +135,8 @@ export function AboutFounderSection() {
                 className="text-[13.5px] text-text-secondary leading-[1.7]"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                Christopher is a full-stack freelancer who spent years on
-                Upwork before building the tool he couldn&apos;t find
-                anywhere else.
+                Christopher is a full-stack freelancer who spent years on Upwork
+                before building the tool he couldn&apos;t find anywhere else.
               </p>
             </div>
           </div>
