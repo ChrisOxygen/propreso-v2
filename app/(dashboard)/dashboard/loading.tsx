@@ -1,89 +1,46 @@
 // Shown immediately when navigating to /dashboard while server data fetches
 export default function DashboardLoading() {
   return (
-    <div className="px-4 py-6 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4 mb-6">
-        <div>
-          <div
-            className="h-7 rounded-lg w-28 animate-pulse"
-            style={{ background: "rgba(255,255,255,0.07)" }}
-          />
-          <div
-            className="h-3 rounded w-44 mt-2 animate-pulse"
-            style={{ background: "rgba(255,255,255,0.04)" }}
-          />
-        </div>
-        <div
-          className="h-9 rounded-lg w-32 shrink-0 animate-pulse"
-          style={{ background: "rgba(255,255,255,0.06)" }}
-        />
-      </div>
-
+    <div className="px-2 space-y-5">
       {/* Stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="rounded-xl p-4 animate-pulse"
-            style={{
-              background: "rgba(255,255,255,0.03)",
-              border: "1px solid rgba(255,255,255,0.07)",
-            }}
+            className="rounded-xl p-4 bg-card border border-border flex flex-col gap-3 animate-pulse"
           >
-            <div
-              className="h-8 rounded w-14"
-              style={{ background: "rgba(255,255,255,0.07)" }}
-            />
-            <div
-              className="h-3 rounded w-20 mt-2"
-              style={{ background: "rgba(255,255,255,0.04)" }}
-            />
+            <div className="w-8 h-8 rounded-lg bg-accent" />
+            <div>
+              <div className="h-7 rounded-md w-14 bg-border" />
+              <div className="h-3 rounded w-20 mt-2 bg-accent" />
+            </div>
           </div>
         ))}
+      </div>
+
+      {/* Quick actions */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="rounded-xl h-16 animate-pulse bg-primary/10 border border-primary/20" />
+        <div className="rounded-xl h-16 animate-pulse bg-card border border-border" />
       </div>
 
       {/* Recent proposals */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <div
-            className="h-3.5 rounded w-32 animate-pulse"
-            style={{ background: "rgba(255,255,255,0.06)" }}
-          />
-          <div
-            className="h-3 rounded w-12 animate-pulse"
-            style={{ background: "rgba(255,255,255,0.04)" }}
-          />
+          <div className="h-3.5 rounded w-32 bg-border animate-pulse" />
+          <div className="h-3 rounded w-12 bg-accent animate-pulse" />
         </div>
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{ border: "1px solid rgba(255,255,255,0.07)" }}
-        >
+        <div className="rounded-xl overflow-hidden border border-border">
           {[1, 2, 3, 4, 5].map((i, idx, arr) => (
             <div
               key={i}
-              className="flex items-center justify-between px-4 py-3 animate-pulse"
-              style={{
-                borderBottom:
-                  idx < arr.length - 1
-                    ? "1px solid rgba(255,255,255,0.05)"
-                    : "none",
-              }}
+              className={`flex items-center justify-between px-4 py-3 bg-card animate-pulse${idx < arr.length - 1 ? " border-b border-border" : ""}`}
             >
               <div>
-                <div
-                  className="h-3.5 rounded w-52"
-                  style={{ background: "rgba(255,255,255,0.07)" }}
-                />
-                <div
-                  className="h-3 rounded w-32 mt-1.5"
-                  style={{ background: "rgba(255,255,255,0.04)" }}
-                />
+                <div className="h-3.5 rounded w-52 bg-border" />
+                <div className="h-3 rounded w-32 mt-1.5 bg-accent" />
               </div>
-              <div
-                className="h-5 rounded-full w-16 shrink-0"
-                style={{ background: "rgba(255,255,255,0.05)" }}
-              />
+              <div className="h-5 rounded-full w-16 shrink-0 bg-accent" />
             </div>
           ))}
         </div>
