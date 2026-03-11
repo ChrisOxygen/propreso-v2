@@ -32,43 +32,29 @@ export function AboutStatsSection() {
         </div>
 
         {/* ── Stat tiles ──────────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center">
           {STATS.map(({ value, label }, i) => (
             <div
               key={value}
               className={cn(
-                "relative rounded-2xl p-6 flex flex-col gap-2 overflow-hidden border",
-                i === 0
-                  ? "bg-primary border-primary"
-                  : "bg-card border-border hover:border-border-strong transition-colors duration-200",
+                "flex flex-col items-center gap-1 px-8 py-6 sm:py-0 border-border",
+                // Mobile: cross pattern
+                i === 0 && "border-r border-b",
+                i === 1 && "border-b",
+                i === 2 && "border-r",
+                // Desktop: vertical dividers between items
+                i < STATS.length - 1 && "sm:border-r sm:border-b-0",
+                i === STATS.length - 1 && "sm:border-0",
               )}
             >
-              {/* Faint dot grid on accent card */}
-              {i === 0 && (
-                <div
-                  className="absolute inset-0 opacity-[0.08] pointer-events-none"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(circle, rgba(255,255,255,1) 1px, transparent 1px)",
-                    backgroundSize: "20px 20px",
-                  }}
-                />
-              )}
-
               <span
-                className={cn(
-                  "text-[clamp(2rem,4.5vw,2.8rem)] font-extrabold tracking-[-0.04em] leading-none",
-                  i === 0 ? "text-white" : "text-foreground",
-                )}
+                className="text-[2.25rem] font-extrabold text-foreground tracking-[-0.04em] leading-none"
                 style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
                 {value}
               </span>
               <span
-                className={cn(
-                  "text-[13px] leading-snug",
-                  i === 0 ? "text-white/65" : "text-muted-foreground",
-                )}
+                className="text-[12px] text-muted-foreground text-center leading-snug max-w-28"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
                 {label}
@@ -77,13 +63,6 @@ export function AboutStatsSection() {
           ))}
         </div>
 
-        {/* Update nudge */}
-        <p
-          className="mt-5 text-center text-[11px] text-muted-foreground/40 tracking-[0.06em]"
-          style={{ fontFamily: "var(--font-jetbrains-mono)" }}
-        >
-          Numbers updated monthly
-        </p>
       </div>
     </section>
   );
