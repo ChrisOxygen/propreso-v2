@@ -72,7 +72,6 @@ export function GenerateView() {
   // ── Unsaved-changes state ──────────────────────────────────────────────
   const [isSaved, setIsSaved] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
-  const [editedContent, setEditedContent] = useState<string | null>(null);
 
   const {
     register,
@@ -153,7 +152,6 @@ export function GenerateView() {
 
   function onSubmit(data: ZGenerateProposal) {
     setIsSaved(false);
-    setEditedContent(null);
     setMessages([]);
     sendMessage({ text: data.rawPost });
   }
@@ -164,13 +162,12 @@ export function GenerateView() {
   }
 
   async function handleSave() {
-    const finalContent = editedContent ?? generatedContent;
-    if (!finalContent) return;
+    if (!generatedContent) return;
     const data = getValues();
     try {
       const result = await saveProposal.mutateAsync({
         ...data,
-        generatedContent: finalContent,
+        generatedContent,
       });
       setIsSaved(true);
       toast.success("Proposal saved!", {
@@ -354,7 +351,6 @@ export function GenerateView() {
             hasGenerated={hasGenerated}
             onSave={handleSave}
             onRegenerate={handleRegenerate}
-            onContentChange={setEditedContent}
           />
         </div>
       </div>
