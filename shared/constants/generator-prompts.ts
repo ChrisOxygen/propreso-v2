@@ -205,19 +205,17 @@ export function buildGeneratorSystemPrompt(
     skills: string[];
     portfolioItems: Array<{ url: string; description: string }>;
   },
-  tone: Tone,
-  selectedPortfolioItem: { url: string; description: string } | null
+  tone: Tone
 ): string {
-  const selectedItemBlock = selectedPortfolioItem
-    ? `\n\nSELECTED PORTFOLIO ITEM (use this as your proof reference):
-Description: ${selectedPortfolioItem.description}
-URL: ${selectedPortfolioItem.url}`
-    : "";
+  const portfolioBlock =
+    profile.portfolioItems.length > 0
+      ? `\n\nPORTFOLIO ITEMS:\n${profile.portfolioItems.map((item, i) => `${i + 1}. ${item.description} — ${item.url}`).join("\n")}`
+      : "";
 
   const profileBlock = `## FREELANCER PROFILE (The Applicant)
 Role/Title: ${profile.name}
 Skills: ${profile.skills.join(", ")}
-Bio: ${profile.bio}${selectedItemBlock}
+Bio: ${profile.bio}${portfolioBlock}
 
 Ground every claim in what's actually true about this freelancer — don't invent experience they don't have.`;
 

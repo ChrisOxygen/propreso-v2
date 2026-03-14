@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Sparkles, Briefcase } from "lucide-react";
+import { Loader2, Sparkles } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -87,7 +87,6 @@ export function GenerateView() {
       profileId: "",
       rawPost: "",
       tone: "PROFESSIONAL",
-      selectedPortfolioItem: null,
     },
   });
 
@@ -104,26 +103,12 @@ export function GenerateView() {
 
   const formValues = watch();
 
-  // Derive portfolio items from the selected profile
-  const selectedProfile = profiles.find((p) => p.id === formValues.profileId);
-  const portfolioItems = (() => {
-    try {
-      const items = selectedProfile?.portfolioItems as
-        | Array<{ url: string; description: string }>
-        | undefined;
-      return Array.isArray(items) ? items : [];
-    } catch {
-      return [];
-    }
-  })();
-
   // Keep a ref with the latest extra body so the transport stays stable
   const extraBodyRef = useRef<Record<string, unknown>>({});
   extraBodyRef.current = {
     profileId: formValues.profileId,
     tone: formValues.tone,
     rawPost: formValues.rawPost,
-    selectedPortfolioItem: formValues.selectedPortfolioItem ?? null,
   };
 
   const transport = useMemo(
@@ -259,63 +244,6 @@ export function GenerateView() {
                 />
               )}
             </div>
-
-            {/* Portfolio item selector — only shown when profile has items */}
-            {portfolioItems.length > 0 && (
-              <>
-                <div className="h-px bg-border" />
-                <div>
-                  <SectionLabel>Highlight a Portfolio Item</SectionLabel>
-                  <Controller
-                    name="selectedPortfolioItem"
-                    control={control}
-                    render={({ field }) => (
-                      <div className="flex flex-col gap-2">
-                        {portfolioItems.map((item, i) => {
-                          const isSelected =
-                            field.value?.url === item.url &&
-                            field.value?.description === item.description;
-                          let hostname = item.url;
-                          try {
-                            hostname = new URL(item.url).hostname;
-                          } catch { /* use raw url */ }
-
-                          return (
-                            <button
-                              key={i}
-                              type="button"
-                              onClick={() =>
-                                field.onChange(isSelected ? null : item)
-                              }
-                              className={`flex items-start gap-2.5 p-3 rounded-lg text-left transition-all duration-150 border ${
-                                isSelected
-                                  ? "bg-accent border-primary/20"
-                                  : "bg-background border-border hover:bg-accent/50"
-                              }`}
-                            >
-                              <Briefcase
-                                size={13}
-                                className={`shrink-0 mt-0.5 ${isSelected ? "text-primary" : "text-muted-foreground"}`}
-                              />
-                              <div className="min-w-0">
-                                <p className="text-[12px] font-medium text-foreground leading-snug line-clamp-2">
-                                  {item.description.length > 60
-                                    ? item.description.slice(0, 60) + "…"
-                                    : item.description}
-                                </p>
-                                <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
-                                  {hostname}
-                                </p>
-                              </div>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    )}
-                  />
-                </div>
-              </>
-            )}
 
             <div className="h-px bg-border" />
 

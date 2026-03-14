@@ -30,11 +30,10 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { profileId, tone, rawPost, selectedPortfolioItem } = body as {
+  const { profileId, tone, rawPost } = body as {
     profileId: string;
     tone: Tone;
     rawPost: string;
-    selectedPortfolioItem: { url: string; description: string } | null;
   };
 
   // Atomic check-and-decrement: only succeeds if tokenBalance > 0
@@ -159,7 +158,7 @@ export async function POST(request: NextRequest) {
 
   const result = streamText({
     model: openrouter(GENERATOR_MODEL),
-    system: buildGeneratorSystemPrompt(profileData, tone, selectedPortfolioItem),
+    system: buildGeneratorSystemPrompt(profileData, tone),
     messages: [{ role: "user", content: buildGeneratorUserMessage(analysisText) }],
     onFinish: async () => {
       try {
