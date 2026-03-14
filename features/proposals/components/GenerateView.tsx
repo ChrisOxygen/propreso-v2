@@ -72,6 +72,7 @@ export function GenerateView() {
   // ── Unsaved-changes state ──────────────────────────────────────────────
   const [isSaved, setIsSaved] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
+  const [editedContent, setEditedContent] = useState<string | null>(null);
 
   const {
     register,
@@ -120,9 +121,31 @@ export function GenerateView() {
     [],
   );
 
-  const { messages, sendMessage, regenerate, setMessages, status } = useChat({
-    transport,
-  });
+  const { messages, sendMessage, regenerate, setMessages, status, error } =
+    useChat({ transport });
+
+  // Surface generation errors as toasts
+  useEffect(() => {
+    if (!error) return;
+    const msg = error.message ?? "";
+    if (msg.includes("token_limit_reached")) {
+      toast.error("Out of tokens", {
+        description: "You've used all your generation tokens. Upgrade to Pro for more.",
+      });
+    } else if (msg.includes("suspicious_post")) {
+      toast.error("Post flagged", {
+        description: "This job post looks suspicious. Try a different one.",
+      });
+    } else if (msg.includes("analysis_failed")) {
+      toast.error("Analysis failed", {
+        description: "Couldn't analyze the job post. Please try again.",
+      });
+    } else {
+      toast.error("Generation failed", {
+        description: "Something went wrong. Please try again.",
+      });
+    }
+  }, [error]);
 
   const isAnalyzing = status === "submitted";
   const isGenerating = status === "streaming";
@@ -152,6 +175,7 @@ export function GenerateView() {
 
   function onSubmit(data: ZGenerateProposal) {
     setIsSaved(false);
+    setEditedContent(null);
     setMessages([]);
     sendMessage({ text: data.rawPost });
   }
@@ -162,12 +186,13 @@ export function GenerateView() {
   }
 
   async function handleSave() {
-    if (!generatedContent) return;
+    const finalContent = editedContent ?? generatedContent;
+    if (!finalContent) return;
     const data = getValues();
     try {
       const result = await saveProposal.mutateAsync({
         ...data,
-        generatedContent,
+        generatedContent: finalContent,
       });
       setIsSaved(true);
       toast.success("Proposal saved!", {
@@ -351,6 +376,7 @@ export function GenerateView() {
             hasGenerated={hasGenerated}
             onSave={handleSave}
             onRegenerate={handleRegenerate}
+            onContentChange={setEditedContent}
           />
         </div>
       </div>
