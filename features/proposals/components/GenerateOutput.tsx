@@ -15,6 +15,7 @@ import {
   List,
   ListOrdered,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { UPWORK_CHAR_LIMIT } from "@/features/proposals/constants/generation";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 
@@ -49,6 +50,32 @@ const TOOLBAR_ITEMS: Array<{
   { type: "ol", icon: ListOrdered, label: "Numbered list" },
 ];
 
+const mdComponents: React.ComponentProps<typeof ReactMarkdown>["components"] =
+  {
+    p: ({ children }) => (
+      <p className="mb-3 last:mb-0 text-[13.5px] leading-[1.8] text-foreground">
+        {children}
+      </p>
+    ),
+    strong: ({ children }) => (
+      <strong className="font-semibold text-foreground">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+    ul: ({ children }) => (
+      <ul className="list-disc pl-5 mb-3 space-y-0.5 text-[13.5px] leading-[1.8] text-foreground">
+        {children}
+      </ul>
+    ),
+    ol: ({ children }) => (
+      <ol className="list-decimal pl-5 mb-3 space-y-0.5 text-[13.5px] leading-[1.8] text-foreground">
+        {children}
+      </ol>
+    ),
+    li: ({ children }) => (
+      <li className="text-[13.5px] leading-[1.8] text-foreground">{children}</li>
+    ),
+  };
+
 export function GenerateOutput({
   content,
   isAnalyzing,
@@ -62,6 +89,7 @@ export function GenerateOutput({
 }: GenerateOutputProps) {
   const [copied, setCopied] = useState(false);
   const [localValue, setLocalValue] = useState("");
+  const [editorTab, setEditorTab] = useState<"write" | "preview">("write");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const contentRef = useRef(content);
   contentRef.current = content;
@@ -77,7 +105,10 @@ export function GenerateOutput({
 
   // Reset editor when a new generation starts
   useEffect(() => {
-    if (!hasGenerated) setLocalValue("");
+    if (!hasGenerated) {
+      setLocalValue("");
+      setEditorTab("write");
+    }
   }, [hasGenerated]);
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -124,7 +155,9 @@ export function GenerateOutput({
         const lineStart = localValue.lastIndexOf("\n", start - 1) + 1;
         const prefix = "- ";
         newValue =
-          localValue.slice(0, lineStart) + prefix + localValue.slice(lineStart);
+          localValue.slice(0, lineStart) +
+          prefix +
+          localValue.slice(lineStart);
         newStart = newEnd = start + prefix.length;
       }
     } else if (format === "ol") {
@@ -141,7 +174,9 @@ export function GenerateOutput({
         const lineStart = localValue.lastIndexOf("\n", start - 1) + 1;
         const prefix = "1. ";
         newValue =
-          localValue.slice(0, lineStart) + prefix + localValue.slice(lineStart);
+          localValue.slice(0, lineStart) +
+          prefix +
+          localValue.slice(lineStart);
         newStart = newEnd = start + prefix.length;
       }
     }
@@ -218,49 +253,83 @@ export function GenerateOutput({
       <div className="relative flex-1 rounded-xl overflow-hidden bg-card border border-border min-h-85">
         {isEditing ? (
           <>
-            {/* Markdown toolbar */}
-            <div className="flex items-center gap-0.5 px-2.5 py-2 border-b border-border bg-background/60">
-              {TOOLBAR_ITEMS.map(({ type, icon: Icon, label }) => (
-                <button
-                  key={type}
-                  type="button"
-                  title={label}
-                  onClick={() => applyFormat(type)}
-                  className="inline-flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-100"
-                >
-                  <Icon size={14} />
-                </button>
-              ))}
-              <div className="w-px h-3.5 bg-border mx-1.5" />
-              <span className="text-[10.5px] text-muted-foreground/50 select-none">
-                Markdown supported
-              </span>
+            {/* Toolbar: Write/Preview tabs + formatting buttons */}
+            <div className="flex items-center justify-between px-2.5 py-2 border-b border-border bg-background/60">
+              {/* Write / Preview tabs */}
+              <div className="flex items-center gap-0.5">
+                {(["write", "preview"] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => setEditorTab(tab)}
+                    className={`h-7 px-3 rounded-md text-[12px] font-medium transition-colors duration-100 capitalize ${
+                      editorTab === tab
+                        ? "bg-accent text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-accent/60"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
+
+              {/* Formatting buttons — only visible in Write tab */}
+              {editorTab === "write" && (
+                <div className="flex items-center gap-0.5">
+                  {TOOLBAR_ITEMS.map(({ type, icon: Icon, label }) => (
+                    <button
+                      key={type}
+                      type="button"
+                      title={label}
+                      onClick={() => applyFormat(type)}
+                      className="inline-flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-100"
+                    >
+                      <Icon size={14} />
+                    </button>
+                  ))}
+                  <div className="w-px h-3.5 bg-border mx-1.5" />
+                  <span className="text-[10.5px] text-muted-foreground/50 select-none pr-1">
+                    Markdown
+                  </span>
+                </div>
+              )}
             </div>
 
-            {/* Auto-resizing textarea via mirror-div pattern */}
-            <ScrollArea className="h-[340px]">
-              <div className="relative min-h-[340px]">
-                {/* Invisible mirror — expands to push the ScrollArea to scroll */}
-                <div
-                  aria-hidden
-                  className="invisible whitespace-pre-wrap break-words px-5 py-4 text-[13.5px] leading-[1.8] min-h-[340px] pointer-events-none"
-                >
-                  {localValue + "\n"}
+            {editorTab === "write" ? (
+              /* Write tab: auto-resizing textarea via mirror-div pattern */
+              <ScrollArea className="h-[340px]">
+                <div className="relative min-h-[340px]">
+                  {/* Invisible mirror — sizes the scroll container to content */}
+                  <div
+                    aria-hidden
+                    className="invisible whitespace-pre-wrap break-words px-5 py-4 text-[13.5px] leading-[1.8] min-h-[340px] pointer-events-none"
+                  >
+                    {localValue + "\n"}
+                  </div>
+                  {/* Textarea overlays the mirror exactly */}
+                  <textarea
+                    ref={textareaRef}
+                    value={localValue}
+                    onChange={handleChange}
+                    spellCheck
+                    placeholder="Your proposal will appear here…"
+                    className="absolute inset-0 w-full h-full px-5 py-4 text-[13.5px] leading-[1.8] text-foreground bg-card resize-none overflow-hidden outline-none placeholder:text-muted-foreground"
+                  />
                 </div>
-                {/* Textarea overlays the mirror exactly */}
-                <textarea
-                  ref={textareaRef}
-                  value={localValue}
-                  onChange={handleChange}
-                  spellCheck
-                  placeholder="Your proposal will appear here…"
-                  className="absolute inset-0 w-full h-full px-5 py-4 text-[13.5px] leading-[1.8] text-foreground bg-card resize-none overflow-hidden outline-none placeholder:text-muted-foreground"
-                />
-              </div>
-            </ScrollArea>
+              </ScrollArea>
+            ) : (
+              /* Preview tab: rendered markdown */
+              <ScrollArea className="h-[340px]">
+                <div className="px-5 py-4">
+                  <ReactMarkdown components={mdComponents}>
+                    {localValue}
+                  </ReactMarkdown>
+                </div>
+              </ScrollArea>
+            )}
           </>
         ) : (
-          /* Streaming — read-only */
+          /* Streaming — plain text with animated cursor */
           <ScrollArea className="h-full min-h-85">
             <div className="p-5">
               <p className="text-[13.5px] leading-[1.8] whitespace-pre-wrap text-foreground">
