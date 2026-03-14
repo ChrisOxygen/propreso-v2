@@ -115,11 +115,13 @@ export async function POST(request: NextRequest) {
     derived_title?: string;
   };
   try {
-    const cleaned = analysisText
-      .replace(/^```(?:json)?\s*/i, "")
-      .replace(/\s*```$/, "")
-      .trim();
-    signals = JSON.parse(cleaned) as typeof signals;
+    // Extract the JSON object robustly — handles markdown fences and trailing prose
+    const jsonStart = analysisText.indexOf("{");
+    const jsonEnd = analysisText.lastIndexOf("}");
+    if (jsonStart === -1 || jsonEnd === -1 || jsonEnd < jsonStart) {
+      throw new Error("No JSON object found in analyzer output");
+    }
+    signals = JSON.parse(analysisText.slice(jsonStart, jsonEnd + 1)) as typeof signals;
   } catch {
     console.error("[generations] JSON.parse failed on analyzer output:", analysisText);
     await prisma.user.update({

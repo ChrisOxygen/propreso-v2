@@ -74,7 +74,7 @@ Output shape:
 
 ---
 
-Output strict JSON only. No markdown fences. No keys outside the schema above.`;
+Output strict JSON only. No markdown fences. No keys outside the schema above. Do NOT add any text, notes, commentary, or strategy tips after the closing brace — the JSON object is the entire response.`;
 
 export function buildAnalyzerUserMessage(
   rawPost: string,
