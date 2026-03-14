@@ -15,6 +15,7 @@ import {
   List,
   ListOrdered,
 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { UPWORK_CHAR_LIMIT } from "@/features/proposals/constants/generation";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 
@@ -49,6 +50,32 @@ const TOOLBAR_ITEMS: Array<{
   { type: "ol", icon: ListOrdered, label: "Numbered list" },
 ];
 
+const mdComponents: React.ComponentProps<typeof ReactMarkdown>["components"] =
+  {
+    p: ({ children }) => (
+      <p className="mb-3 last:mb-0 text-[13.5px] leading-[1.8] text-foreground">
+        {children}
+      </p>
+    ),
+    strong: ({ children }) => (
+      <strong className="font-semibold text-foreground">{children}</strong>
+    ),
+    em: ({ children }) => <em className="italic">{children}</em>,
+    ul: ({ children }) => (
+      <ul className="list-disc pl-5 mb-3 space-y-0.5 text-[13.5px] leading-[1.8] text-foreground">
+        {children}
+      </ul>
+    ),
+    ol: ({ children }) => (
+      <ol className="list-decimal pl-5 mb-3 space-y-0.5 text-[13.5px] leading-[1.8] text-foreground">
+        {children}
+      </ol>
+    ),
+    li: ({ children }) => (
+      <li className="text-[13.5px] leading-[1.8] text-foreground">{children}</li>
+    ),
+  };
+
 export function GenerateOutput({
   content,
   isAnalyzing,
@@ -62,106 +89,56 @@ export function GenerateOutput({
 }: GenerateOutputProps) {
   const [copied, setCopied] = useState(false);
   const [localValue, setLocalValue] = useState("");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const contentRef = useRef(content);
   contentRef.current = content;
 
   const isEditing = hasGenerated && !isStreaming;
 
-  // When streaming ends, initialize the editor with the final streamed content
+  // When streaming ends, initialize local value with the final content
   useEffect(() => {
     if (!isStreaming && contentRef.current) {
       setLocalValue(contentRef.current);
     }
   }, [isStreaming]);
 
-  // Reset editor when a new generation starts
+  // Reset when a new generation starts
   useEffect(() => {
     if (!hasGenerated) {
       setLocalValue("");
     }
   }, [hasGenerated]);
 
-  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    const val = e.target.value;
-    setLocalValue(val);
-    onContentChange?.(val);
-  }
-
   function applyFormat(format: FormatType) {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
+    const selection = window.getSelection();
+    const selectedText = selection?.toString() ?? "";
+    if (!selectedText) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selected = localValue.slice(start, end);
+    // Find the selected plain text in the markdown source
+    const idx = localValue.indexOf(selectedText);
+    if (idx === -1) return;
 
-    let newValue = localValue;
-    let newStart = start;
-    let newEnd = end;
-
+    let wrapped = selectedText;
     if (format === "bold") {
-      const inner = selected || "bold text";
-      newValue =
-        localValue.slice(0, start) + `**${inner}**` + localValue.slice(end);
-      newStart = start + 2;
-      newEnd = newStart + inner.length;
+      wrapped = `**${selectedText}**`;
     } else if (format === "italic") {
-      const inner = selected || "italic text";
-      newValue =
-        localValue.slice(0, start) + `*${inner}*` + localValue.slice(end);
-      newStart = start + 1;
-      newEnd = newStart + inner.length;
+      wrapped = `*${selectedText}*`;
     } else if (format === "ul") {
-      if (selected) {
-        const formatted = selected
-          .split("\n")
-          .map((l) => `- ${l}`)
-          .join("\n");
-        newValue =
-          localValue.slice(0, start) + formatted + localValue.slice(end);
-        newStart = start;
-        newEnd = start + formatted.length;
-      } else {
-        const lineStart = localValue.lastIndexOf("\n", start - 1) + 1;
-        const prefix = "- ";
-        newValue =
-          localValue.slice(0, lineStart) +
-          prefix +
-          localValue.slice(lineStart);
-        newStart = newEnd = start + prefix.length;
-      }
+      wrapped = selectedText
+        .split("\n")
+        .map((l) => `- ${l}`)
+        .join("\n");
     } else if (format === "ol") {
-      if (selected) {
-        const formatted = selected
-          .split("\n")
-          .map((l, i) => `${i + 1}. ${l}`)
-          .join("\n");
-        newValue =
-          localValue.slice(0, start) + formatted + localValue.slice(end);
-        newStart = start;
-        newEnd = start + formatted.length;
-      } else {
-        const lineStart = localValue.lastIndexOf("\n", start - 1) + 1;
-        const prefix = "1. ";
-        newValue =
-          localValue.slice(0, lineStart) +
-          prefix +
-          localValue.slice(lineStart);
-        newStart = newEnd = start + prefix.length;
-      }
+      wrapped = selectedText
+        .split("\n")
+        .map((l, i) => `${i + 1}. ${l}`)
+        .join("\n");
     }
 
+    const newValue =
+      localValue.slice(0, idx) + wrapped + localValue.slice(idx + selectedText.length);
     setLocalValue(newValue);
     onContentChange?.(newValue);
-
-    requestAnimationFrame(() => {
-      if (textareaRef.current) {
-        textareaRef.current.selectionStart = newStart;
-        textareaRef.current.selectionEnd = newEnd;
-        textareaRef.current.focus();
-      }
-    });
+    selection?.removeAllRanges();
   }
 
   const displayValue = isEditing ? localValue : content;
@@ -225,45 +202,34 @@ export function GenerateOutput({
         {isEditing ? (
           <>
             {/* Formatting toolbar */}
-            <div className="flex items-center justify-between px-2.5 py-2 border-b border-border bg-background/60">
-              <div className="flex items-center gap-0.5">
-                {TOOLBAR_ITEMS.map(({ type, icon: Icon, label }) => (
-                  <button
-                    key={type}
-                    type="button"
-                    title={label}
-                    onClick={() => applyFormat(type)}
-                    className="inline-flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-100"
-                  >
-                    <Icon size={14} />
-                  </button>
-                ))}
-                <div className="w-px h-3.5 bg-border mx-1.5" />
-                <span className="text-[10.5px] text-muted-foreground/50 select-none pr-1">
-                  Markdown
-                </span>
-              </div>
+            <div className="flex items-center gap-0.5 px-2.5 py-2 border-b border-border bg-background/60">
+              {TOOLBAR_ITEMS.map(({ type, icon: Icon, label }) => (
+                <button
+                  key={type}
+                  type="button"
+                  title={label}
+                  onMouseDown={(e) => {
+                    // Prevent losing the text selection when clicking toolbar
+                    e.preventDefault();
+                    applyFormat(type);
+                  }}
+                  className="inline-flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-100"
+                >
+                  <Icon size={14} />
+                </button>
+              ))}
+              <div className="w-px h-3.5 bg-border mx-1.5" />
+              <span className="text-[10.5px] text-muted-foreground/50 select-none pr-1">
+                Select text, then format
+              </span>
             </div>
 
-            {/* Editable textarea */}
+            {/* Rendered markdown — selectable */}
             <ScrollArea className="h-[340px]">
-              <div className="relative min-h-[340px]">
-                {/* Invisible mirror — sizes the scroll container to content */}
-                <div
-                  aria-hidden
-                  className="invisible whitespace-pre-wrap break-words px-5 py-4 text-[13.5px] leading-[1.8] min-h-[340px] pointer-events-none"
-                >
-                  {localValue + "\n"}
-                </div>
-                {/* Textarea overlays the mirror exactly */}
-                <textarea
-                  ref={textareaRef}
-                  value={localValue}
-                  onChange={handleChange}
-                  spellCheck
-                  placeholder="Your proposal will appear here…"
-                  className="absolute inset-0 w-full h-full px-5 py-4 text-[13.5px] leading-[1.8] text-foreground bg-card resize-none overflow-hidden outline-none placeholder:text-muted-foreground"
-                />
+              <div className="px-5 py-4 select-text cursor-text">
+                <ReactMarkdown components={mdComponents}>
+                  {localValue}
+                </ReactMarkdown>
               </div>
             </ScrollArea>
           </>
