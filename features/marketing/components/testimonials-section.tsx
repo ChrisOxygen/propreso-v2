@@ -1,6 +1,7 @@
 import { TESTIMONIALS } from "../constants/testimonials";
 import { TestimonialCard } from "./testimonial-card";
 import { TestimonialsSlider } from "./testimonials-slider";
+import { ScrollReveal } from "@/shared/components/scroll-reveal";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -59,7 +60,7 @@ export function TestimonialsSection() {
 
       <div className="relative mx-auto sm:max-w-lg md:max-w-2xl lg:max-w-5xl px-6">
         {/* ── Header ────────────────────────────────────────── */}
-        <div className="text-center mb-12 md:mb-16">
+        <ScrollReveal className="text-center mb-12 md:mb-16">
           {/* Pill */}
 
           <p
@@ -91,30 +92,32 @@ export function TestimonialsSection() {
           >
             Find out how our happy clients are raving about us.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* ── Grid ──────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:items-stretch">
           {/* Left — p1, spans both rows */}
-          <div className="lg:row-span-2">
+          <ScrollReveal className="lg:row-span-2">
             <TestimonialCard
               testimonial={p1}
               showTitle
               variant="light"
               className="h-full min-h-[440px]"
             />
-          </div>
+          </ScrollReveal>
 
           {/* Right top — p2 */}
-          <TestimonialCard
-            testimonial={p2}
-            showTitle
-            variant="light"
-            className="min-h-[210px]"
-          />
+          <ScrollReveal delay={100}>
+            <TestimonialCard
+              testimonial={p2}
+              showTitle
+              variant="light"
+              className="min-h-[210px]"
+            />
+          </ScrollReveal>
 
           {/* Right bottom — sliders */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[210px]">
+          <ScrollReveal delay={200} className="grid grid-cols-1 sm:grid-cols-2 gap-4 min-h-[210px]">
             <TestimonialsSlider
               testimonials={sliderA}
               direction="vertical"
@@ -127,7 +130,7 @@ export function TestimonialsSection() {
               startingBackground="dark"
               className="h-full"
             />
-          </div>
+          </ScrollReveal>
         </div>
 
         {/* ── Social proof bar ──────────────────────────────── */}

@@ -39,7 +39,7 @@ export function AboutHeroSection() {
         {/* Eyebrow */}
         <Badge
           variant="outline"
-          className="border-primary/20 bg-accent text-primary px-4 py-1.5 text-[11px] tracking-widest uppercase rounded-full"
+          className="animate-fade-up border-primary/20 bg-accent text-primary px-4 py-1.5 text-[11px] tracking-widest uppercase rounded-full"
           style={{ fontFamily: "var(--font-jetbrains-mono)" }}
         >
           Our Story
@@ -47,7 +47,7 @@ export function AboutHeroSection() {
 
         {/* Headline */}
         <h1
-          className="text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold text-foreground tracking-[-0.04em] leading-[1.05]"
+          className="animate-fade-up delay-100 text-[clamp(2.4rem,6vw,4.5rem)] font-extrabold text-foreground tracking-[-0.04em] leading-[1.05]"
           style={{ fontFamily: "var(--font-space-grotesk)" }}
         >
           Built by a freelancer,{" "}
@@ -76,7 +76,7 @@ export function AboutHeroSection() {
         </p>
 
         {/* Decorative divider */}
-        <div className="mt-2 flex items-center gap-3">
+        <div className="animate-fade-in delay-300 mt-2 flex items-center gap-3">
           <div className="w-12 h-px bg-border-strong" />
           <div className="w-2 h-2 rounded-full bg-primary/40" />
           <div className="w-12 h-px bg-border-strong" />

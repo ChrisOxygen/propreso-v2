@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { UserCircle, ClipboardList, Zap } from "lucide-react";
+import { ScrollReveal } from "@/shared/components/scroll-reveal";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Data
@@ -73,7 +74,7 @@ export function HowItWorksSection() {
 
       <div className="relative mx-auto sm:max-w-lg lg:max-w-5xl px-6">
         {/* ── Section header ──────────────────────────────── */}
-        <div className="relative mb-16 md:mb-20 text-center">
+        <ScrollReveal className="relative mb-16 md:mb-20 text-center">
           <DecorativeBoxes />
 
           {/* Eyebrow */}
@@ -105,12 +106,12 @@ export function HowItWorksSection() {
           >
             Here&rsquo;s exactly what happens when you use Propreso:
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* ── Two-column body ─────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-12 lg:gap-24 items-start">
           {/* ── Left: image stack ───────────────────────── */}
-          <div className="relative lg:sticky lg:top-32">
+          <ScrollReveal delay={100} className="relative lg:sticky lg:top-32">
             {/* Outer glow */}
             <div
               className="absolute -inset-4 rounded-3xl pointer-events-none"
@@ -164,14 +165,14 @@ export function HowItWorksSection() {
 
             {/* Spacer so overflowing card isn't clipped */}
             <div className="h-20 lg:h-20" />
-          </div>
+          </ScrollReveal>
 
           {/* ── Right: steps ────────────────────────────── */}
           <div className="pt-2 lg:pt-0">
             <div className="space-y-3">
-              {STEPS.map(({ number, icon: Icon, title, description }) => (
+              {STEPS.map(({ number, icon: Icon, title, description }, i) => (
+                <ScrollReveal key={number} delay={i * 120}>
                 <div
-                  key={number}
                   className="group flex gap-5 py-6 px-5  border-l-4 border-border hover:border-primary/25 hover:bg-white/60 transition-all duration-200"
                 >
                   {/* Icon badge */}
@@ -212,6 +213,7 @@ export function HowItWorksSection() {
                     </p>
                   </div>
                 </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>

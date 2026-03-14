@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ScrollReveal } from "@/shared/components/scroll-reveal";
 import {
   Brain,
   Sliders,
@@ -342,7 +343,7 @@ export function FeaturesSection() {
 
         <div className="relative mx-auto sm:max-w-lg md:max-w-2xl lg:max-w-5xl px-6">
           {/* Side-by-side header */}
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-20">
+          <ScrollReveal className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-20">
             {/* Left: eyebrow + title */}
             <div>
               {/* <p
@@ -377,7 +378,7 @@ export function FeaturesSection() {
                 Here&apos;s what&apos;s under the hood.
               </p>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
         {/* ── Video — bleeds between primary and accent zones ── */}
         <div className="relative z-10 mx-auto sm:max-w-lg md:max-w-2xl lg:max-w-5xl px-6 mt-14 md:mt-20">
@@ -398,14 +399,16 @@ export function FeaturesSection() {
 
           {/* 3-col grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {FEATURES.map((feature) => (
-              <FeatureCard key={feature.title} {...feature} />
+            {FEATURES.map((feature, i) => (
+              <ScrollReveal key={feature.title} delay={i * 60}>
+                <FeatureCard {...feature} />
+              </ScrollReveal>
             ))}
 
             {/* CTA — fills the 2 remaining columns on the last row */}
-            <div className="md:col-span-1 lg:col-span-2">
+            <ScrollReveal className="md:col-span-1 lg:col-span-2" delay={FEATURES.length * 60}>
               <CTACard />
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </div>

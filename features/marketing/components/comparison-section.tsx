@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Check, Minus, X, ArrowRight } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
+import { ScrollReveal } from "@/shared/components/scroll-reveal";
 
 // ─── Types & Data ─────────────────────────────────────────────────────────────
 
@@ -158,7 +159,7 @@ export function ComparisonSection() {
     <section className="bg-gradient-to-b from-white to-background pt-20 md:pt-28 pb-20 md:pb-28">
       <div className="mx-auto sm:max-w-lg md:max-w-2xl lg:max-w-5xl px-6">
         {/* ── Comparison header ───────────────────────────────── */}
-        <div className="text-center mb-12 md:mb-16">
+        <ScrollReveal className="text-center mb-12 md:mb-16">
           <p
             className="text-[11px] tracking-[0.14em] uppercase text-muted-foreground/40 mb-5"
             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
@@ -186,10 +187,10 @@ export function ComparisonSection() {
             Here&apos;s how Propreso compares to the other tools freelancers
             use.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* ── Table ───────────────────────────────────────────── */}
-        <div className="-mx-6 px-6 overflow-x-auto">
+        <ScrollReveal delay={80} className="-mx-6 px-6 overflow-x-auto">
           <div className="min-w-[600px] bg-card rounded-2xl border border-border overflow-hidden shadow-[0_2px_16px_rgba(26,20,18,0.06)]">
             <table className="w-full border-collapse">
               <thead>
@@ -327,7 +328,7 @@ export function ComparisonSection() {
               </tbody>
             </table>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* ── Footnote ────────────────────────────────────────── */}
         <p
@@ -340,7 +341,7 @@ export function ComparisonSection() {
         </p>
 
         {/* ── Pricing teaser box ──────────────────────────────── */}
-        <div className="mt-16 md:mt-20 rounded-2xl border border-primary px-6 py-8 sm:px-8 sm:py-10 md:px-12 md:py-12">
+        <ScrollReveal className="mt-16 md:mt-20 rounded-2xl border border-primary px-6 py-8 sm:px-8 sm:py-10 md:px-12 md:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-20 items-center">
             {/* Left — copy */}
             <div>
@@ -396,7 +397,7 @@ export function ComparisonSection() {
               </p>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

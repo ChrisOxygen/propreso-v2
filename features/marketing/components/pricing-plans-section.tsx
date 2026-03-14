@@ -98,7 +98,7 @@ export function PricingPlansSection() {
       {/* ── Content ───────────────────────────────────────────────────── */}
       <div className="relative z-10 mx-auto max-w-5xl px-6">
         {/* ── Hero text ─────────────────────────────────────────────── */}
-        <div className="text-center mb-12 md:mb-16">
+        <div className="animate-fade-up text-center mb-12 md:mb-16">
           <p
             className="text-[11px] tracking-[0.14em] uppercase text-muted-foreground/40 mb-5"
             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
@@ -135,7 +135,7 @@ export function PricingPlansSection() {
         </div>
 
         {/* ── Billing toggle ────────────────────────────────────────── */}
-        <div className="flex justify-center mb-12 md:mb-16">
+        <div className="animate-fade-in delay-200 flex justify-center mb-12 md:mb-16">
           <div className="flex items-center bg-muted rounded-full p-1 gap-0.5">
             <button
               onClick={() => setBilling("monthly")}
@@ -176,7 +176,7 @@ export function PricingPlansSection() {
         {/* ── Plan cards ────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           {/* ─ Free card ─────────────────────────────────────────── */}
-          <div className="flex flex-col bg-card border border-border rounded-2xl p-7 shadow-[0_2px_12px_rgba(26,20,18,0.05)]">
+          <div className="animate-fade-up delay-300 flex flex-col bg-card border border-border rounded-2xl p-7 shadow-[0_2px_12px_rgba(26,20,18,0.05)]">
             {/* Plan label */}
             <span
               className="text-[10.5px] tracking-[0.14em] uppercase text-muted-foreground mb-3 block"
@@ -242,7 +242,7 @@ export function PricingPlansSection() {
           </div>
 
           {/* ─ Pro card ──────────────────────────────────────────── */}
-          <div className="relative flex flex-col bg-accent border-2 border-primary rounded-2xl p-7 shadow-[0_8px_32px_rgba(200,84,56,0.12),0_2px_8px_rgba(200,84,56,0.06)]">
+          <div className="animate-fade-up delay-400 relative flex flex-col bg-accent border-2 border-primary rounded-2xl p-7 shadow-[0_8px_32px_rgba(200,84,56,0.12),0_2px_8px_rgba(200,84,56,0.06)]">
             {/* Most Popular badge */}
             <span
               className="absolute top-5 right-5 bg-primary text-white text-[10.5px] font-bold tracking-[0.05em] uppercase px-3 py-1 rounded-full shadow-[0_2px_8px_rgba(200,84,56,0.3)]"

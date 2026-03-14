@@ -1,4 +1,5 @@
 import { cn } from "@/shared/lib/utils";
+import { ScrollReveal } from "@/shared/components/scroll-reveal";
 
 // ─── About Stats Section ───────────────────────────────────────────────────────
 // Large bold stat tiles in a row — mirrors the HeroSection stats treatment
@@ -16,7 +17,7 @@ export function AboutStatsSection() {
     <section className="bg-background py-20 md:py-28">
       <div className="mx-auto max-w-6xl px-6">
         {/* ── Header ──────────────────────────────────────────── */}
-        <div className="mb-14 text-center flex flex-col items-center gap-2">
+        <ScrollReveal className="mb-14 text-center flex flex-col items-center gap-2">
           <p
             className="text-[11px] tracking-[0.18em] uppercase text-muted-foreground/50"
             style={{ fontFamily: "var(--font-jetbrains-mono)" }}
@@ -29,10 +30,10 @@ export function AboutStatsSection() {
           >
             Real numbers, no fluff.
           </h2>
-        </div>
+        </ScrollReveal>
 
         {/* ── Stat tiles ──────────────────────────────────────── */}
-        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center">
+        <ScrollReveal delay={100} className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center">
           {STATS.map(({ value, label }, i) => (
             <div
               key={value}
@@ -61,7 +62,7 @@ export function AboutStatsSection() {
               </span>
             </div>
           ))}
-        </div>
+        </ScrollReveal>
 
       </div>
     </section>

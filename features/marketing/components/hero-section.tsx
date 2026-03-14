@@ -48,14 +48,14 @@ export function HeroSection() {
         {/* Eyebrow */}
         <Badge
           variant="outline"
-          className="border-primary/20 bg-accent text-primary px-4 py-1.5 text-[11px] tracking-widest uppercase rounded-full"
+          className="animate-fade-up border-primary/20 bg-accent text-primary px-4 py-1.5 text-[11px] tracking-widest uppercase rounded-full"
           style={{ fontFamily: "var(--font-jetbrains-mono)" }}
         >
           Built for Freelancers
         </Badge>
 
         {/* Headline */}
-        <div className="flex flex-col items-center gap-0.5">
+        <div className="animate-fade-up delay-100 flex flex-col items-center gap-0.5">
           <h1
             className="text-[clamp(2.6rem,6.5vw,5rem)] font-extrabold text-foreground tracking-[-0.04em] leading-[1.05]"
             style={{ fontFamily: "var(--font-space-grotesk)" }}
@@ -79,7 +79,7 @@ export function HeroSection() {
 
         {/* Subheading */}
         <p
-          className="max-w-xl text-[15px] md:text-[16px] text-muted-foreground leading-[1.8]"
+          className="animate-fade-up delay-200 max-w-xl text-[15px] md:text-[16px] text-muted-foreground leading-[1.8]"
           style={{ fontFamily: "var(--font-inter)" }}
         >
           Propreso writes proposals in your voice, using your niche, your
@@ -87,7 +87,7 @@ export function HeroSection() {
         </p>
 
         {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-3 mt-1">
+        <div className="animate-fade-up delay-300 flex flex-col sm:flex-row items-center gap-3 mt-1">
           <Button
             asChild
             size="lg"
@@ -110,7 +110,7 @@ export function HeroSection() {
 
         {/* Social proof micro-text */}
         <p
-          className="text-[11px] tracking-[0.06em] text-center flex flex-col sm:flex-row justify-center text-muted-foreground/60"
+          className="animate-fade-in delay-400 text-[11px] tracking-[0.06em] text-center flex flex-col sm:flex-row justify-center text-muted-foreground/60"
           style={{ fontFamily: "var(--font-jetbrains-mono)" }}
         >
           No credit card required{" "}
@@ -120,7 +120,7 @@ export function HeroSection() {
       </div>
 
       {/* ── Browser mockup ────────────────────────────── */}
-      <div className="relative z-10 mt-16 md:mt-20 w-full max-w-250 mx-auto px-4 md:px-8 pb-0">
+      <div className="animate-fade-in delay-500 relative z-10 mt-16 md:mt-20 w-full max-w-250 mx-auto px-4 md:px-8 pb-0">
         {/* Glow halo behind mockup */}
         <div
           className="absolute pointer-events-none"
@@ -232,7 +232,7 @@ export function HeroSection() {
       </div>
 
       {/* ── Stats ─────────────────────────────────────── */}
-      <div className="relative z-10 w-full -mt-30 sm:-mt-60 max-w-3xl mx-auto px-6 pt-10 pb-24">
+      <div className="animate-fade-up delay-700 relative z-10 w-full -mt-30 sm:-mt-60 max-w-3xl mx-auto px-6 pt-10 pb-24">
         {/* Section label */}
         <p
           className="text-center text-[11px] text-muted-foreground/50 tracking-widest uppercase mb-8"

@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/shared/components/ui/button";
 import { ArrowRight, Star } from "lucide-react";
+import { ScrollReveal } from "@/shared/components/scroll-reveal";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // CtaSection
@@ -77,7 +78,7 @@ export function CtaSection() {
       />
 
       {/* ── Content ────────────────────────────────────────────────── */}
-      <div className="relative z-10 mx-auto max-w-3xl px-6 flex flex-col items-center text-center">
+      <ScrollReveal className="relative z-10 mx-auto max-w-3xl px-6 flex flex-col items-center text-center">
         {/* Logo lockup */}
         <div className="flex items-center gap-2 mb-10">
           <div
@@ -258,7 +259,7 @@ export function CtaSection() {
             </span>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
     </section>
   );
 }

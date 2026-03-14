@@ -1,3 +1,5 @@
+import { ScrollReveal } from "@/shared/components/scroll-reveal";
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Data
 // ─────────────────────────────────────────────────────────────────────────────
@@ -38,7 +40,7 @@ export function PainPointSection() {
       <div className="mx-auto sm:max-w-lg lg:max-w-5xl px-6">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.15fr] gap-16 lg:gap-24 items-start">
           {/* ── Left: headline + emotional copy ─────── */}
-          <div className="lg:sticky lg:top-32">
+          <ScrollReveal className="lg:sticky lg:top-32">
             {/* Eyebrow */}
             <p
               className="text-[11px] tracking-[0.12em] uppercase text-muted-foreground/40 mb-8"
@@ -82,10 +84,10 @@ export function PainPointSection() {
             >
               Sound familiar? Here&rsquo;s what&rsquo;s actually going wrong:
             </p>
-          </div>
+          </ScrollReveal>
 
           {/* ── Right: problems list ──────────────────── */}
-          <div>
+          <ScrollReveal delay={120}>
             <div className="divide-y divide-border">
               {PROBLEMS.map(({ number, title, description }) => (
                 <div
@@ -130,7 +132,7 @@ export function PainPointSection() {
                 <span className="text-primary">before you hit send.</span>
               </p>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>
