@@ -139,6 +139,23 @@
   }
 }
 
+/* ─── Sonner toast — brand theming ──────────────────────────────── */
+[data-sonner-toast] [data-icon] {
+  color: var(--primary);
+}
+[data-sonner-toast][data-type="error"] [data-icon] {
+  color: var(--destructive);
+}
+[data-sonner-toast][data-type="warning"] [data-icon] {
+  color: oklch(0.72 0.16 75);
+}
+[data-sonner-toast][data-type="success"] {
+  border-left: 2.5px solid var(--primary) !important;
+}
+[data-sonner-toast][data-type="error"] {
+  border-left: 2.5px solid var(--destructive) !important;
+}
+
 /* ─── Hero entrance animations ───────────────────────────────────── */
 @keyframes fade-up {
   from {

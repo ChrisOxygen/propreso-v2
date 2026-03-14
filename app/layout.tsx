@@ -50,7 +50,14 @@ export default function RootLayout({
       >
         <QueryProvider>
           <TooltipProvider>{children}</TooltipProvider>
-          <Toaster />
+          <Toaster
+            toastOptions={{
+              classNames: {
+                actionButton:
+                  "!bg-primary !text-white !text-[12px] !font-semibold !rounded-lg hover:!bg-primary-hover active:!bg-primary-active",
+              },
+            }}
+          />
         </QueryProvider>
       </body>
     </html>
