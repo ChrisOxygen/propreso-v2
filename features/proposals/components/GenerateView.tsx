@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, Briefcase } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -34,6 +34,7 @@ import { useSaveProposal } from "@/features/proposals/hooks/use-save-proposal";
 import { extractText } from "@/features/proposals/hooks/use-generate-proposal";
 import { ProfileSelect } from "@/features/proposals/components/ProfileSelect";
 import { GenerateOutput } from "@/features/proposals/components/GenerateOutput";
+import { TONES } from "@/features/proposals/constants/generation";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -60,8 +61,6 @@ function FieldError({ msg }: { msg?: string }) {
   return <p className="mt-1.5 text-[11.5px] text-destructive">{msg}</p>;
 }
 
-import { FORMULAS, TONES, LENGTHS } from "@/features/proposals/constants/generation";
-
 // ── Component ──────────────────────────────────────────────────────────────
 
 export function GenerateView() {
@@ -86,13 +85,9 @@ export function GenerateView() {
     resolver: zodResolver(ZGenerateProposalSchema),
     defaultValues: {
       profileId: "",
-      jobTitle: "",
-      jobUrl: "",
-      jobDescription: "",
+      rawPost: "",
       tone: "PROFESSIONAL",
-      formula: "AIDA",
-      proposalLength: "MEDIUM",
-      upworkOpener: false,
+      selectedPortfolioItem: null,
     },
   });
 
@@ -109,17 +104,26 @@ export function GenerateView() {
 
   const formValues = watch();
 
+  // Derive portfolio items from the selected profile
+  const selectedProfile = profiles.find((p) => p.id === formValues.profileId);
+  const portfolioItems = (() => {
+    try {
+      const items = selectedProfile?.portfolioItems as
+        | Array<{ url: string; description: string }>
+        | undefined;
+      return Array.isArray(items) ? items : [];
+    } catch {
+      return [];
+    }
+  })();
+
   // Keep a ref with the latest extra body so the transport stays stable
   const extraBodyRef = useRef<Record<string, unknown>>({});
-  // Run on every render (no deps) so ref is always current before sendMessage
   extraBodyRef.current = {
     profileId: formValues.profileId,
     tone: formValues.tone,
-    formula: formValues.formula,
-    proposalLength: formValues.proposalLength,
-    upworkOpener: formValues.upworkOpener,
-    jobTitle: formValues.jobTitle,
-    jobDescription: formValues.jobDescription,
+    rawPost: formValues.rawPost,
+    selectedPortfolioItem: formValues.selectedPortfolioItem ?? null,
   };
 
   const transport = useMemo(
@@ -164,9 +168,7 @@ export function GenerateView() {
   function onSubmit(data: ZGenerateProposal) {
     setIsSaved(false);
     setMessages([]);
-    sendMessage({
-      text: `Job Title: ${data.jobTitle}\n\nJob Description:\n${data.jobDescription}`,
-    });
+    sendMessage({ text: data.rawPost });
   }
 
   function handleRegenerate() {
@@ -202,8 +204,8 @@ export function GenerateView() {
     }
   }
 
-  const jobDescription = watch("jobDescription");
-  const descLength = jobDescription?.length ?? 0;
+  const rawPost = watch("rawPost");
+  const rawPostLength = rawPost?.length ?? 0;
 
   return (
     <>
@@ -232,7 +234,7 @@ export function GenerateView() {
       {/* ── Layout ── */}
       <div className="flex flex-col lg:grid lg:grid-cols-[420px_1fr] gap-6 items-start">
         {/* ── LEFT: Config form ── */}
-        <div className="w-full rounded-xl  bg-card border border-border">
+        <div className="w-full rounded-xl bg-card border border-border">
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-5 p-5"
@@ -258,151 +260,123 @@ export function GenerateView() {
               )}
             </div>
 
+            {/* Portfolio item selector — only shown when profile has items */}
+            {portfolioItems.length > 0 && (
+              <>
+                <div className="h-px bg-border" />
+                <div>
+                  <SectionLabel>Highlight a Portfolio Item</SectionLabel>
+                  <Controller
+                    name="selectedPortfolioItem"
+                    control={control}
+                    render={({ field }) => (
+                      <div className="flex flex-col gap-2">
+                        {portfolioItems.map((item, i) => {
+                          const isSelected =
+                            field.value?.url === item.url &&
+                            field.value?.description === item.description;
+                          let hostname = item.url;
+                          try {
+                            hostname = new URL(item.url).hostname;
+                          } catch { /* use raw url */ }
+
+                          return (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() =>
+                                field.onChange(isSelected ? null : item)
+                              }
+                              className={`flex items-start gap-2.5 p-3 rounded-lg text-left transition-all duration-150 border ${
+                                isSelected
+                                  ? "bg-accent border-primary/20"
+                                  : "bg-background border-border hover:bg-accent/50"
+                              }`}
+                            >
+                              <Briefcase
+                                size={13}
+                                className={`shrink-0 mt-0.5 ${isSelected ? "text-primary" : "text-muted-foreground"}`}
+                              />
+                              <div className="min-w-0">
+                                <p className="text-[12px] font-medium text-foreground leading-snug line-clamp-2">
+                                  {item.description.length > 60
+                                    ? item.description.slice(0, 60) + "…"
+                                    : item.description}
+                                </p>
+                                <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
+                                  {hostname}
+                                </p>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  />
+                </div>
+              </>
+            )}
+
             <div className="h-px bg-border" />
 
-            {/* Job details */}
+            {/* Job Post */}
             <div className="flex flex-col gap-2">
-              <SectionLabel>Job Details</SectionLabel>
-
-              {/* Job title */}
-              <div>
-                <label className="block text-[12px] font-medium mb-1.5 text-muted-foreground">
-                  Job Title <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("jobTitle")}
-                  placeholder="e.g. React Native Developer needed"
-                  className={`${fieldClass(!!errors.jobTitle)} h-9`}
-                />
-                <FieldError msg={errors.jobTitle?.message} />
-              </div>
-
-              {/* Job description */}
+              <SectionLabel>Job Post</SectionLabel>
               <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-[12px] font-medium text-muted-foreground">
-                    Job Description <span className="text-destructive">*</span>
+                    Paste job post <span className="text-destructive">*</span>
                   </label>
                   <span
                     className={`text-[11px] tabular-nums transition-colors duration-200 ${
-                      descLength > 7000
+                      rawPostLength > 7000
                         ? "text-destructive"
                         : "text-muted-foreground/50"
                     }`}
                   >
-                    {descLength.toLocaleString()} / 8,000
+                    {rawPostLength.toLocaleString()} / 8,000
                   </span>
                 </div>
                 <textarea
-                  {...register("jobDescription")}
+                  {...register("rawPost")}
                   rows={8}
-                  placeholder="Paste the full Upwork job description here…"
-                  className={`${fieldClass(!!errors.jobDescription)} py-2.5 leading-relaxed resize-none`}
+                  placeholder="Paste the full job post here…"
+                  className={`${fieldClass(!!errors.rawPost)} py-2.5 leading-relaxed resize-none`}
                 />
-                <FieldError msg={errors.jobDescription?.message} />
+                <FieldError msg={errors.rawPost?.message} />
               </div>
             </div>
 
             <div className="h-px bg-border" />
 
-            {/* Generation options */}
+            {/* Generation Options */}
             <div className="flex flex-col gap-4">
               <SectionLabel>Generation Options</SectionLabel>
 
-              {/* Tone + Length row */}
-              <div className="flex gap-2">
-                <div className="flex-1">
-                  <label className="block text-[12px] font-medium mb-2 text-muted-foreground">
-                    Tone
-                  </label>
-                  <Controller
-                    name="tone"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="h-9 w-full text-[13px] bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/10">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {TONES.map((t) => (
-                            <SelectItem
-                              key={t.value}
-                              value={t.value}
-                              className="text-[13px]"
-                            >
-                              {t.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-
-                <div className="flex-1">
-                  <label className="block text-[12px] font-medium mb-2 text-muted-foreground">
-                    Length
-                  </label>
-                  <Controller
-                    name="proposalLength"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <SelectTrigger className="h-9 w-full text-[13px] bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/10">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="w-full">
-                          {LENGTHS.map((l) => (
-                            <SelectItem
-                              key={l.value}
-                              value={l.value}
-                              className="text-[13px] w-full"
-                            >
-                              <span>{l.label}</span>
-                              <span className="ml-2 text-muted-foreground text-[12px]">
-                                {l.sub}
-                              </span>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* Formula */}
+              {/* Tone */}
               <div>
                 <label className="block text-[12px] font-medium mb-2 text-muted-foreground">
-                  Formula
+                  Tone
                 </label>
                 <Controller
-                  name="formula"
+                  name="tone"
                   control={control}
                   render={({ field }) => (
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value}
+                      onValueChange={field.onChange}
+                    >
                       <SelectTrigger className="h-9 w-full text-[13px] bg-background border-border focus:border-primary focus:ring-2 focus:ring-primary/10">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {FORMULAS.map((f) => (
+                        {TONES.map((t) => (
                           <SelectItem
-                            key={f.value}
-                            value={f.value}
+                            key={t.value}
+                            value={t.value}
                             className="text-[13px]"
                           >
-                            <span className="font-semibold font-heading">
-                              {f.label}
-                            </span>
-                            <span className="ml-2 text-muted-foreground text-[12px]">
-                              — {f.desc}
-                            </span>
+                            {t.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -410,51 +384,6 @@ export function GenerateView() {
                   )}
                 />
               </div>
-
-              {/* Upwork opener toggle */}
-              <Controller
-                name="upworkOpener"
-                control={control}
-                render={({ field }) => (
-                  <button
-                    type="button"
-                    onClick={() => field.onChange(!field.value)}
-                    className={`flex items-start gap-3 p-3 rounded-lg text-left transition-all duration-150 border ${
-                      field.value
-                        ? "bg-accent border-primary/20"
-                        : "bg-background border-border hover:bg-accent/50"
-                    }`}
-                  >
-                    {/* Toggle track */}
-                    <div
-                      className={`relative shrink-0 mt-0.5 rounded-full transition-colors duration-200 ${
-                        field.value ? "bg-primary" : "bg-border-strong"
-                      }`}
-                      style={{ height: "18px", width: "32px" }}
-                    >
-                      <div
-                        className="absolute top-0.5 rounded-full bg-white transition-transform duration-200 shadow-sm"
-                        style={{
-                          width: "14px",
-                          height: "14px",
-                          transform: field.value
-                            ? "translateX(16px)"
-                            : "translateX(2px)",
-                        }}
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[12.5px] font-medium text-foreground">
-                        Upwork Opener
-                      </p>
-                      <p className="text-[11.5px] mt-0.5 leading-relaxed text-muted-foreground">
-                        Prepend a one-line hook addressing the client&apos;s
-                        post directly.
-                      </p>
-                    </div>
-                  </button>
-                )}
-              />
             </div>
 
             {/* Generate CTA */}

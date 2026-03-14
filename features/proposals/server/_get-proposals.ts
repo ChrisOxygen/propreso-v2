@@ -6,12 +6,8 @@ const proposalSelect = {
   id: true,
   userId: true,
   profileId: true,
-  jobTitle: true,
-  jobUrl: true,
+  jobDescription: true, // stores the raw post; jobTitle removed — requires schema migration
   tone: true,
-  formula: true,
-  proposalLength: true,
-  upworkOpener: true,
   status: true,
   createdAt: true,
   profile: {
@@ -51,7 +47,7 @@ export async function _getProposals(
       : { status: status as ProposalStatus };
 
   const searchFilter = search?.trim()
-    ? { jobTitle: { contains: search.trim(), mode: "insensitive" as const } }
+    ? { jobDescription: { contains: search.trim(), mode: "insensitive" as const } }
     : {};
 
   const where = { userId, ...statusFilter, ...searchFilter };

@@ -1,21 +1,14 @@
 import { prisma } from "@/shared/lib/prisma";
-import type {
-  Tone,
-  ProposalFormula,
-  ProposalLength,
-} from "@/shared/lib/generated/prisma/enums";
+import type { Tone } from "@/shared/lib/generated/prisma/enums";
 import { NotFoundError } from "@/shared/lib/api-error";
 
 export interface SaveProposalInput {
   profileId: string;
-  jobTitle: string;
-  jobUrl?: string;
-  jobDescription: string;
+  rawPost: string;
   tone: Tone;
-  formula: ProposalFormula;
-  proposalLength: ProposalLength;
-  upworkOpener: boolean;
   generatedContent: string;
+  signals?: Record<string, unknown> | null; // NOTE: requires schema migration
+  wordCount?: number | null;                 // NOTE: requires schema migration
 }
 
 export async function _saveProposal(
@@ -34,14 +27,11 @@ export async function _saveProposal(
     data: {
       userId,
       profileId: input.profileId,
-      jobTitle: input.jobTitle,
-      jobUrl: input.jobUrl || null,
-      jobDescription: input.jobDescription,
+      jobDescription: input.rawPost,
       tone: input.tone,
-      formula: input.formula,
-      proposalLength: input.proposalLength,
-      upworkOpener: input.upworkOpener,
       generatedContent: input.generatedContent,
+      // signals: input.signals ?? undefined,   // NOTE: requires schema migration
+      // wordCount: input.wordCount ?? undefined, // NOTE: requires schema migration
     },
     select: { id: true },
   });

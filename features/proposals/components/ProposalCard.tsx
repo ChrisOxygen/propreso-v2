@@ -1,24 +1,16 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { ExternalLink } from "lucide-react";
 import type { ProposalListItem } from "@/features/proposals/server/_get-proposals";
 import { ProposalStatusBar } from "./ProposalStatusBar";
 import { useUpdateProposalStatus } from "@/features/proposals/hooks/use-update-proposal-status";
 import type { ZProposalStatus } from "@/features/proposals/schemas/proposal-schemas";
 
-const FORMULA_LABELS: Record<string, string> = {
-  AIDA: "AIDA",
-  PAS: "PAS",
-  BAB: "BAB",
-  STAR: "STAR",
-  DIRECT: "Direct",
-};
-
-const LENGTH_LABELS: Record<string, string> = {
-  SHORT: "Short",
-  MEDIUM: "Medium",
-  LONG: "Long",
+const TONE_LABELS: Record<string, string> = {
+  PROFESSIONAL: "Professional",
+  CONVERSATIONAL: "Conversational",
+  CONFIDENT: "Confident",
+  FRIENDLY: "Friendly",
 };
 
 interface ProposalCardProps {
@@ -32,24 +24,16 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
     mutate({ proposalId: proposal.id, status });
   };
 
+  const snippet = proposal.jobDescription
+    ? proposal.jobDescription.slice(0, 80).trim() + (proposal.jobDescription.length > 80 ? "…" : "")
+    : "No description";
+
   return (
     <div className="rounded-xl p-4 bg-card border border-border">
-      {/* Title + external link */}
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[14px] font-semibold leading-snug tracking-[-0.01em] line-clamp-2 text-foreground font-heading">
-          {proposal.jobTitle}
-        </p>
-        {proposal.jobUrl && (
-          <a
-            href={proposal.jobUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="shrink-0 mt-0.5 transition-colors duration-150 text-muted-foreground hover:text-text-secondary"
-          >
-            <ExternalLink size={13} />
-          </a>
-        )}
-      </div>
+      {/* Job post snippet */}
+      <p className="text-[13.5px] font-medium leading-snug tracking-[-0.01em] line-clamp-2 text-foreground">
+        {snippet}
+      </p>
 
       {/* Profile name + relative date */}
       <div className="flex items-center gap-2 mt-1.5">
@@ -64,13 +48,10 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         </span>
       </div>
 
-      {/* Formula + length badges */}
+      {/* Tone badge */}
       <div className="flex items-center gap-1.5 mt-2.5">
         <span className="px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wide bg-accent border border-primary/20 text-primary font-heading">
-          {FORMULA_LABELS[proposal.formula] ?? proposal.formula}
-        </span>
-        <span className="px-2 py-0.5 rounded text-[10.5px] font-medium bg-muted border border-border text-muted-foreground font-heading">
-          {LENGTH_LABELS[proposal.proposalLength] ?? proposal.proposalLength}
+          {TONE_LABELS[proposal.tone] ?? proposal.tone}
         </span>
       </div>
 

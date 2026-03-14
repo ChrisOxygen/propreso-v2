@@ -3,11 +3,7 @@ import { _getProposals } from "@/features/proposals/server/_get-proposals";
 import { _saveProposal } from "@/features/proposals/server/_save-proposal";
 import { NextResponse, type NextRequest } from "next/server";
 import { apiError, NotFoundError } from "@/shared/lib/api-error";
-import type {
-  Tone,
-  ProposalFormula,
-  ProposalLength,
-} from "@/shared/lib/generated/prisma/enums";
+import type { Tone } from "@/shared/lib/generated/prisma/enums";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
@@ -47,36 +43,21 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const {
     profileId,
-    jobTitle,
-    jobUrl,
-    jobDescription,
+    rawPost,
     tone,
-    formula,
-    proposalLength,
-    upworkOpener,
     generatedContent,
   }: {
     profileId: string;
-    jobTitle: string;
-    jobUrl?: string;
-    jobDescription: string;
+    rawPost: string;
     tone: Tone;
-    formula: ProposalFormula;
-    proposalLength: ProposalLength;
-    upworkOpener: boolean;
     generatedContent: string;
   } = body;
 
   try {
     const proposal = await _saveProposal(user.id, {
       profileId,
-      jobTitle,
-      jobUrl,
-      jobDescription,
+      rawPost,
       tone,
-      formula,
-      proposalLength,
-      upworkOpener,
       generatedContent,
     });
     return NextResponse.json(proposal, { status: 201 });

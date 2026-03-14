@@ -34,7 +34,7 @@ export async function DashboardRecentProposals({ userId }: Props) {
     take: 8,
     select: {
       id: true,
-      jobTitle: true,
+      jobDescription: true,
       status: true,
       createdAt: true,
       profile: { select: { name: true } },
@@ -60,6 +60,8 @@ export async function DashboardRecentProposals({ userId }: Props) {
         const statusCfg =
           STATUS_CONFIG[proposal.status ?? "PENDING"] ?? STATUS_CONFIG.PENDING;
         const isLast = index === proposals.length - 1;
+        const snippet = proposal.jobDescription.slice(0, 60).trim() +
+          (proposal.jobDescription.length > 60 ? "…" : "");
 
         return (
           <Link
@@ -71,8 +73,8 @@ export async function DashboardRecentProposals({ userId }: Props) {
             )}
           >
             <div className="min-w-0 flex-1">
-              <p className="text-[13px] font-medium truncate text-foreground font-heading">
-                {proposal.jobTitle}
+              <p className="text-[13px] font-medium truncate text-foreground">
+                {snippet}
               </p>
               <p className="text-[11.5px] mt-0.5 text-muted-foreground">
                 {proposal.profile.name} ·{" "}

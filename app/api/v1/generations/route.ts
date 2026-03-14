@@ -1,6 +1,6 @@
 import { createClient } from "@/shared/lib/supabase/server";
 import { type NextRequest } from "next/server";
-import { streamText, generateText, type UIMessage } from "ai";
+import { streamText, generateText } from "ai";
 import { openrouter } from "@/shared/lib/openrouter";
 import { prisma } from "@/shared/lib/prisma";
 import {
@@ -11,11 +11,7 @@ import {
   buildGeneratorSystemPrompt,
   buildGeneratorUserMessage,
 } from "@/shared/constants/generator-prompts";
-import type {
-  Tone,
-  ProposalFormula,
-  ProposalLength,
-} from "@/shared/lib/generated/prisma/enums";
+import type { Tone } from "@/shared/lib/generated/prisma/enums";
 import {
   ANALYZER_MODEL,
   GENERATOR_MODEL,
@@ -34,25 +30,12 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const {
-    messages,
-    profileId,
-    tone,
-    formula,
-    proposalLength,
-    upworkOpener,
-    jobTitle,
-    jobDescription,
-  }: {
-    messages: UIMessage[];
+  const { profileId, tone, rawPost, selectedPortfolioItem } = body as {
     profileId: string;
     tone: Tone;
-    formula: ProposalFormula;
-    proposalLength: ProposalLength;
-    upworkOpener: boolean;
-    jobTitle: string;
-    jobDescription: string;
-  } = body;
+    rawPost: string;
+    selectedPortfolioItem: { url: string; description: string } | null;
+  };
 
   // Atomic check-and-decrement: only succeeds if tokenBalance > 0
   const deducted = await prisma.user.updateMany({
@@ -95,50 +78,77 @@ export async function POST(request: NextRequest) {
     }
   })();
 
-  // ── Step 1: Analyze the job post (Haiku — cheap extraction task) ──────────
+  // ── Step 1: Combined classify + analyze (non-streaming, cheap model) ────────
   const analysis = await generateText({
     model: openrouter(ANALYZER_MODEL),
     system: ANALYZER_SYSTEM_PROMPT,
     messages: [
       {
         role: "user",
-        content: buildAnalyzerUserMessage(jobTitle, jobDescription, {
+        content: buildAnalyzerUserMessage(rawPost, {
           name: profile.name,
           skills: profile.skills,
           bio: profile.bio,
         }),
       },
     ],
-    maxOutputTokens: 500, // compact JSON output — hard cap prevents verbose responses
+    maxOutputTokens: 600,
   });
 
-  // ── Step 2: Generate the proposal (Sonnet — streaming) ───────────────────
-  const systemPrompt = buildGeneratorSystemPrompt(
-    {
-      name: profile.name,
-      bio: profile.bio,
-      skills: profile.skills,
-      portfolioItems,
-    },
-    tone,
-    formula,
-    proposalLength,
-    upworkOpener
-  );
+  // Parse the analysis response and handle classification signals
+  let signals: {
+    is_suspicious_post?: boolean;
+    is_unclassifiable?: boolean;
+    confidence?: number;
+    post_type?: string;
+    derived_title?: string;
+  };
+  try {
+    signals = JSON.parse(analysis.text) as typeof signals;
+  } catch {
+    return apiError("analysis_failed", "Failed to analyze job post", 500);
+  }
 
-  // The intelligence report from Step 1 captures everything the generator needs.
-  // We do NOT re-send the raw job post — it was already distilled into the report.
-  void messages; // acknowledged — not used in single-turn generation
-  const userMessage = buildGeneratorUserMessage(jobTitle, analysis.text);
+  if (signals.is_suspicious_post === true) {
+    return apiError(
+      "suspicious_post",
+      "This post may be a scam or spam. Generation blocked.",
+      422
+    );
+  }
+
+  if (
+    signals.is_unclassifiable === true ||
+    (signals.confidence !== undefined && signals.confidence < 0.7)
+  ) {
+    return Response.json({
+      requiresConfirmation: true,
+      detectedType: signals.post_type,
+      confidence: signals.confidence,
+    });
+  }
+
+  // ── Step 2: Streaming proposal generation ────────────────────────────────────
+  const profileData = {
+    name: profile.name,
+    bio: profile.bio,
+    skills: profile.skills,
+    portfolioItems,
+  };
 
   const result = streamText({
     model: openrouter(GENERATOR_MODEL),
-    system: systemPrompt,
-    messages: [{ role: "user", content: userMessage }],
+    system: buildGeneratorSystemPrompt(profileData, tone, selectedPortfolioItem),
+    messages: [{ role: "user", content: buildGeneratorUserMessage(analysis.text) }],
     onFinish: async () => {
       try {
+        let derivedTitle = rawPost.slice(0, 80);
+        try {
+          const parsed = JSON.parse(analysis.text) as { derived_title?: string };
+          if (parsed.derived_title) derivedTitle = parsed.derived_title;
+        } catch { /* ignore */ }
         await prisma.generationEvent.create({
-          data: { userId: user.id, status: "COMPLETED", jobTitle },
+          data: { userId: user.id, status: "COMPLETED", jobTitle: derivedTitle },
         });
       } catch (err) {
         console.error("Failed to record generation event:", err);

@@ -28,21 +28,21 @@ export async function POST() {
     return apiError("precondition_failed", "No profiles found. Create a profile first.", 400);
   }
 
+  // ── Wipe all existing user data before seeding ──────────────────────────
+  await prisma.generationEvent.deleteMany({ where: { userId: user.id } });
+  await prisma.proposal.deleteMany({ where: { userId: user.id } });
+
+  // ── Insert fresh seed data ───────────────────────────────────────────────
   const data = DUMMY_PROPOSALS.map((p, i) => ({
     userId: user.id,
     profileId: profiles[i % profiles.length].id,
-    jobTitle: p.jobTitle,
-    jobUrl: p.jobUrl ?? null,
     jobDescription: p.jobDescription,
     generatedContent: p.generatedContent,
     tone: p.tone,
-    formula: p.formula,
-    proposalLength: p.proposalLength,
-    upworkOpener: p.upworkOpener,
     status: p.status ?? null,
   }));
 
   await prisma.proposal.createMany({ data });
 
-  return NextResponse.json({ created: data.length });
+  return NextResponse.json({ deleted: true, created: data.length });
 }

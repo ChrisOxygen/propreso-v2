@@ -2,18 +2,11 @@
 // Proposal display mappings — labels, status styling, table columns
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const FORMULA_LABELS: Record<string, string> = {
-  AIDA: "AIDA",
-  PAS: "PAS",
-  BAB: "BAB",
-  STAR: "STAR",
-  DIRECT: "Direct",
-};
-
-export const LENGTH_LABELS: Record<string, string> = {
-  SHORT: "Short",
-  MEDIUM: "Medium",
-  LONG: "Long",
+export const TONE_LABELS: Record<string, string> = {
+  PROFESSIONAL: "Professional",
+  CONVERSATIONAL: "Conversational",
+  CONFIDENT: "Confident",
+  FRIENDLY: "Friendly",
 };
 
 export const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
@@ -44,10 +37,9 @@ export const STATUS_OPTIONS = [
 ] as const;
 
 export const PROPOSAL_TABLE_COLUMNS = [
-  { label: "Job Title", width: "40%" },
-  { label: "Profile", width: "17%" },
-  { label: "Formula", width: "10%" },
-  { label: "Length", width: "9%" },
-  { label: "Status", width: "13%" },
+  { label: "Job Post", width: "42%" },
+  { label: "Profile", width: "18%" },
+  { label: "Tone", width: "15%" },
+  { label: "Status", width: "14%" },
   { label: "Date", width: "11%" },
 ] as const;

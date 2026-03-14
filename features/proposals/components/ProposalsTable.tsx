@@ -2,13 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
-import { ExternalLink } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { Spinner } from "@/shared/components/Spinner";
 import type { ProposalListItem } from "@/features/proposals/types";
 import {
-  FORMULA_LABELS,
-  LENGTH_LABELS,
+  TONE_LABELS,
   STATUS_CONFIG,
   PROPOSAL_TABLE_COLUMNS,
 } from "@/features/proposals/constants/display";
@@ -33,7 +31,6 @@ export function ProposalsTable({
         </div>
       )}
 
-      {/* overflow-x-auto enables horizontal scroll on narrow viewports */}
       <div className="overflow-x-auto">
         <table
           className={cn(
@@ -65,6 +62,10 @@ export function ProposalsTable({
                 STATUS_CONFIG[proposal.status ?? "PENDING"] ??
                 STATUS_CONFIG.PENDING;
               const isLast = index === proposals.length - 1;
+              const snippet = proposal.jobDescription
+                ? proposal.jobDescription.slice(0, 80).trim() +
+                  (proposal.jobDescription.length > 80 ? "…" : "")
+                : "—";
 
               return (
                 <tr
@@ -75,24 +76,11 @@ export function ProposalsTable({
                     !isLast && "border-b border-border",
                   )}
                 >
-                  {/* Job Title — max-w-0 forces truncation within the fixed column */}
+                  {/* Job post snippet */}
                   <td className="px-4 py-3 max-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[13px] font-medium truncate text-foreground font-heading">
-                        {proposal.jobTitle}
-                      </span>
-                      {proposal.jobUrl && (
-                        <a
-                          href={proposal.jobUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="shrink-0 transition-colors duration-100 text-muted-foreground hover:text-text-secondary"
-                        >
-                          <ExternalLink size={11} />
-                        </a>
-                      )}
-                    </div>
+                    <span className="text-[13px] font-medium truncate block text-foreground">
+                      {snippet}
+                    </span>
                   </td>
 
                   {/* Profile */}
@@ -102,18 +90,10 @@ export function ProposalsTable({
                     </span>
                   </td>
 
-                  {/* Formula */}
+                  {/* Tone */}
                   <td className="px-4 py-3 whitespace-nowrap">
                     <span className="inline-block px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wide bg-accent border border-primary/20 text-primary font-heading">
-                      {FORMULA_LABELS[proposal.formula] ?? proposal.formula}
-                    </span>
-                  </td>
-
-                  {/* Length */}
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span className="text-[12px] text-muted-foreground">
-                      {LENGTH_LABELS[proposal.proposalLength] ??
-                        proposal.proposalLength}
+                      {TONE_LABELS[proposal.tone] ?? proposal.tone}
                     </span>
                   </td>
 

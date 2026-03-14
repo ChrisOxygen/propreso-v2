@@ -38,20 +38,6 @@ enum Tone {
   FRIENDLY
 }
 
-enum ProposalFormula {
-  AIDA
-  PAS
-  BAB
-  STAR
-  DIRECT
-}
-
-enum ProposalLength {
-  SHORT
-  MEDIUM
-  LONG
-}
-
 enum ProposalStatus {
   REPLIED
   WON
@@ -97,13 +83,10 @@ model Proposal {
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   profileId        String
   profile          FreelancerProfile @relation(fields: [profileId], references: [id])
-  jobTitle         String
-  jobUrl           String?
   jobDescription   String
   tone             Tone
-  formula          ProposalFormula
-  proposalLength   ProposalLength
-  upworkOpener     Boolean   @default(false)
+  signals          Json?
+  wordCount        Int?
   generatedContent String
   editedContent    String?
   status           ProposalStatus?

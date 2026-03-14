@@ -1,25 +1,11 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { formatDistanceToNow, format } from "date-fns";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/shared/lib/supabase/server";
 import { _getProposal } from "@/features/proposals/server/_get-proposal";
 import { ProposalDetailStatus } from "@/features/proposals/components/ProposalDetailStatus";
 import type { ZProposalStatus } from "@/features/proposals/schemas/proposal-schemas";
-
-const FORMULA_LABELS: Record<string, string> = {
-  AIDA: "AIDA",
-  PAS: "PAS",
-  BAB: "BAB",
-  STAR: "STAR",
-  DIRECT: "Direct",
-};
-
-const LENGTH_LABELS: Record<string, string> = {
-  SHORT: "Short",
-  MEDIUM: "Medium",
-  LONG: "Long",
-};
 
 const TONE_LABELS: Record<string, string> = {
   PROFESSIONAL: "Professional",
@@ -47,6 +33,8 @@ export default async function ProposalDetailPage({ params }: Props) {
   if (!proposal) notFound();
 
   const content = proposal.editedContent ?? proposal.generatedContent;
+  const snippet = proposal.jobDescription.slice(0, 80).trim() +
+    (proposal.jobDescription.length > 80 ? "…" : "");
 
   return (
     <div className="px-4 py-6 sm:px-6 lg:px-8 max-w-3xl">
@@ -59,34 +47,16 @@ export default async function ProposalDetailPage({ params }: Props) {
         Back to proposals
       </Link>
 
-      {/* Title + link */}
-      <div className="flex items-start gap-3 mb-1">
-        <h1 className="text-[1.35rem] font-bold tracking-[-0.03em] leading-snug flex-1 text-foreground font-heading">
-          {proposal.jobTitle}
-        </h1>
-        {proposal.jobUrl && (
-          <a
-            href={proposal.jobUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 shrink-0 transition-colors duration-150 text-muted-foreground hover:text-text-secondary"
-          >
-            <ExternalLink size={15} />
-          </a>
-        )}
-      </div>
+      {/* Snippet heading */}
+      <h1 className="text-[1.35rem] font-bold tracking-[-0.03em] leading-snug flex-1 text-foreground font-heading mb-1">
+        {snippet}
+      </h1>
 
       {/* Meta row */}
       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 mb-5 text-[12px] text-muted-foreground">
         <span>{proposal.profile.name}</span>
         <span className="text-border-strong">·</span>
         <span className="px-2 py-0.5 rounded text-[10.5px] font-semibold uppercase tracking-wide bg-accent border border-primary/20 text-primary font-heading">
-          {FORMULA_LABELS[proposal.formula] ?? proposal.formula}
-        </span>
-        <span className="px-2 py-0.5 rounded text-[10.5px] font-medium bg-muted border border-border text-muted-foreground font-heading">
-          {LENGTH_LABELS[proposal.proposalLength] ?? proposal.proposalLength}
-        </span>
-        <span className="px-2 py-0.5 rounded text-[10.5px] font-medium bg-muted border border-border text-muted-foreground font-heading">
           {TONE_LABELS[proposal.tone] ?? proposal.tone}
         </span>
         <span className="text-border-strong">·</span>
