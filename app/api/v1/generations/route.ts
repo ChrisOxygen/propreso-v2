@@ -79,23 +79,35 @@ export async function POST(request: NextRequest) {
   })();
 
   // ── Step 1: Combined classify + analyze (non-streaming, cheap model) ────────
-  const analysis = await generateText({
-    model: openrouter(ANALYZER_MODEL),
-    system: ANALYZER_SYSTEM_PROMPT,
-    messages: [
-      {
-        role: "user",
-        content: buildAnalyzerUserMessage(rawPost, {
-          name: profile.name,
-          skills: profile.skills,
-          bio: profile.bio,
-        }),
-      },
-    ],
-    maxOutputTokens: 600,
-  });
+  let analysisText: string;
+  try {
+    const analysis = await generateText({
+      model: openrouter(ANALYZER_MODEL),
+      system: ANALYZER_SYSTEM_PROMPT,
+      messages: [
+        {
+          role: "user",
+          content: buildAnalyzerUserMessage(rawPost, {
+            name: profile.name,
+            skills: profile.skills,
+            bio: profile.bio,
+          }),
+        },
+      ],
+      maxOutputTokens: 1200,
+    });
+    analysisText = analysis.text;
+  } catch (err) {
+    console.error("[generations] generateText (analyzer) failed:", err);
+    // Refund the token since generation didn't happen
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { tokenBalance: { increment: 1 } },
+    });
+    return apiError("analysis_failed", "Failed to analyze job post", 500);
+  }
 
-  // Parse the analysis response and handle classification signals
+  // Parse the analysis response — strip markdown fences if the model wrapped them
   let signals: {
     is_suspicious_post?: boolean;
     is_unclassifiable?: boolean;
@@ -104,9 +116,18 @@ export async function POST(request: NextRequest) {
     derived_title?: string;
   };
   try {
-    signals = JSON.parse(analysis.text) as typeof signals;
+    const cleaned = analysisText
+      .replace(/^```(?:json)?\s*/i, "")
+      .replace(/\s*```$/, "")
+      .trim();
+    signals = JSON.parse(cleaned) as typeof signals;
   } catch {
-    return apiError("analysis_failed", "Failed to analyze job post", 500);
+    console.error("[generations] JSON.parse failed on analyzer output:", analysisText);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { tokenBalance: { increment: 1 } },
+    });
+    return apiError("analysis_failed", "Failed to parse analysis response", 500);
   }
 
   if (signals.is_suspicious_post === true) {
@@ -139,12 +160,12 @@ export async function POST(request: NextRequest) {
   const result = streamText({
     model: openrouter(GENERATOR_MODEL),
     system: buildGeneratorSystemPrompt(profileData, tone, selectedPortfolioItem),
-    messages: [{ role: "user", content: buildGeneratorUserMessage(analysis.text) }],
+    messages: [{ role: "user", content: buildGeneratorUserMessage(analysisText) }],
     onFinish: async () => {
       try {
         let derivedTitle = rawPost.slice(0, 80);
         try {
-          const parsed = JSON.parse(analysis.text) as { derived_title?: string };
+          const parsed = JSON.parse(analysisText) as { derived_title?: string };
           if (parsed.derived_title) derivedTitle = parsed.derived_title;
         } catch { /* ignore */ }
         await prisma.generationEvent.create({
