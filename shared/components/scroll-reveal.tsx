@@ -15,11 +15,18 @@ interface ScrollRevealProps {
 }
 
 /**
- * Fades + slides children into view when they enter the viewport.
- * Disconnects the observer after first trigger so it only animates once.
- * Reduced-motion users see the content immediately (via globals.css override).
+ * Hook version of scroll-reveal — returns a ref and the animation classes
+ * to apply directly to any element, avoiding an extra wrapper div.
+ * Useful when the element is a direct grid/flex child and a wrapper would
+ * break equal-height layout.
  */
-export function ScrollReveal({ children, className, delay }: ScrollRevealProps) {
+/**
+ * Hook version — attaches a data-reveal attribute directly to any element so
+ * the animation is driven by CSS (not className toggling). This preserves the
+ * element's className exactly, which matters when the element is a direct grid
+ * child and className changes could affect layout / equal-height behaviour.
+ */
+export function useScrollReveal(delay?: number) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -41,16 +48,28 @@ export function ScrollReveal({ children, className, delay }: ScrollRevealProps) 
     return () => io.disconnect();
   }, []);
 
+  return {
+    ref,
+    revealProps: {
+      "data-reveal": visible ? "visible" : "hidden",
+      style: delay ? { transitionDelay: `${delay}ms` } : undefined,
+    } as { "data-reveal": string; style?: React.CSSProperties },
+  };
+}
+
+/**
+ * Fades + slides children into view when they enter the viewport.
+ * Disconnects the observer after first trigger so it only animates once.
+ * Reduced-motion users see the content immediately (via globals.css override).
+ */
+export function ScrollReveal({ children, className, delay }: ScrollRevealProps) {
+  const { ref, revealProps } = useScrollReveal(delay);
+
   return (
     <div
       ref={ref}
-      data-reveal
-      className={cn(
-        "transition-[opacity,transform] duration-[400ms] ease-out",
-        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5",
-        className,
-      )}
-      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+      {...revealProps}
+      className={cn(className)}
     >
       {children}
     </div>

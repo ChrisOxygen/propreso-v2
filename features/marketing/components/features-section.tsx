@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ScrollReveal } from "@/shared/components/scroll-reveal";
+import { ScrollReveal, useScrollReveal } from "@/shared/components/scroll-reveal";
 import {
   Brain,
   Sliders,
@@ -162,9 +162,15 @@ function FeatureCard({
   tagColor,
   title,
   description,
-}: (typeof FEATURES)[number]) {
+  delay,
+}: (typeof FEATURES)[number] & { delay?: number }) {
+  const { ref, revealProps } = useScrollReveal(delay);
   return (
-    <div className="group bg-card rounded-2xl p-6 border border-border hover:border-border-strong hover:shadow-[0_4px_24px_rgba(26,20,18,0.07)] transition-all duration-200 flex flex-col">
+    <div
+      ref={ref}
+      {...revealProps}
+      className="group bg-card rounded-2xl p-6 border border-border hover:border-border-strong hover:shadow-[0_4px_24px_rgba(26,20,18,0.07)] transition-all duration-200 flex flex-col"
+    >
       {/* Tag */}
       <span
         className={`self-start inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[10.5px] font-medium border mb-4 ${tagColor}`}
@@ -197,9 +203,14 @@ function FeatureCard({
 // CTA card — spans 2 columns
 // ─────────────────────────────────────────────────────────────────────────────
 
-function CTACard() {
+function CTACard({ delay }: { delay?: number }) {
+  const { ref, revealProps } = useScrollReveal(delay);
   return (
-    <div className="relative bg-primary rounded-2xl p-8 md:p-10 overflow-hidden h-full flex flex-col justify-between min-h-[220px]">
+    <div
+      ref={ref}
+      {...revealProps}
+      className="relative bg-primary rounded-2xl p-8 md:p-10 overflow-hidden h-full flex flex-col justify-between min-h-[220px]"
+    >
       {/* Dot texture */}
       <div
         className="absolute inset-0 opacity-[0.07] pointer-events-none"
@@ -398,17 +409,15 @@ export function FeaturesSection() {
           </p>
 
           {/* 3-col grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
             {FEATURES.map((feature, i) => (
-              <ScrollReveal key={feature.title} delay={i * 60}>
-                <FeatureCard {...feature} />
-              </ScrollReveal>
+              <FeatureCard key={feature.title} {...feature} delay={i * 60} />
             ))}
 
             {/* CTA — fills the 2 remaining columns on the last row */}
-            <ScrollReveal className="md:col-span-1 lg:col-span-2" delay={FEATURES.length * 60}>
-              <CTACard />
-            </ScrollReveal>
+            <div className="md:col-span-1 lg:col-span-2">
+              <CTACard delay={FEATURES.length * 60} />
+            </div>
           </div>
         </div>
       </div>

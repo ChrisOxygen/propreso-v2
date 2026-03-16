@@ -190,6 +190,19 @@
 .delay-500 { animation-delay: 500ms; }
 .delay-700 { animation-delay: 700ms; }
 
+/* ─── Scroll-reveal: driven by data-reveal attribute, not className ─ */
+[data-reveal] {
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+[data-reveal="hidden"] {
+  opacity: 0;
+  transform: translateY(1.25rem);
+}
+[data-reveal="visible"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ─── Accessible: respect prefers-reduced-motion ─────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
@@ -198,7 +211,8 @@
     opacity: 1 !important;
     transform: none !important;
   }
-  [data-reveal] {
+  [data-reveal="hidden"],
+  [data-reveal="visible"] {
     opacity: 1 !important;
     transform: none !important;
     transition-duration: 0.01ms !important;
