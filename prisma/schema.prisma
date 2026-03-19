@@ -105,8 +105,8 @@ model Proposal {
   status           ProposalStatus?
   createdAt        DateTime  @default(now())
 
-  @@index([userId])
   @@index([userId, createdAt])
+  @@index([userId, status])
   @@index([profileId])
 }
 
