@@ -1,11 +1,20 @@
 import { stripe } from "@/shared/lib/stripe";
 import { prisma } from "@/shared/lib/prisma";
+import { Redis } from "@upstash/redis";
 import { NextResponse } from "next/server";
 import type { Plan, BillingInterval } from "@/shared/lib/generated/prisma/enums";
 import type Stripe from "stripe";
 import { PRO_MONTHLY_TOKENS } from "@/features/billing/constants/plans";
 import { apiError } from "@/shared/lib/api-error";
 import { captureServerEvent } from "@/shared/lib/posthog-server";
+
+const redis =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Redis({
+        url: process.env.UPSTASH_REDIS_REST_URL,
+        token: process.env.UPSTASH_REDIS_REST_TOKEN,
+      })
+    : null;
 
 // POST /api/v1/billing/webhook — handle Stripe webhook events
 export async function POST(request: Request) {
@@ -27,15 +36,24 @@ export async function POST(request: Request) {
     return apiError("invalid_signature", "Invalid signature", 400);
   }
 
+  // Idempotency: skip events already processed (Stripe retries for up to 3 days)
+  if (redis) {
+    const key = `stripe:webhook:${event.id}`;
+    const already = await redis.set(key, "1", { nx: true, ex: 60 * 60 * 24 * 7 });
+    if (already === null) {
+      return NextResponse.json({ received: true });
+    }
+  }
+
   try {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        if (session.mode !== "subscription") break;
+        if (session.mode !== "subscription" || !session.subscription) break;
 
-        const userId = session.subscription
-          ? await getUserIdFromSubscription(session.subscription as string)
-          : null;
+        const userId =
+          (session.client_reference_id as string | null) ??
+          (await getUserIdFromCustomer(session.customer as string));
 
         if (!userId) break;
 

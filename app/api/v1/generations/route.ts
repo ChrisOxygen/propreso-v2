@@ -134,6 +134,10 @@ export async function POST(request: NextRequest) {
   }
 
   if (signals.is_suspicious_post === true) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { tokenBalance: { increment: 1 } },
+    });
     return apiError(
       "suspicious_post",
       "This post may be a scam or spam. Generation blocked.",
