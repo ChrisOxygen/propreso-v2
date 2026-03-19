@@ -56,10 +56,16 @@ export function EditProfileSheet({
   const skillInputRef = useRef<HTMLInputElement>(null);
 
   // Parse portfolioItems from JSON (Prisma stores as JsonValue)
+  // Back-compat: existing items may lack `title` — default to empty string
   const initialPortfolio = (() => {
     try {
-      const items = profile.portfolioItems as ZPortfolioItem[];
-      return Array.isArray(items) ? items : [];
+      const items = profile.portfolioItems as Array<Partial<ZPortfolioItem>>;
+      if (!Array.isArray(items)) return [];
+      return items.map((item) => ({
+        title: item.title ?? "",
+        url: item.url ?? "",
+        description: item.description ?? "",
+      }));
     } catch {
       return [];
     }
@@ -255,15 +261,17 @@ export function EditProfileSheet({
           {/* Portfolio Items */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <SectionLabel>Portfolio Links</SectionLabel>
-              {portfolioFields.length < 5 && (
+              <SectionLabel>Portfolio Projects</SectionLabel>
+              {portfolioFields.length > 0 && portfolioFields.length < 5 && (
                 <button
                   type="button"
-                  onClick={() => append({ url: "", description: "" })}
+                  onClick={() =>
+                    append({ title: "", url: "", description: "" })
+                  }
                   className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:text-primary-hover transition-colors duration-150"
                 >
                   <Plus size={11} />
-                  Add Link
+                  Add project
                 </button>
               )}
             </div>
@@ -271,46 +279,67 @@ export function EditProfileSheet({
             {portfolioFields.length === 0 && (
               <button
                 type="button"
-                onClick={() => append({ url: "", description: "" })}
-                className="w-full h-9 rounded-lg text-[12.5px] transition-colors duration-150 bg-background border border-dashed border-border text-muted-foreground hover:border-border-strong hover:bg-accent"
+                onClick={() => append({ title: "", url: "", description: "" })}
+                className="w-full h-9 rounded-lg text-[12.5px] transition-colors duration-150 bg-background border border-dashed border-border text-muted-foreground hover:border-primary/25 hover:text-primary hover:bg-accent/40"
               >
-                + Add portfolio link
+                + Add a project
               </button>
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {portfolioFields.map((field, index) => (
                 <div
                   key={field.id}
-                  className="p-3 rounded-lg bg-background border border-border"
+                  className="p-3 rounded-lg bg-background border border-border space-y-2"
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-medium text-muted-foreground">
-                      Link {index + 1}
+                  <div className="flex items-center justify-between">
+                    <span className="text-[11px] font-semibold text-muted-foreground/50 uppercase tracking-wide">
+                      Project {index + 1}
                     </span>
                     <button
                       type="button"
                       onClick={() => remove(index)}
-                      className="h-5 w-5 flex items-center justify-center rounded transition-colors duration-150 text-destructive/60 hover:text-destructive"
+                      className="h-5 w-5 flex items-center justify-center rounded transition-colors duration-150 text-muted-foreground/30 hover:text-destructive"
                     >
                       <Trash2 size={11} />
                     </button>
                   </div>
+
+                  {/* Title */}
+                  <input
+                    {...register(`portfolioItems.${index}.title`)}
+                    placeholder="Project title"
+                    className={`${fieldClass(!!errors.portfolioItems?.[index]?.title)} h-8 text-[12.5px]`}
+                  />
+                  {errors.portfolioItems?.[index]?.title && (
+                    <p className="text-[11px] text-destructive">
+                      {errors.portfolioItems[index].title?.message}
+                    </p>
+                  )}
+
+                  {/* URL */}
                   <input
                     {...register(`portfolioItems.${index}.url`)}
                     placeholder="https://your-project.com"
-                    className={`${fieldClass(!!errors.portfolioItems?.[index]?.url)} h-8 mb-2 text-[12.5px]`}
+                    className={`${fieldClass(!!errors.portfolioItems?.[index]?.url)} h-8 text-[12.5px]`}
                   />
                   {errors.portfolioItems?.[index]?.url && (
-                    <p className="mb-1.5 text-[11px] text-destructive">
+                    <p className="text-[11px] text-destructive">
                       {errors.portfolioItems[index].url?.message}
                     </p>
                   )}
+
+                  {/* Description */}
                   <input
                     {...register(`portfolioItems.${index}.description`)}
-                    placeholder="Brief description of this project"
+                    placeholder="Short description — optional"
                     className={`${fieldClass(!!errors.portfolioItems?.[index]?.description)} h-8 text-[12.5px]`}
                   />
+                  {errors.portfolioItems?.[index]?.description && (
+                    <p className="text-[11px] text-destructive">
+                      {errors.portfolioItems[index].description?.message}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
   const portfolioItems = (() => {
     try {
       const items = profile.portfolioItems as Array<{
+        title?: string;
         url: string;
         description: string;
       }>;

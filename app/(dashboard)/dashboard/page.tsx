@@ -6,21 +6,37 @@ import {
   Users,
   Zap,
   UserCog,
+  FolderOpen,
 } from "lucide-react";
 import { createClient } from "@/shared/lib/supabase/server";
 import { prisma } from "@/shared/lib/prisma";
 import { DashboardRecentProposals } from "@/features/proposals/components/DashboardRecentProposals";
 
 async function getDashboardData(userId: string) {
-  const [totalProposals, wonProposals, repliedProposals, profileCount] =
+  const [totalProposals, wonProposals, repliedProposals, profileCount, defaultProfile] =
     await Promise.all([
       prisma.proposal.count({ where: { userId } }),
       prisma.proposal.count({ where: { userId, status: "WON" } }),
       prisma.proposal.count({ where: { userId, status: "REPLIED" } }),
       prisma.freelancerProfile.count({ where: { userId } }),
+      prisma.freelancerProfile.findFirst({
+        where: { userId, isDefault: true },
+        select: { portfolioItems: true },
+      }),
     ]);
 
-  return { totalProposals, wonProposals, repliedProposals, profileCount };
+  const hasPortfolio =
+    defaultProfile &&
+    Array.isArray(defaultProfile.portfolioItems) &&
+    (defaultProfile.portfolioItems as unknown[]).length > 0;
+
+  return {
+    totalProposals,
+    wonProposals,
+    repliedProposals,
+    profileCount,
+    showPortfolioNudge: profileCount > 0 && !hasPortfolio,
+  };
 }
 
 export default async function DashboardPage() {
@@ -31,7 +47,7 @@ export default async function DashboardPage() {
 
   if (!user) return null;
 
-  const { totalProposals, wonProposals, repliedProposals, profileCount } =
+  const { totalProposals, wonProposals, repliedProposals, profileCount, showPortfolioNudge } =
     await getDashboardData(user.id);
 
   const responseRate =
@@ -105,6 +121,30 @@ export default async function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Portfolio completeness nudge */}
+      {showPortfolioNudge && (
+        <Link
+          href="/profiles"
+          className="flex items-center gap-3 rounded-xl px-4 py-3 bg-accent border border-primary/20 hover:border-primary/40 hover:bg-accent transition-colors duration-150 group"
+        >
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <FolderOpen size={15} className="text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[13px] font-semibold text-foreground font-heading leading-tight">
+              Add work samples to your profile
+            </p>
+            <p className="text-[12px] text-muted-foreground mt-0.5">
+              Projects give the AI concrete proof points — proposals get
+              stronger.
+            </p>
+          </div>
+          <span className="text-[12px] text-primary font-medium shrink-0 group-hover:underline">
+            Add now →
+          </span>
+        </Link>
+      )}
 
       {/* Quick actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

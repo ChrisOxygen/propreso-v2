@@ -1,8 +1,9 @@
 import { z } from "zod";
 
 export const ZPortfolioItemSchema = z.object({
+  title: z.string().min(1, "Title is required").max(80, { error: "Title is too long" }),
   url: z.string().url({ error: "Please enter a valid URL" }),
-  description: z.string().max(400, { error: "Description is too long" }),
+  description: z.string().max(200, { error: "Description is too long" }),
 });
 
 export const ZCreateProfileSchema = z.object({

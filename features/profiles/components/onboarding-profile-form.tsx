@@ -77,6 +77,8 @@ export function OnboardingProfileForm({
     name: "portfolioItems",
   });
 
+  const [expandedPortfolioIndex, setExpandedPortfolioIndex] = useState<number | null>(null);
+
   const bioValue = watch("bio") ?? "";
 
   // The effective role is the preset or whatever the user typed
@@ -580,87 +582,225 @@ export function OnboardingProfileForm({
                 className="text-[1.75rem] font-bold tracking-[-0.035em] leading-[1.15] text-foreground"
                 style={{ fontFamily: "var(--font-space-grotesk)" }}
               >
-                Add your portfolio
+                Showcase your work
               </h1>
               <p
                 className="mt-1.5 text-[13px] leading-relaxed text-muted-foreground"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                Up to 5 projects. The AI references these when relevant to a
-                job.
+                Add up to 5 projects. The AI references these as proof points
+                in proposals.
               </p>
             </div>
 
             {/* Portfolio items */}
-            <div className="space-y-3">
-              {portfolioFields.map((field, index) => (
-                <div
-                  key={field.id}
-                  className="rounded-xl p-4 space-y-3 bg-background border border-border"
-                >
-                  <div className="flex items-center justify-between">
-                    <span
-                      className="text-[11px] font-semibold text-muted-foreground/50"
-                      style={{ fontFamily: "var(--font-space-grotesk)" }}
-                    >
-                      Project {index + 1}
-                    </span>
+            <div className="space-y-2.5">
+              {portfolioFields.map((field, index) => {
+                const isExpanded = expandedPortfolioIndex === index;
+                const titleVal = watch(`portfolioItems.${index}.title`) ?? "";
+                const urlVal = watch(`portfolioItems.${index}.url`) ?? "";
+                const hasErrors =
+                  !!errors.portfolioItems?.[index]?.title ||
+                  !!errors.portfolioItems?.[index]?.url ||
+                  !!errors.portfolioItems?.[index]?.description;
+
+                return (
+                  <div
+                    key={field.id}
+                    className={cn(
+                      "rounded-xl border transition-all duration-200",
+                      isExpanded
+                        ? "bg-card border-border-strong shadow-sm"
+                        : hasErrors
+                          ? "bg-card border-destructive/30"
+                          : "bg-card border-border",
+                    )}
+                  >
+                    {/* Card header — always visible */}
                     <button
                       type="button"
-                      onClick={() => remove(index)}
-                      className="w-6 h-6 rounded flex items-center justify-center transition-colors duration-150 text-muted-foreground/30 hover:text-destructive"
+                      onClick={() =>
+                        setExpandedPortfolioIndex(isExpanded ? null : index)
+                      }
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left"
                     >
-                      <Trash2 size={13} />
+                      <div className="w-6 h-6 rounded-md bg-accent flex items-center justify-center shrink-0">
+                        <span
+                          className="text-[10px] font-bold text-primary"
+                          style={{ fontFamily: "var(--font-space-grotesk)" }}
+                        >
+                          {index + 1}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        {titleVal ? (
+                          <p
+                            className="text-[13px] font-medium text-foreground truncate"
+                            style={{ fontFamily: "var(--font-inter)" }}
+                          >
+                            {titleVal}
+                          </p>
+                        ) : (
+                          <p
+                            className="text-[13px] text-muted-foreground/50"
+                            style={{ fontFamily: "var(--font-inter)" }}
+                          >
+                            Untitled project
+                          </p>
+                        )}
+                        {urlVal && !isExpanded && (
+                          <p
+                            className="text-[11px] text-muted-foreground truncate mt-0.5"
+                            style={{ fontFamily: "var(--font-inter)" }}
+                          >
+                            {urlVal.replace(/^https?:\/\//, "")}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        {hasErrors && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-destructive" />
+                        )}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            remove(index);
+                            if (expandedPortfolioIndex === index)
+                              setExpandedPortfolioIndex(null);
+                          }}
+                          className="w-6 h-6 rounded flex items-center justify-center transition-colors duration-150 text-muted-foreground/30 hover:text-destructive"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </div>
                     </button>
+
+                    {/* Expanded fields */}
+                    {isExpanded && (
+                      <div className="px-4 pb-4 space-y-2.5 border-t border-border pt-3">
+                        {/* Title */}
+                        <div className="space-y-1">
+                          <label
+                            className="text-[11px] font-medium text-muted-foreground"
+                            style={{ fontFamily: "var(--font-space-grotesk)" }}
+                          >
+                            Project title
+                          </label>
+                          <input
+                            {...register(`portfolioItems.${index}.title`)}
+                            placeholder="e.g. E-commerce checkout redesign"
+                            className={cn(
+                              inputCn(!!errors.portfolioItems?.[index]?.title),
+                              "h-9",
+                            )}
+                            style={{ fontFamily: "var(--font-inter)" }}
+                          />
+                          {errors.portfolioItems?.[index]?.title && (
+                            <p
+                              className="text-[11px] text-destructive"
+                              style={{ fontFamily: "var(--font-inter)" }}
+                            >
+                              {errors.portfolioItems[index]?.title?.message}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* URL */}
+                        <div className="space-y-1">
+                          <label
+                            className="text-[11px] font-medium text-muted-foreground"
+                            style={{ fontFamily: "var(--font-space-grotesk)" }}
+                          >
+                            Project URL
+                          </label>
+                          <input
+                            {...register(`portfolioItems.${index}.url`)}
+                            placeholder="https://yourproject.com"
+                            className={cn(
+                              inputCn(!!errors.portfolioItems?.[index]?.url),
+                              "h-9",
+                            )}
+                            style={{ fontFamily: "var(--font-inter)" }}
+                          />
+                          {errors.portfolioItems?.[index]?.url && (
+                            <p
+                              className="text-[11px] text-destructive"
+                              style={{ fontFamily: "var(--font-inter)" }}
+                            >
+                              {errors.portfolioItems[index]?.url?.message}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Description */}
+                        <div className="space-y-1">
+                          <div className="flex items-center justify-between">
+                            <label
+                              className="text-[11px] font-medium text-muted-foreground"
+                              style={{
+                                fontFamily: "var(--font-space-grotesk)",
+                              }}
+                            >
+                              Short description{" "}
+                              <span className="text-muted-foreground/40 font-normal">
+                                · optional
+                              </span>
+                            </label>
+                            <span
+                              className="text-[10px] text-muted-foreground/40"
+                              style={{ fontFamily: "var(--font-inter)" }}
+                            >
+                              {(
+                                watch(
+                                  `portfolioItems.${index}.description`,
+                                ) ?? ""
+                              ).length}
+                              /200
+                            </span>
+                          </div>
+                          <input
+                            {...register(`portfolioItems.${index}.description`)}
+                            placeholder="What did you build? What was the result?"
+                            className={cn(
+                              inputCn(
+                                !!errors.portfolioItems?.[index]?.description,
+                              ),
+                              "h-9",
+                            )}
+                            style={{ fontFamily: "var(--font-inter)" }}
+                          />
+                          {errors.portfolioItems?.[index]?.description && (
+                            <p
+                              className="text-[11px] text-destructive"
+                              style={{ fontFamily: "var(--font-inter)" }}
+                            >
+                              {
+                                errors.portfolioItems[index]?.description
+                                  ?.message
+                              }
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-
-                  <input
-                    {...register(`portfolioItems.${index}.url`)}
-                    placeholder="https://yourproject.com"
-                    className={cn(
-                      inputCn(!!errors.portfolioItems?.[index]?.url),
-                      "h-9",
-                    )}
-                    style={{ fontFamily: "var(--font-inter)" }}
-                  />
-                  {errors.portfolioItems?.[index]?.url && (
-                    <p
-                      className="text-[11px] text-destructive"
-                      style={{ fontFamily: "var(--font-inter)" }}
-                    >
-                      {errors.portfolioItems[index]?.url?.message}
-                    </p>
-                  )}
-
-                  <input
-                    {...register(`portfolioItems.${index}.description`)}
-                    placeholder="Short description — what did you build?"
-                    className={cn(
-                      inputCn(!!errors.portfolioItems?.[index]?.description),
-                      "h-9",
-                    )}
-                    style={{ fontFamily: "var(--font-inter)" }}
-                  />
-                  {errors.portfolioItems?.[index]?.description && (
-                    <p
-                      className="text-[11px] text-destructive"
-                      style={{ fontFamily: "var(--font-inter)" }}
-                    >
-                      {errors.portfolioItems[index]?.description?.message}
-                    </p>
-                  )}
-                </div>
-              ))}
+                );
+              })}
 
               {portfolioFields.length < 5 && (
                 <button
                   type="button"
-                  onClick={() => append({ url: "", description: "" })}
-                  className="w-full h-10 flex items-center justify-center gap-2 rounded-lg text-[13px] font-medium transition-all duration-150 bg-card border border-dashed border-border text-muted-foreground hover:border-primary/30 hover:text-primary"
+                  onClick={() => {
+                    const newIndex = portfolioFields.length;
+                    append({ title: "", url: "", description: "" });
+                    setExpandedPortfolioIndex(newIndex);
+                  }}
+                  className="w-full h-10 flex items-center justify-center gap-2 rounded-xl text-[13px] font-medium transition-all duration-150 bg-card border border-dashed border-border text-muted-foreground hover:border-primary/30 hover:text-primary hover:bg-accent/40"
                   style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
                   <Plus size={14} />
-                  Add project
+                  Add a project
                 </button>
               )}
             </div>
@@ -670,7 +810,8 @@ export function OnboardingProfileForm({
                 className="rounded-lg px-4 py-3 text-[13px] bg-error-subtle border border-destructive/25 text-destructive"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                {(mutation.error as { code?: string })?.code === "profile_limit_reached"
+                {(mutation.error as { code?: string })?.code ===
+                "profile_limit_reached"
                   ? "You've reached the free plan limit of 2 profiles."
                   : "Something went wrong. Please try again."}
               </div>
@@ -719,7 +860,7 @@ export function OnboardingProfileForm({
                 className="text-[12.5px] text-muted-foreground/50 hover:text-text-secondary transition-colors duration-150 disabled:opacity-50"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                Skip portfolio for now
+                Skip — add later
               </button>
             </div>
           </div>

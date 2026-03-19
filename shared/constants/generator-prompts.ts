@@ -203,13 +203,17 @@ export function buildGeneratorSystemPrompt(
     name: string;
     bio: string;
     skills: string[];
-    portfolioItems: Array<{ url: string; description: string }>;
+    portfolioItems: Array<{ title?: string; url: string; description: string }>;
   },
   tone: Tone
 ): string {
   const portfolioBlock =
     profile.portfolioItems.length > 0
-      ? `\n\nPORTFOLIO ITEMS:\n${profile.portfolioItems.map((item, i) => `${i + 1}. ${item.description} — ${item.url}`).join("\n")}`
+      ? `\n\nPORTFOLIO ITEMS:\n${profile.portfolioItems.map((item, i) => {
+          const label = item.title ?? item.description;
+          const detail = item.title && item.description ? `: ${item.description}` : "";
+          return `${i + 1}. ${label}${detail} — ${item.url}`;
+        }).join("\n")}`
       : "";
 
   const profileBlock = `## FREELANCER PROFILE (The Applicant)
