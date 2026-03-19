@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const ZPortfolioItemSchema = z.object({
-  url: z.url({ error: "Please enter a valid URL" }),
+  url: z.string().url("Please enter a valid URL"),
   description: z.string().max(200, "Description is too long"),
 });
 
