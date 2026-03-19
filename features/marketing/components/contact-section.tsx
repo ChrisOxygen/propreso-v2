@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Twitter, Clock, CalendarDays, ArrowRight, CheckCircle2 } from "lucide-react";
@@ -78,10 +79,19 @@ export function ContactSection() {
     resolver: zodResolver(ZContactSchema),
   });
 
+  // Anti-spam: record when the form was first rendered
+  const formLoadedAt = useRef(Date.now());
+  // Anti-spam: honeypot field — bots fill it, humans never see it
+  const honeypotRef = useRef<HTMLInputElement>(null);
+
   const mutation = useSubmitContact({ onSuccess: () => {} });
 
   function onSubmit(data: ZContact) {
-    mutation.mutate(data);
+    mutation.mutate({
+      ...data,
+      _honeypot: honeypotRef.current?.value ?? "",
+      _formLoadedAt: formLoadedAt.current,
+    });
   }
 
   function handleSendAnother() {
@@ -313,6 +323,17 @@ export function ContactSection() {
                     </p>
                   )}
                 </div>
+
+                {/* Honeypot — visually hidden, only bots fill this */}
+                <input
+                  ref={honeypotRef}
+                  type="text"
+                  name="website"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="hidden"
+                />
 
                 {/* API-level error */}
                 {mutation.isError && (

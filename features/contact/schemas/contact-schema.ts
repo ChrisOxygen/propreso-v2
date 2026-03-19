@@ -9,3 +9,9 @@ export const ZContactSchema = z.object({
 });
 
 export type ZContact = z.infer<typeof ZContactSchema>;
+
+// Extended payload sent to the API — includes anti-spam fields not part of form validation
+export type ZContactPayload = ZContact & {
+  _honeypot?: string;
+  _formLoadedAt?: number;
+};

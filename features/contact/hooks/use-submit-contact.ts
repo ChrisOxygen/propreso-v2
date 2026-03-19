@@ -1,9 +1,9 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import type { ZContact } from "@/features/contact/schemas/contact-schema";
+import type { ZContactPayload } from "@/features/contact/schemas/contact-schema";
 
-async function submitContact(data: ZContact): Promise<void> {
+async function submitContact(data: ZContactPayload): Promise<void> {
   const res = await fetch("/api/v1/contact", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
