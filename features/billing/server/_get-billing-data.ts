@@ -2,6 +2,7 @@ import { prisma } from "@/shared/lib/prisma";
 import { stripe } from "@/shared/lib/stripe";
 import { startOfMonth } from "date-fns";
 import type { BillingData, BillingInvoice } from "@/features/billing/types";
+import type { Plan, BillingInterval, SubscriptionStatus } from "@/shared/lib/generated/prisma/enums";
 
 export async function _getBillingData(
   userId: string,
@@ -17,17 +18,52 @@ export async function _getBillingData(
 
   if (!user) throw new Error("User not found");
 
+  // Race condition guard: user just returned from Stripe Checkout but the
+  // webhook hasn't been processed yet — proactively sync their subscription.
+  let resolvedUser = user;
+  if (showSuccessBanner && user.plan === "FREE" && user.stripeCustomerId) {
+    try {
+      const subs = await stripe.subscriptions.list({
+        customer: user.stripeCustomerId,
+        status: "active",
+        limit: 1,
+      });
+      const activeSub = subs.data[0];
+      if (activeSub) {
+        const priceId = activeSub.items.data[0]?.price?.id ?? null;
+        const interval = activeSub.items.data[0]?.price?.recurring?.interval;
+        const billingInterval: BillingInterval | null =
+          interval === "year" ? "YEARLY" : interval === "month" ? "MONTHLY" : null;
+        resolvedUser = await prisma.user.update({
+          where: { id: userId },
+          data: {
+            plan: "PRO" as Plan,
+            billingInterval,
+            stripeSubscriptionId: activeSub.id,
+            stripePriceId: priceId,
+            subscriptionStatus: activeSub.status as SubscriptionStatus,
+            currentPeriodEnd: activeSub.items.data[0]?.current_period_end
+              ? new Date(activeSub.items.data[0].current_period_end * 1000)
+              : null,
+          },
+        });
+      }
+    } catch {
+      // Stripe unavailable — fall through with existing DB data
+    }
+  }
+
   let invoices: BillingInvoice[] = [];
   let paymentMethodLast4: string | null = null;
   let paymentMethodBrand: string | null = null;
   let paymentMethodExpMonth: number | null = null;
   let paymentMethodExpYear: number | null = null;
 
-  if (user.stripeCustomerId) {
+  if (resolvedUser.stripeCustomerId) {
     try {
       const [stripeInvoices, customer] = await Promise.all([
-        stripe.invoices.list({ customer: user.stripeCustomerId, limit: 12 }),
-        stripe.customers.retrieve(user.stripeCustomerId, {
+        stripe.invoices.list({ customer: resolvedUser.stripeCustomerId!, limit: 12 }),
+        stripe.customers.retrieve(resolvedUser.stripeCustomerId!, {
           expand: ["invoice_settings.default_payment_method"],
         }),
       ]);
@@ -59,14 +95,14 @@ export async function _getBillingData(
 
   return {
     user: {
-      id: user.id,
-      email: user.email,
-      plan: user.plan,
-      stripeCustomerId: user.stripeCustomerId ?? null,
-      stripeSubscriptionId: user.stripeSubscriptionId ?? null,
-      subscriptionStatus: user.subscriptionStatus ?? null,
-      currentPeriodEnd: user.currentPeriodEnd?.toISOString() ?? null,
-      stripePriceId: user.stripePriceId ?? null,
+      id: resolvedUser.id,
+      email: resolvedUser.email,
+      plan: resolvedUser.plan,
+      stripeCustomerId: resolvedUser.stripeCustomerId ?? null,
+      stripeSubscriptionId: resolvedUser.stripeSubscriptionId ?? null,
+      subscriptionStatus: resolvedUser.subscriptionStatus ?? null,
+      currentPeriodEnd: resolvedUser.currentPeriodEnd?.toISOString() ?? null,
+      stripePriceId: resolvedUser.stripePriceId ?? null,
     },
     proposalCount,
     profileCount,
