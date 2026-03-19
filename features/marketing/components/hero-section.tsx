@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";
+import { DemoButton } from "@/features/marketing/components/demo-button";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Data
@@ -97,15 +98,7 @@ export function HeroSection() {
             <Link href="/sign-up">Get Started Free &nbsp;→</Link>
           </Button>
 
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="border-border-strong text-text-secondary hover:text-foreground hover:bg-accent h-11 px-7 text-[14px] font-medium tracking-[-0.01em] transition-all duration-200 rounded-lg"
-            style={{ fontFamily: "var(--font-space-grotesk)" }}
-          >
-            <Link href="/demo">Watch 60-sec Demo</Link>
-          </Button>
+          <DemoButton />
         </div>
 
         {/* Social proof micro-text */}
