@@ -5,8 +5,7 @@ export default function OnboardingLayout({
 }) {
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-6 py-16"
-      style={{ backgroundColor: "#0F0A05" }}
+      className="min-h-screen flex items-center justify-center px-6 py-16 bg-background"
     >
       {/* Subtle radial glow behind content */}
       <div
