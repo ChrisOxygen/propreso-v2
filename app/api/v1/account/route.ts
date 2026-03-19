@@ -49,13 +49,14 @@ export async function DELETE() {
   }
 
   try {
-    // Delete Prisma user — cascade handles profiles and proposals
-    await prisma.user.delete({ where: { id: user.id } });
-
-    // Delete the Supabase Auth identity (requires service role key).
-    // This invalidates all sessions and prevents re-login with the same credentials.
+    // Delete the Supabase Auth identity first (requires service role key).
+    // Doing this before Prisma ensures the user record is untouched if this
+    // step fails, so the user can retry without being left in a broken state.
     const admin = createAdminClient();
     await admin.auth.admin.deleteUser(user.id);
+
+    // Delete Prisma user — cascade handles profiles and proposals
+    await prisma.user.delete({ where: { id: user.id } });
 
     return NextResponse.json({ ok: true });
   } catch {
