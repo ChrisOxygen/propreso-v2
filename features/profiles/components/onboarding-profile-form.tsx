@@ -635,9 +635,20 @@ export function OnboardingProfileForm({
                   <input
                     {...register(`portfolioItems.${index}.description`)}
                     placeholder="Short description — what did you build?"
-                    className={cn(inputCn(false), "h-9")}
+                    className={cn(
+                      inputCn(!!errors.portfolioItems?.[index]?.description),
+                      "h-9",
+                    )}
                     style={{ fontFamily: "var(--font-inter)" }}
                   />
+                  {errors.portfolioItems?.[index]?.description && (
+                    <p
+                      className="text-[11px] text-destructive"
+                      style={{ fontFamily: "var(--font-inter)" }}
+                    >
+                      {errors.portfolioItems[index]?.description?.message}
+                    </p>
+                  )}
                 </div>
               ))}
 
@@ -659,7 +670,7 @@ export function OnboardingProfileForm({
                 className="rounded-lg px-4 py-3 text-[13px] bg-error-subtle border border-destructive/25 text-destructive"
                 style={{ fontFamily: "var(--font-inter)" }}
               >
-                {mutation.error.message === "profile_limit_reached"
+                {(mutation.error as { code?: string })?.code === "profile_limit_reached"
                   ? "You've reached the free plan limit of 2 profiles."
                   : "Something went wrong. Please try again."}
               </div>
