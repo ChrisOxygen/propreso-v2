@@ -17,7 +17,7 @@ export const ZCreateProfileSchema = z.object({
   bio: z
     .string()
     .min(50, "Please write at least 50 characters")
-    .max(600, "Bio is too long"),
+    .max(1000, "Bio is too long"),
   portfolioItems: z
     .array(ZPortfolioItemSchema)
     .max(5, "Maximum 5 portfolio items"),
@@ -40,7 +40,7 @@ export const ZUpdateProfileSchema = z.object({
   bio: z
     .string()
     .min(50, "Please write at least 50 characters")
-    .max(600, "Bio is too long")
+    .max(1000, "Bio is too long")
     .optional(),
   portfolioItems: z
     .array(ZPortfolioItemSchema)
