@@ -2,7 +2,7 @@ import { stripe } from "@/shared/lib/stripe";
 import { prisma } from "@/shared/lib/prisma";
 import { Redis } from "@upstash/redis";
 import { NextResponse } from "next/server";
-import type { Plan, BillingInterval } from "@/shared/lib/generated/prisma/enums";
+import type { Plan, BillingInterval, SubscriptionStatus } from "@/shared/lib/generated/prisma/enums";
 import type Stripe from "stripe";
 import { PRO_MONTHLY_TOKENS } from "@/features/billing/constants/plans";
 import { apiError } from "@/shared/lib/api-error";
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
             billingInterval: null,
             stripeSubscriptionId: null,
             stripePriceId: null,
-            subscriptionStatus: "canceled",
+            subscriptionStatus: "canceled" as SubscriptionStatus,
             currentPeriodEnd: null,
             // tokenBalance intentionally not reset — user keeps remaining tokens
           },
@@ -142,7 +142,7 @@ export async function POST(request: Request) {
         if (!userId) break;
         await prisma.user.updateMany({
           where: { id: userId },
-          data: { subscriptionStatus: "past_due" },
+          data: { subscriptionStatus: "past_due" as SubscriptionStatus },
         });
         void captureServerEvent(userId, "billing_failed");
         break;
@@ -164,14 +164,6 @@ async function getUserIdFromCustomer(customerId: string): Promise<string | null>
   return user?.id ?? null;
 }
 
-async function getUserIdFromSubscription(subscriptionId: string): Promise<string | null> {
-  const user = await prisma.user.findFirst({
-    where: { stripeSubscriptionId: subscriptionId },
-    select: { id: true },
-  });
-  return user?.id ?? null;
-}
-
 async function syncSubscription(subscriptionId: string, userId: string) {
   const sub = await stripe.subscriptions.retrieve(subscriptionId);
   const priceId = sub.items.data[0]?.price?.id ?? null;
@@ -187,7 +179,7 @@ async function syncSubscription(subscriptionId: string, userId: string) {
       billingInterval,
       stripeSubscriptionId: sub.id,
       stripePriceId: priceId,
-      subscriptionStatus: sub.status,
+      subscriptionStatus: sub.status as SubscriptionStatus,
       currentPeriodEnd: sub.items.data[0]?.current_period_end
         ? new Date(sub.items.data[0].current_period_end * 1000)
         : null,

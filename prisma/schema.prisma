@@ -44,6 +44,19 @@ enum ProposalStatus {
   NO_RESPONSE
 }
 
+// Mirrors Stripe's Subscription.status string values exactly so sub.status
+// can be assigned directly without casting.
+enum SubscriptionStatus {
+  active
+  past_due
+  unpaid
+  canceled
+  incomplete
+  incomplete_expired
+  trialing
+  paused
+}
+
 model User {
   id                   String           @id
   email                String           @unique
@@ -55,7 +68,7 @@ model User {
   stripeSubscriptionId String?          @unique
   stripePriceId        String?
   currentPeriodEnd     DateTime?
-  subscriptionStatus   String?
+  subscriptionStatus   SubscriptionStatus?
   createdAt            DateTime         @default(now())
   profiles             FreelancerProfile[]
   proposals            Proposal[]
@@ -82,7 +95,7 @@ model Proposal {
   userId           String
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   profileId        String
-  profile          FreelancerProfile @relation(fields: [profileId], references: [id])
+  profile          FreelancerProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
   jobDescription   String
   tone             Tone
   signals          Json?
@@ -94,6 +107,7 @@ model Proposal {
 
   @@index([userId])
   @@index([userId, createdAt])
+  @@index([profileId])
 }
 
 model GenerationEvent {

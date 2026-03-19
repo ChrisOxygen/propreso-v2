@@ -11,12 +11,13 @@ import {
   buildGeneratorSystemPrompt,
   buildGeneratorUserMessage,
 } from "@/shared/constants/generator-prompts";
-import type { Tone } from "@/shared/lib/generated/prisma/enums";
 import {
   ANALYZER_MODEL,
   GENERATOR_MODEL,
 } from "@/features/proposals/constants/generation";
-import { apiError } from "@/shared/lib/api-error";
+import { apiError, apiValidationError } from "@/shared/lib/api-error";
+import { ZGenerateProposalSchema } from "@/features/proposals/schemas/generate-schema";
+import { generationRatelimit } from "@/shared/lib/rate-limit";
 import { captureServerEvent } from "@/shared/lib/posthog-server";
 
 export async function POST(request: NextRequest) {
@@ -30,12 +31,20 @@ export async function POST(request: NextRequest) {
     return apiError("unauthorized", "Unauthorized", 401);
   }
 
-  const body = await request.json();
-  const { profileId, tone, rawPost } = body as {
-    profileId: string;
-    tone: Tone;
-    rawPost: string;
-  };
+  // Per-user rate limit: 5 requests/min. Prevents burst abuse.
+  if (generationRatelimit) {
+    const { success } = await generationRatelimit.limit(user.id);
+    if (!success) {
+      return apiError("rate_limited", "Too many requests. Please wait a moment.", 429);
+    }
+  }
+
+  const bodyJson = await request.json().catch(() => null);
+  const parsed = ZGenerateProposalSchema.safeParse(bodyJson);
+  if (!parsed.success) {
+    return apiValidationError(parsed.error);
+  }
+  const { profileId, tone, rawPost } = parsed.data;
 
   // Atomic check-and-decrement: only succeeds if tokenBalance > 0
   const deducted = await prisma.user.updateMany({
@@ -149,6 +158,10 @@ export async function POST(request: NextRequest) {
     signals.is_unclassifiable === true ||
     (signals.confidence !== undefined && signals.confidence < 0.7)
   ) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { tokenBalance: { increment: 1 } },
+    });
     return Response.json({
       requiresConfirmation: true,
       detectedType: signals.post_type,

@@ -1,4 +1,5 @@
 import { createClient } from "@/shared/lib/supabase/server";
+import { createAdminClient } from "@/shared/lib/supabase/admin";
 import { prisma } from "@/shared/lib/prisma";
 import { ZUpdateDisplayNameSchema } from "@/features/account/schemas/account-schema";
 import { NextResponse } from "next/server";
@@ -51,8 +52,10 @@ export async function DELETE() {
     // Delete Prisma user — cascade handles profiles and proposals
     await prisma.user.delete({ where: { id: user.id } });
 
-    // Sign out the current session server-side
-    await supabase.auth.signOut();
+    // Delete the Supabase Auth identity (requires service role key).
+    // This invalidates all sessions and prevents re-login with the same credentials.
+    const admin = createAdminClient();
+    await admin.auth.admin.deleteUser(user.id);
 
     return NextResponse.json({ ok: true });
   } catch {

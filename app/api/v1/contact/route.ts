@@ -38,6 +38,7 @@ export async function POST(request: Request) {
   // 5 submissions per 10 minutes per IP. Skipped if Upstash env vars are absent.
   if (contactRatelimit) {
     const ip =
+      request.headers.get("x-real-ip") ??
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       "unknown";
     const { success } = await contactRatelimit.limit(ip);

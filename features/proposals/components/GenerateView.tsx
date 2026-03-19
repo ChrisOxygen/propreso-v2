@@ -102,14 +102,14 @@ export function GenerateView() {
     }
   }, [profiles, defaultSet, setValue]);
 
-  const formValues = watch();
+  const [watchedProfileId, watchedTone, rawPost] = watch(["profileId", "tone", "rawPost"]);
 
   // Keep a ref with the latest extra body so the transport stays stable
   const extraBodyRef = useRef<Record<string, unknown>>({});
   extraBodyRef.current = {
-    profileId: formValues.profileId,
-    tone: formValues.tone,
-    rawPost: formValues.rawPost,
+    profileId: watchedProfileId,
+    tone: watchedTone,
+    rawPost,
   };
 
   const transport = useMemo(
@@ -214,7 +214,6 @@ export function GenerateView() {
     }
   }
 
-  const rawPost = watch("rawPost");
   const rawPostLength = rawPost?.length ?? 0;
 
   return (
