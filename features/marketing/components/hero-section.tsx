@@ -204,7 +204,7 @@ export function HeroSection() {
                   className="text-[10px] text-muted-foreground/60 select-none truncate"
                   style={{ fontFamily: "var(--font-jetbrains-mono)" }}
                 >
-                  app.propreso.ai/dashboard
+                  app.propreso.com/dashboard
                 </span>
               </div>
             </div>

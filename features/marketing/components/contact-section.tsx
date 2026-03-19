@@ -1,9 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, Twitter, Clock, CalendarDays, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
+import { cn } from "@/shared/lib/utils";
+import { ZContactSchema, type ZContact } from "@/features/contact/schemas/contact-schema";
+import { useSubmitContact } from "@/features/contact/hooks/use-submit-contact";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Data
@@ -13,7 +17,7 @@ const CONTACT_CARDS = [
   {
     icon: Mail,
     label: "Email Us",
-    value: "hello@propreso.ai",
+    value: "hello@propreso.com",
     sub: "We read every message",
   },
   {
@@ -37,21 +41,52 @@ const CONTACT_CARDS = [
 ] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+
+function inputCn(hasError: boolean) {
+  return cn(
+    "h-10 px-3.5 rounded-lg border bg-background text-[13.5px] text-foreground",
+    "placeholder:text-muted-foreground/50 outline-none transition-all duration-150",
+    hasError
+      ? "border-destructive/50 ring-2 ring-destructive/10"
+      : "border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/10",
+  );
+}
+
+function textareaCn(hasError: boolean) {
+  return cn(
+    "px-3.5 py-3 rounded-lg border bg-background text-[13.5px] text-foreground",
+    "placeholder:text-muted-foreground/50 outline-none transition-all duration-150 resize-none leading-relaxed",
+    hasError
+      ? "border-destructive/50 ring-2 ring-destructive/10"
+      : "border-border focus:border-primary/50 focus:ring-2 focus:ring-primary/10",
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Component
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function ContactSection() {
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ZContact>({
+    resolver: zodResolver(ZContactSchema),
+  });
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoading(true);
-    // Simulate send — wire up a real endpoint later
-    setTimeout(() => {
-      setLoading(false);
-      setSent(true);
-    }, 1200);
+  const mutation = useSubmitContact({ onSuccess: () => {} });
+
+  function onSubmit(data: ZContact) {
+    mutation.mutate(data);
+  }
+
+  function handleSendAnother() {
+    mutation.reset();
+    reset();
   }
 
   return (
@@ -129,7 +164,7 @@ export function ContactSection() {
               Fill out the form and we&apos;ll get back to you shortly.
             </p>
 
-            {sent ? (
+            {mutation.isSuccess ? (
               /* ── Success state ──────────────────────────────── */
               <div className="flex flex-col items-center gap-4 py-12 text-center">
                 <div className="w-14 h-14 rounded-full bg-accent border border-primary/20 flex items-center justify-center">
@@ -150,7 +185,7 @@ export function ContactSection() {
                   </p>
                 </div>
                 <button
-                  onClick={() => setSent(false)}
+                  onClick={handleSendAnother}
                   className="mt-2 text-[12.5px] text-primary underline underline-offset-2 hover:text-primary-hover transition-colors"
                   style={{ fontFamily: "var(--font-inter)" }}
                 >
@@ -158,7 +193,7 @@ export function ContactSection() {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+              <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
                 {/* Name row */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
@@ -172,11 +207,16 @@ export function ContactSection() {
                     <input
                       id="firstName"
                       type="text"
-                      required
                       placeholder="First name"
-                      className="h-10 px-3.5 rounded-lg border border-border bg-background text-[13.5px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all duration-150"
+                      className={inputCn(!!errors.firstName)}
                       style={{ fontFamily: "var(--font-inter)" }}
+                      {...register("firstName")}
                     />
+                    {errors.firstName && (
+                      <p className="text-[11.5px] text-destructive" style={{ fontFamily: "var(--font-inter)" }}>
+                        {errors.firstName.message}
+                      </p>
+                    )}
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label
@@ -189,11 +229,16 @@ export function ContactSection() {
                     <input
                       id="lastName"
                       type="text"
-                      required
                       placeholder="Last name"
-                      className="h-10 px-3.5 rounded-lg border border-border bg-background text-[13.5px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all duration-150"
+                      className={inputCn(!!errors.lastName)}
                       style={{ fontFamily: "var(--font-inter)" }}
+                      {...register("lastName")}
                     />
+                    {errors.lastName && (
+                      <p className="text-[11.5px] text-destructive" style={{ fontFamily: "var(--font-inter)" }}>
+                        {errors.lastName.message}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -209,11 +254,16 @@ export function ContactSection() {
                   <input
                     id="email"
                     type="email"
-                    required
                     placeholder="you@example.com"
-                    className="h-10 px-3.5 rounded-lg border border-border bg-background text-[13.5px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all duration-150"
+                    className={inputCn(!!errors.email)}
                     style={{ fontFamily: "var(--font-inter)" }}
+                    {...register("email")}
                   />
+                  {errors.email && (
+                    <p className="text-[11.5px] text-destructive" style={{ fontFamily: "var(--font-inter)" }}>
+                      {errors.email.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Subject */}
@@ -228,11 +278,16 @@ export function ContactSection() {
                   <input
                     id="subject"
                     type="text"
-                    required
                     placeholder="What's this about?"
-                    className="h-10 px-3.5 rounded-lg border border-border bg-background text-[13.5px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all duration-150"
+                    className={inputCn(!!errors.subject)}
                     style={{ fontFamily: "var(--font-inter)" }}
+                    {...register("subject")}
                   />
+                  {errors.subject && (
+                    <p className="text-[11.5px] text-destructive" style={{ fontFamily: "var(--font-inter)" }}>
+                      {errors.subject.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Message */}
@@ -246,22 +301,37 @@ export function ContactSection() {
                   </label>
                   <textarea
                     id="message"
-                    required
                     rows={5}
                     placeholder="Leave us a message..."
-                    className="px-3.5 py-3 rounded-lg border border-border bg-background text-[13.5px] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 transition-all duration-150 resize-none leading-relaxed"
+                    className={textareaCn(!!errors.message)}
                     style={{ fontFamily: "var(--font-inter)" }}
+                    {...register("message")}
                   />
+                  {errors.message && (
+                    <p className="text-[11.5px] text-destructive" style={{ fontFamily: "var(--font-inter)" }}>
+                      {errors.message.message}
+                    </p>
+                  )}
                 </div>
+
+                {/* API-level error */}
+                {mutation.isError && (
+                  <p
+                    className="text-[12.5px] text-destructive bg-error-subtle border border-destructive/20 rounded-lg px-3.5 py-2.5"
+                    style={{ fontFamily: "var(--font-inter)" }}
+                  >
+                    Something went wrong. Please try again or email us directly at hello@propreso.com.
+                  </p>
+                )}
 
                 {/* Submit */}
                 <Button
                   type="submit"
-                  disabled={loading}
+                  disabled={mutation.isPending}
                   className="bg-primary hover:bg-primary-hover active:bg-primary-active text-white border-0 h-11 px-7 text-[14px] font-semibold tracking-[-0.01em] rounded-xl shadow-[0_4px_20px_rgba(200,84,56,0.28)] hover:shadow-[0_6px_28px_rgba(200,84,56,0.42)] transition-all duration-200 gap-2 self-start disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{ fontFamily: "var(--font-space-grotesk)" }}
                 >
-                  {loading ? (
+                  {mutation.isPending ? (
                     <>
                       <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                       Sending...
