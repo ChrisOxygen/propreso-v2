@@ -5,6 +5,7 @@ import type { Plan, BillingInterval } from "@/shared/lib/generated/prisma/enums"
 import type Stripe from "stripe";
 import { PRO_MONTHLY_TOKENS } from "@/features/billing/constants/plans";
 import { apiError } from "@/shared/lib/api-error";
+import { captureServerEvent } from "@/shared/lib/posthog-server";
 
 // POST /api/v1/billing/webhook — handle Stripe webhook events
 export async function POST(request: Request) {
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
         if (!userId) break;
 
         await syncSubscription(session.subscription as string, userId);
+        void captureServerEvent(userId, "plan_upgraded", { source: "checkout" });
         break;
       }
 
@@ -71,6 +73,7 @@ export async function POST(request: Request) {
             // tokenBalance intentionally not reset — user keeps remaining tokens
           },
         });
+        void captureServerEvent(userId, "subscription_cancelled");
         break;
       }
 
@@ -123,6 +126,7 @@ export async function POST(request: Request) {
           where: { id: userId },
           data: { subscriptionStatus: "past_due" },
         });
+        void captureServerEvent(userId, "billing_failed");
         break;
       }
     }

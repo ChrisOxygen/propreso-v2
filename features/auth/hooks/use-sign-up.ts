@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { ZSignUpSchema, type ZSignUp } from "@/features/auth/schemas/auth-schemas";
 import { createClient } from "@/shared/lib/supabase/client";
+import posthog from "posthog-js";
 
 export function useSignUp() {
   const router = useRouter();
@@ -29,7 +30,7 @@ export function useSignUp() {
 
     const supabase = createClient();
 
-    const { error: authError } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
@@ -45,6 +46,15 @@ export function useSignUp() {
       setError(authError.message);
       setIsPending(false);
       return;
+    }
+
+    if (authData.user) {
+      posthog.identify(authData.user.id, {
+        email: authData.user.email,
+        name: `${data.firstName} ${data.lastName}`,
+        plan: "free",
+      });
+      posthog.capture("user_signed_up", { method: "email" });
     }
 
     router.push("/dashboard");

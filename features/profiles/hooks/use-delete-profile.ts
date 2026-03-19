@@ -1,9 +1,11 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePostHog } from "posthog-js/react";
 
 export function useDeleteProfile() {
   const queryClient = useQueryClient();
+  const posthog = usePostHog();
 
   return useMutation({
     mutationFn: async (profileId: string) => {
@@ -15,7 +17,8 @@ export function useDeleteProfile() {
         throw new Error(err.error?.message ?? "Failed to delete profile");
       }
     },
-    onSuccess: () => {
+    onSuccess: (_, profileId) => {
+      posthog.capture("profile_deleted", { profile_id: profileId });
       queryClient.invalidateQueries({ queryKey: ["profiles"] });
     },
   });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
+import { usePostHog } from "posthog-js/react";
 
 async function createCheckout(priceId: string): Promise<{ url: string }> {
   const res = await fetch("/api/v1/billing/checkout", {
@@ -16,9 +17,12 @@ async function createCheckout(priceId: string): Promise<{ url: string }> {
 }
 
 export function useCreateCheckout() {
+  const posthog = usePostHog();
+
   return useMutation({
     mutationFn: createCheckout,
-    onSuccess: ({ url }) => {
+    onSuccess: ({ url }, priceId) => {
+      posthog.capture("checkout_started", { price_id: priceId });
       if (url) window.location.href = url;
     },
   });

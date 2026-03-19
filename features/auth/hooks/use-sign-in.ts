@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { ZSignInSchema, type ZSignIn } from "@/features/auth/schemas/auth-schemas";
 import { createClient } from "@/shared/lib/supabase/client";
+import posthog from "posthog-js";
 
 export function useSignIn() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export function useSignIn() {
 
     const supabase = createClient();
 
-    const { error: authError } = await supabase.auth.signInWithPassword({
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email: data.email,
       password: data.password,
     });
@@ -35,6 +36,13 @@ export function useSignIn() {
       setError(authError.message);
       setIsPending(false);
       return;
+    }
+
+    if (authData.user) {
+      posthog.identify(authData.user.id, {
+        email: authData.user.email,
+      });
+      posthog.capture("user_logged_in", { method: "email" });
     }
 
     router.push("/dashboard");

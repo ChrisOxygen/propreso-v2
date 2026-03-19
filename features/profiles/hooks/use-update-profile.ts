@@ -1,11 +1,13 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { usePostHog } from "posthog-js/react";
 import type { ZUpdateProfile } from "@/features/profiles/schemas/profile-schemas";
 import type { FreelancerProfileModel } from "@/shared/lib/generated/prisma/models";
 
 export function useUpdateProfile() {
   const queryClient = useQueryClient();
+  const posthog = usePostHog();
 
   return useMutation({
     mutationFn: async ({
@@ -26,7 +28,8 @@ export function useUpdateProfile() {
       }
       return res.json();
     },
-    onSuccess: () => {
+    onSuccess: (_, { profileId }) => {
+      posthog.capture("profile_updated", { profile_id: profileId });
       queryClient.invalidateQueries({ queryKey: ["profiles"] });
     },
   });

@@ -9,6 +9,7 @@ import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 import { TooltipProvider } from "@/shared/components/ui/tooltip";
 import { Toaster } from "@/shared/components/ui/sonner";
+import { PostHogProvider } from "@/providers/post-hog-provider";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
@@ -48,17 +49,19 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} ${instrumentSerif.variable} antialiased`}
       >
-        <QueryProvider>
-          <TooltipProvider>{children}</TooltipProvider>
-          <Toaster
-            toastOptions={{
-              classNames: {
-                actionButton:
-                  "!bg-primary !text-white !text-[12px] !font-semibold !rounded-lg hover:!bg-primary-hover active:!bg-primary-active",
-              },
-            }}
-          />
-        </QueryProvider>
+        <PostHogProvider>
+          <QueryProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+            <Toaster
+              toastOptions={{
+                classNames: {
+                  actionButton:
+                    "!bg-primary !text-white !text-[12px] !font-semibold !rounded-lg hover:!bg-primary-hover active:!bg-primary-active",
+                },
+              }}
+            />
+          </QueryProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
