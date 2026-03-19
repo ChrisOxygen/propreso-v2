@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Propreso
+
+> AI-powered proposal generation for freelancers.
+
+**[propreso.com](https://propreso.com/)** — Create a niche-based freelancer profile, configure your tone and style, and get streaming AI-drafted proposals injected directly into Upwork job pages via the Chrome extension.
+
+---
+
+## Features
+
+- **Profile-based generation** — Build niche profiles that capture your expertise, voice, and positioning
+- **Configurable output** — Control tone, proposal style, and Upwork-specific openers per generation
+- **Streaming proposals** — Real-time AI output powered by GPT-4o-mini via the Vercel AI SDK
+- **Chrome extension** — WXT-based extension that injects the proposal generator directly into Upwork job pages
+- **Proposal history** — Browse and revisit previously generated proposals
+- **Freemium limits** — Free tier includes 2 profiles and 10 proposals/month; enforced server-side
+
+---
+
+## Tech Stack
+
+| Layer             | Technology                                 |
+| ----------------- | ------------------------------------------ |
+| Framework         | Next.js 16.1 (App Router)                  |
+| Language          | TypeScript (strict)                        |
+| Styling           | Tailwind CSS v4 + shadcn/ui                |
+| Database          | Supabase PostgreSQL via Prisma ORM 7.x     |
+| Auth              | Supabase Auth + Supabase SSR               |
+| AI                | Vercel AI SDK v6 · GPT-4o-mini · streaming |
+| Data fetching     | TanStack Query v5                          |
+| Forms             | React Hook Form + Zod                      |
+| Browser extension | WXT + React (Chrome)                       |
+
+---
+
+## Project Structure
+
+```
+/
+├── app/                    # Next.js App Router
+│   ├── (auth)/             # Sign-in, sign-up
+│   ├── (dashboard)/        # Protected routes
+│   ├── (marketing)/        # Public landing page
+│   └── api/                # Route handlers
+├── features/               # Feature modules (profiles, proposals, auth)
+├── shared/                 # Cross-feature utilities, components, lib
+├── providers/              # TanStack QueryClientProvider
+├── proxy.ts                # Route protection (replaces middleware.ts in Next.js 16)
+└── prisma/                 # Schema + migrations
+```
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- A Supabase project (for auth + database)
+- An OpenAI API key
+- A Stripe account (for billing)
+
+### Installation
+
+```bash
+git clone https://github.com/ChrisOxygen/propreso-v2
+cd propreso-v2
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file at the project root:
+
+```env
+DATABASE_URL=                         # Supabase pooler URL (for queries)
+DIRECT_URL=                           # Supabase direct URL (for migrations)
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+OPENAI_API_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+```
+
+### Database Setup
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+### Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+```bash
+npm run dev                              # Start dev server (Turbopack)
+npm run build                            # Production build
+npm run lint                             # Lint
+npx tsc --noEmit                         # Type check
+npx prisma migrate dev --name <name>     # Create + apply migration
+npx prisma generate                      # Regenerate Prisma client
+npx prisma studio                        # Visual DB browser
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Chrome Extension
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The Upwork injector lives in `propreso-extension/` as a separate WXT project.
 
-## Deploy on Vercel
+```bash
+cd propreso-extension
+npm install
+npm run dev        # Watch mode (Chrome)
+npm run build      # Production build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Load the output from `propreso-extension/.output/chrome-mv3/` in Chrome via `chrome://extensions` → Load unpacked.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Architecture Notes
+
+- **Auth** — Supabase manages sessions. `proxy.ts` protects all `/(dashboard)` routes. On first sign-in, `POST /api/auth/sync` upserts a Prisma `User` from the Supabase Auth UID.
+- **Data** — All DB reads/writes go through Prisma. The Supabase JS client is used for auth only.
+- **AI generation** — `POST /api/proposals/generate` assembles a prompt from four blocks (profile context → tone → style → opener) and streams the response via `streamText()`.
+- **Freemium enforcement** — Profile and proposal limits are checked server-side before any write. Returns `403` with `profile_limit_reached` or `proposal_limit_reached`.
+
+---
+
+## License
+
+MIT
