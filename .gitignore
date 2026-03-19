@@ -53,5 +53,8 @@ propreso-color-style-guide.md
 # Claude Code
 .claude/
 
+# AI agent tool local configs
+.goose/
+
 # Local learning docs
 LEARNING.md
