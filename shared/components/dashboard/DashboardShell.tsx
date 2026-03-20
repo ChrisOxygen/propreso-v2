@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { ShellHeader } from "./ShellHeader";
@@ -16,6 +17,8 @@ interface DashboardShellProps {
 
 export function DashboardShell({ children, user }: DashboardShellProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
+  const hideGreeting = pathname === "/generate";
 
   return (
     <div className="flex h-screen bg-background p-4 gap-2">
@@ -44,10 +47,16 @@ export function DashboardShell({ children, user }: DashboardShellProps) {
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0 min-h-0 rounded-xl gap-4">
         <ShellHeader onMenuClick={() => setSidebarOpen(true)} />
-        <GreetingBanner name={user.name} />
-        <ScrollArea className="flex-1 min-h-0 rounded-xl">
-          {children}
-        </ScrollArea>
+        {!hideGreeting && <GreetingBanner name={user.name} />}
+        {hideGreeting ? (
+          <div className="flex-1 min-h-0 rounded-xl overflow-hidden">
+            {children}
+          </div>
+        ) : (
+          <ScrollArea className="flex-1 min-h-0 rounded-xl">
+            {children}
+          </ScrollArea>
+        )}
       </div>
     </div>
   );

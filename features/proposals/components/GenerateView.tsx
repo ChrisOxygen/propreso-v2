@@ -241,12 +241,12 @@ export function GenerateView() {
       </AlertDialog>
 
       {/* ── Layout ── */}
-      <div className="flex flex-col lg:grid lg:grid-cols-[420px_1fr] gap-6 items-start">
+      <div className="flex flex-col lg:grid lg:grid-cols-[420px_1fr] gap-6 lg:h-full">
         {/* ── LEFT: Config form ── */}
-        <div className="w-full rounded-xl bg-card border border-border">
+        <div className="w-full rounded-xl bg-card border border-border lg:overflow-y-auto lg:flex lg:flex-col">
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-5 p-5"
+            className="flex flex-col gap-5 p-5 lg:flex-1"
           >
             {/* Profile */}
             <div>
@@ -272,9 +272,9 @@ export function GenerateView() {
             <div className="h-px bg-border" />
 
             {/* Job Post */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 flex-1 min-h-0">
               <SectionLabel>Job Post</SectionLabel>
-              <div>
+              <div className="flex flex-col flex-1 min-h-0">
                 <div className="flex items-center justify-between mb-1.5">
                   <label className="text-[12px] font-medium text-muted-foreground">
                     Paste job post <span className="text-destructive">*</span>
@@ -291,9 +291,8 @@ export function GenerateView() {
                 </div>
                 <textarea
                   {...register("rawPost")}
-                  rows={8}
                   placeholder="Paste the full job post here…"
-                  className={`${fieldClass(!!errors.rawPost)} py-2.5 leading-relaxed resize-none`}
+                  className={`${fieldClass(!!errors.rawPost)} py-2.5 leading-relaxed resize-none flex-1 min-h-[8rem]`}
                 />
                 <FieldError msg={errors.rawPost?.message} />
               </div>
@@ -365,7 +364,7 @@ export function GenerateView() {
         </div>
 
         {/* ── RIGHT: Output panel ── */}
-        <div className="w-full lg:sticky">
+        <div className="w-full min-h-0 h-full">
           <GenerateOutput
             content={generatedContent}
             isAnalyzing={isAnalyzing}
