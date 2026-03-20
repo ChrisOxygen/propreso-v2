@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { ScrollArea } from "@/shared/components/ui/scroll-area";
+
 import { DashboardSidebar } from "./DashboardSidebar";
 import { ShellHeader } from "./ShellHeader";
 import { GreetingBanner } from "./GreetingBanner";
@@ -21,7 +21,7 @@ export function DashboardShell({ children, user }: DashboardShellProps) {
   const hideGreeting = pathname === "/generate";
 
   return (
-    <div className="flex h-screen bg-background p-4 gap-2">
+    <div className="flex lg:h-screen bg-background p-4 gap-2">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div
@@ -53,9 +53,9 @@ export function DashboardShell({ children, user }: DashboardShellProps) {
             {children}
           </div>
         ) : (
-          <ScrollArea className="flex-1 min-h-0 rounded-xl">
+          <div className="flex-1 min-h-0 rounded-xl overflow-y-auto scrollbar-brand">
             {children}
-          </ScrollArea>
+          </div>
         )}
       </div>
     </div>
