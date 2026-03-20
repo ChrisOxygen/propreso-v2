@@ -164,7 +164,7 @@ export function GenerateOutput({
   // ── Analyzing state ──────────────────────────────────────────────────────
   if (isAnalyzing) {
     return (
-      <div className="flex flex-col items-center justify-center h-full min-h-85 rounded-xl bg-accent/40 border border-dashed border-border-strong">
+      <div className="flex flex-col items-center justify-center rounded-xl bg-accent/40 border border-dashed border-border-strong h-[380px]">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-accent border border-primary/20">
           <ScanText size={18} className="text-primary animate-pulse" />
         </div>
@@ -181,7 +181,7 @@ export function GenerateOutput({
   // ── Empty state ──────────────────────────────────────────────────────────
   if (!hasGenerated) {
     return (
-      <div className="flex flex-col items-center justify-center h-full min-h-85 rounded-xl bg-accent/40 border border-dashed border-border-strong">
+      <div className="flex flex-col items-center justify-center rounded-xl bg-accent/40 border border-dashed border-border-strong h-[380px]">
         <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3 bg-accent border border-primary/20">
           <Sparkles size={18} className="text-primary" />
         </div>
@@ -198,7 +198,7 @@ export function GenerateOutput({
   return (
     <div className="flex flex-col gap-3 h-full">
       {/* ── Output box ── */}
-      <div className="relative flex-1 rounded-xl overflow-hidden bg-card border border-border min-h-85">
+      <div className="relative flex flex-col rounded-xl overflow-hidden bg-card border border-border h-[380px]">
         {isEditing ? (
           <>
             {/* Formatting toolbar */}
@@ -225,7 +225,7 @@ export function GenerateOutput({
             </div>
 
             {/* Rendered markdown — selectable */}
-            <ScrollArea className="h-[340px]">
+            <ScrollArea className="flex-1 min-h-0">
               <div className="px-5 py-4 select-text cursor-text">
                 <ReactMarkdown components={mdComponents}>
                   {localValue}
@@ -235,7 +235,7 @@ export function GenerateOutput({
           </>
         ) : (
           /* Streaming — plain text with animated cursor */
-          <ScrollArea className="h-full min-h-85">
+          <ScrollArea className="flex-1 min-h-0">
             <div className="p-5">
               <p className="text-[13.5px] leading-[1.8] whitespace-pre-wrap text-foreground">
                 {content}
@@ -246,9 +246,10 @@ export function GenerateOutput({
         )}
       </div>
 
-      {/* ── Unsaved banner ── */}
-      {isDirty && (
-        <div className="flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg bg-accent border border-primary/20">
+      {/* ── Unsaved banner ── always rendered to prevent footer from jumping */}
+      <div
+        className={`flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-lg bg-accent border border-primary/20 transition-opacity duration-200 ${isDirty ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+      >
           <div className="flex items-center gap-2">
             <AlertTriangle size={13} className="text-primary/70 shrink-0" />
             <p className="text-[12px] text-text-secondary">
@@ -268,8 +269,7 @@ export function GenerateOutput({
             )}
             Save now
           </button>
-        </div>
-      )}
+      </div>
 
       {/* ── Footer: counts + actions ── */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
