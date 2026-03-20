@@ -292,7 +292,7 @@ export function GenerateView() {
                 <textarea
                   {...register("rawPost")}
                   placeholder="Paste the full job post here…"
-                  className={`${fieldClass(!!errors.rawPost)} py-2.5 leading-relaxed resize-none flex-1 min-h-[8rem]`}
+                  className={`${fieldClass(!!errors.rawPost)} py-2.5 leading-relaxed resize-none flex-1 min-h-[8rem] scrollbar-brand`}
                 />
                 <FieldError msg={errors.rawPost?.message} />
               </div>

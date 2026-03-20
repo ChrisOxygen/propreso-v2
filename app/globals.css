@@ -139,6 +139,32 @@
   }
 }
 
+/* ─── Minimal brand scrollbar ───────────────────────────────────── */
+@layer utilities {
+  .scrollbar-brand {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--primary) 35%, transparent) transparent;
+  }
+  .scrollbar-brand::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-brand::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-brand::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklch, var(--primary) 35%, transparent);
+    border-radius: 9999px;
+  }
+  .scrollbar-brand::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(in oklch, var(--primary) 60%, transparent);
+  }
+  .scrollbar-brand::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+    width: 0;
+  }
+}
+
 /* ─── Sonner toast — brand theming ──────────────────────────────── */
 [data-sonner-toast] [data-icon] {
   color: var(--primary);
