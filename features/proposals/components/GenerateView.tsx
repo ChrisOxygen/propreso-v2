@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, Sparkles } from "lucide-react";
+import { Loader2, Sparkles, ChevronDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -68,6 +68,9 @@ export function GenerateView() {
   const { data: profiles = [], isPending: profilesPending } = useProfiles();
   const saveProposal = useSaveProposal();
   const [defaultSet, setDefaultSet] = useState(false);
+
+  // ── Mobile config panel toggle ─────────────────────────────────────────
+  const [isConfigOpen, setIsConfigOpen] = useState(true);
 
   // ── Unsaved-changes state ──────────────────────────────────────────────
   const [isSaved, setIsSaved] = useState(false);
@@ -178,6 +181,7 @@ export function GenerateView() {
     setEditedContent(null);
     setMessages([]);
     sendMessage({ text: data.rawPost });
+    setIsConfigOpen(false);
   }
 
   function handleRegenerate() {
@@ -215,6 +219,8 @@ export function GenerateView() {
   }
 
   const rawPostLength = rawPost?.length ?? 0;
+  const selectedProfile = profiles.find((p) => p.id === watchedProfileId);
+  const selectedTone = TONES.find((t) => t.value === watchedTone);
 
   return (
     <>
@@ -244,9 +250,32 @@ export function GenerateView() {
       <div className="flex flex-col lg:grid lg:grid-cols-[420px_1fr] gap-6 lg:h-full">
         {/* ── LEFT: Config form ── */}
         <div className="w-full rounded-xl bg-card border border-border lg:overflow-y-auto lg:flex lg:flex-col">
+          {/* Mobile toggle header */}
+          <button
+            type="button"
+            onClick={() => setIsConfigOpen((o) => !o)}
+            className={`lg:hidden flex items-center justify-between w-full px-5 py-4 ${isConfigOpen ? "border-b border-border" : ""}`}
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <span className="text-[13px] font-semibold text-foreground shrink-0">
+                Job Details
+              </span>
+              {!isConfigOpen && selectedProfile && (
+                <span className="text-[12px] text-muted-foreground truncate">
+                  {selectedProfile.name}
+                  {selectedTone ? ` · ${selectedTone.label}` : ""}
+                </span>
+              )}
+            </div>
+            <ChevronDown
+              size={15}
+              className={`text-muted-foreground shrink-0 ml-2 transition-transform duration-200 ${isConfigOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-5 p-5 lg:flex-1"
+            className={`flex flex-col gap-5 p-5 lg:flex-1 ${!isConfigOpen ? "hidden lg:flex" : ""}`}
           >
             {/* Profile */}
             <div>
