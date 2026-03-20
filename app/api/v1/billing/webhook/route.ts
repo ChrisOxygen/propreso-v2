@@ -58,7 +58,7 @@ export async function POST(request: Request) {
         if (!userId) break;
 
         await syncSubscription(session.subscription as string, userId);
-        void captureServerEvent(userId, "plan_upgraded", { source: "checkout" });
+        await captureServerEvent(userId, "plan_upgraded", { source: "checkout" });
         break;
       }
 
@@ -91,7 +91,7 @@ export async function POST(request: Request) {
             // tokenBalance intentionally not reset — user keeps remaining tokens
           },
         });
-        void captureServerEvent(userId, "subscription_cancelled");
+        await captureServerEvent(userId, "subscription_cancelled");
         break;
       }
 
@@ -144,7 +144,7 @@ export async function POST(request: Request) {
           where: { id: userId },
           data: { subscriptionStatus: "past_due" as SubscriptionStatus },
         });
-        void captureServerEvent(userId, "billing_failed");
+        await captureServerEvent(userId, "billing_failed");
         break;
       }
     }

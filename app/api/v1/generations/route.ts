@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     if (!exists) {
       return apiError("not_found", "User not found", 404);
     }
-    void captureServerEvent(user.id, "token_limit_hit");
+    await captureServerEvent(user.id, "token_limit_hit");
     return apiError("token_limit_reached", "Token limit reached", 403);
   }
 
@@ -194,7 +194,7 @@ export async function POST(request: NextRequest) {
         await prisma.generationEvent.create({
           data: { userId: user.id, status: "COMPLETED", jobTitle: derivedTitle },
         });
-        void captureServerEvent(user.id, "proposal_generated", {
+        await captureServerEvent(user.id, "proposal_generated", {
           profile_id: profileId,
           tone,
           job_title: derivedTitle,
