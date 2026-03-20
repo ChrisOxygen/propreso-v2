@@ -1,3 +1,5 @@
+export const maxDuration = 60; // Vercel: allow up to 60s for two sequential AI calls
+
 import { createClient } from "@/shared/lib/supabase/server";
 import { type NextRequest } from "next/server";
 import { streamText, generateText } from "ai";
