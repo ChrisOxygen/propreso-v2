@@ -129,8 +129,8 @@ Restate the core_problem in their language. Use keywords_to_mirror verbatim. Mak
 **PROOF** (1–2 sentences)
 One past result with a specific number or named outcome. If a selected portfolio item is provided, use it as your primary reference. Do not pad with adjectives.
 
-**MICRO-PLAN** (3 bullets)
-Phase-by-phase breakdown showing you've already thought through their project. Each bullet = one concrete action + one tangible output. No vague steps.
+**MICRO-PLAN** (3 short lines, each on its own line separated by a blank line)
+Phase-by-phase breakdown showing you've already thought through their project. Each line = one concrete action + one tangible output. No vague steps. No bullet symbols, no dashes, no numbers — write each phase as a plain sentence starting with the phase name followed by a colon.
 
 **CTA** (1 sentence)
 One option only. Low-friction. Never "hire me." Never "I look forward to hearing from you." A specific question or a specific next step.
@@ -153,6 +153,15 @@ Before outputting the proposal, run all six checks. Fix any that fail:
 ## TARGET LENGTH
 
 150–250 words. This is the research-backed optimal range for mobile reading and reply rate on freelance platforms. Never exceed 250 words. Length comes from precision, not from adding more paragraphs.
+
+## OUTPUT FORMAT
+
+Plain text only. No markdown whatsoever. This means:
+- No **bold** or *italic* syntax
+- No bullet points (-, *, •) or numbered lists
+- No headers (##, ###)
+- No backticks or code blocks
+- Paragraphs separated by a single blank line
 
 Output ONLY the finished proposal text, ready to send. No labels, no strategy notes, no commentary, no headers, no JSON. Start directly with the first word of the proposal.`;
 

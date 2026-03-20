@@ -10,12 +10,7 @@ import {
   Sparkles,
   AlertTriangle,
   ScanText,
-  Bold,
-  Italic,
-  List,
-  ListOrdered,
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
 import { UPWORK_CHAR_LIMIT } from "@/features/proposals/constants/generation";
 import { ScrollArea } from "@/shared/components/ui/scroll-area";
 
@@ -36,45 +31,6 @@ function charCountClass(count: number) {
   if (count >= 4500) return "text-amber-500";
   return "text-muted-foreground/60";
 }
-
-type FormatType = "bold" | "italic" | "ul" | "ol";
-
-const TOOLBAR_ITEMS: Array<{
-  type: FormatType;
-  icon: React.ElementType;
-  label: string;
-}> = [
-  { type: "bold", icon: Bold, label: "Bold" },
-  { type: "italic", icon: Italic, label: "Italic" },
-  { type: "ul", icon: List, label: "Bullet list" },
-  { type: "ol", icon: ListOrdered, label: "Numbered list" },
-];
-
-const mdComponents: React.ComponentProps<typeof ReactMarkdown>["components"] =
-  {
-    p: ({ children }) => (
-      <p className="mb-3 last:mb-0 text-[13.5px] leading-[1.8] text-foreground">
-        {children}
-      </p>
-    ),
-    strong: ({ children }) => (
-      <strong className="font-semibold text-foreground">{children}</strong>
-    ),
-    em: ({ children }) => <em className="italic">{children}</em>,
-    ul: ({ children }) => (
-      <ul className="list-disc pl-5 mb-3 space-y-0.5 text-[13.5px] leading-[1.8] text-foreground">
-        {children}
-      </ul>
-    ),
-    ol: ({ children }) => (
-      <ol className="list-decimal pl-5 mb-3 space-y-0.5 text-[13.5px] leading-[1.8] text-foreground">
-        {children}
-      </ol>
-    ),
-    li: ({ children }) => (
-      <li className="text-[13.5px] leading-[1.8] text-foreground">{children}</li>
-    ),
-  };
 
 export function GenerateOutput({
   content,
@@ -107,39 +63,6 @@ export function GenerateOutput({
       setLocalValue("");
     }
   }, [hasGenerated]);
-
-  function applyFormat(format: FormatType) {
-    const selection = window.getSelection();
-    const selectedText = selection?.toString() ?? "";
-    if (!selectedText) return;
-
-    // Find the selected plain text in the markdown source
-    const idx = localValue.indexOf(selectedText);
-    if (idx === -1) return;
-
-    let wrapped = selectedText;
-    if (format === "bold") {
-      wrapped = `**${selectedText}**`;
-    } else if (format === "italic") {
-      wrapped = `*${selectedText}*`;
-    } else if (format === "ul") {
-      wrapped = selectedText
-        .split("\n")
-        .map((l) => `- ${l}`)
-        .join("\n");
-    } else if (format === "ol") {
-      wrapped = selectedText
-        .split("\n")
-        .map((l, i) => `${i + 1}. ${l}`)
-        .join("\n");
-    }
-
-    const newValue =
-      localValue.slice(0, idx) + wrapped + localValue.slice(idx + selectedText.length);
-    setLocalValue(newValue);
-    onContentChange?.(newValue);
-    selection?.removeAllRanges();
-  }
 
   const displayValue = isEditing ? localValue : content;
   const charCount = displayValue.length;
@@ -200,39 +123,15 @@ export function GenerateOutput({
       {/* ── Output box ── */}
       <div className="relative flex flex-col rounded-xl overflow-hidden bg-card border border-border flex-1 min-h-0">
         {isEditing ? (
-          <>
-            {/* Formatting toolbar */}
-            <div className="flex items-center gap-0.5 px-2.5 py-2 border-b border-border bg-background/60">
-              {TOOLBAR_ITEMS.map(({ type, icon: Icon, label }) => (
-                <button
-                  key={type}
-                  type="button"
-                  title={label}
-                  onMouseDown={(e) => {
-                    // Prevent losing the text selection when clicking toolbar
-                    e.preventDefault();
-                    applyFormat(type);
-                  }}
-                  className="inline-flex items-center justify-center w-7 h-7 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-100"
-                >
-                  <Icon size={14} />
-                </button>
-              ))}
-              <div className="w-px h-3.5 bg-border mx-1.5" />
-              <span className="text-[10.5px] text-muted-foreground/50 select-none pr-1">
-                Select text, then format
-              </span>
-            </div>
-
-            {/* Rendered markdown — selectable */}
-            <ScrollArea className="flex-1 min-h-0">
-              <div className="px-5 py-4 select-text cursor-text">
-                <ReactMarkdown components={mdComponents}>
-                  {localValue}
-                </ReactMarkdown>
-              </div>
-            </ScrollArea>
-          </>
+          /* Editable plain-text textarea */
+          <textarea
+            value={localValue}
+            onChange={(e) => {
+              setLocalValue(e.target.value);
+              onContentChange?.(e.target.value);
+            }}
+            className="flex-1 w-full p-5 text-[13.5px] leading-[1.8] text-foreground bg-transparent resize-none outline-none scrollbar-brand"
+          />
         ) : (
           /* Streaming — plain text with animated cursor */
           <ScrollArea className="flex-1 min-h-0">
