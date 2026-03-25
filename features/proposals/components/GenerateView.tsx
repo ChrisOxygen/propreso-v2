@@ -75,7 +75,9 @@ export function GenerateView() {
   // ── Unsaved-changes state ──────────────────────────────────────────────
   const [isSaved, setIsSaved] = useState(false);
   const [showLeaveDialog, setShowLeaveDialog] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [editedContent, setEditedContent] = useState<string | null>(null);
+  const skipConfirmationRef = useRef(false);
 
   const {
     register,
@@ -113,6 +115,7 @@ export function GenerateView() {
     profileId: watchedProfileId,
     tone: watchedTone,
     rawPost,
+    skipConfirmation: skipConfirmationRef.current,
   };
 
   const transport = useMemo(
@@ -139,6 +142,8 @@ export function GenerateView() {
       toast.error("Post flagged", {
         description: "This job post looks suspicious. Try a different one.",
       });
+    } else if (msg.includes("requires_confirmation")) {
+      setShowConfirmDialog(true);
     } else if (msg.includes("analysis_failed")) {
       toast.error("Analysis failed", {
         description: "Couldn't analyze the job post. Please try again.",
@@ -149,6 +154,13 @@ export function GenerateView() {
       });
     }
   }, [error]);
+
+  // Reset skip flag once the generation starts streaming (server received the request)
+  useEffect(() => {
+    if (status === "streaming") {
+      skipConfirmationRef.current = false;
+    }
+  }, [status]);
 
   const isAnalyzing = status === "submitted";
   const isGenerating = status === "streaming";
@@ -177,6 +189,7 @@ export function GenerateView() {
   // ── Handlers ──────────────────────────────────────────────────────────
 
   function onSubmit(data: ZGenerateProposal) {
+    skipConfirmationRef.current = false;
     setIsSaved(false);
     setEditedContent(null);
     setMessages([]);
@@ -186,6 +199,15 @@ export function GenerateView() {
 
   function handleRegenerate() {
     setIsSaved(false);
+    regenerate();
+  }
+
+  function handleConfirmGenerate() {
+    skipConfirmationRef.current = true;
+    setShowConfirmDialog(false);
+    setIsSaved(false);
+    setEditedContent(null);
+    setMessages([]);
     regenerate();
   }
 
@@ -224,6 +246,28 @@ export function GenerateView() {
 
   return (
     <>
+      {/* ── Low-confidence confirmation dialog ── */}
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Unusual job post</AlertDialogTitle>
+            <AlertDialogDescription>
+              This post doesn&apos;t look like a standard freelance job listing. The
+              proposal may be less relevant. Generate anyway?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmGenerate}
+              className="bg-primary text-primary-foreground hover:bg-primary-hover"
+            >
+              Generate anyway
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* ── Leave confirmation dialog ── */}
       <AlertDialog open={showLeaveDialog} onOpenChange={setShowLeaveDialog}>
         <AlertDialogContent>

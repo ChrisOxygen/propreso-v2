@@ -7,6 +7,7 @@ export const ZGenerateProposalSchema = z.object({
     .min(50, "Please paste at least 50 characters of the job post")
     .max(8000, "Job post is too long"),
   tone: z.enum(["PROFESSIONAL", "CONVERSATIONAL", "CONFIDENT", "FRIENDLY"]),
+  skipConfirmation: z.boolean().optional(),
 });
 
 export type ZGenerateProposal = z.infer<typeof ZGenerateProposalSchema>;

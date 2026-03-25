@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) {
     return apiValidationError(parsed.error);
   }
-  const { profileId, tone, rawPost } = parsed.data;
+  const { profileId, tone, rawPost, skipConfirmation } = parsed.data;
 
   // Atomic check-and-decrement: only succeeds if tokenBalance > 0
   const deducted = await prisma.user.updateMany({
@@ -158,18 +158,15 @@ export async function POST(request: NextRequest) {
   }
 
   if (
-    signals.is_unclassifiable === true ||
-    (signals.confidence !== undefined && signals.confidence < 0.7)
+    !skipConfirmation &&
+    (signals.is_unclassifiable === true ||
+      (signals.confidence !== undefined && signals.confidence < 0.7))
   ) {
     await prisma.user.update({
       where: { id: user.id },
       data: { tokenBalance: { increment: 1 } },
     });
-    return Response.json({
-      requiresConfirmation: true,
-      detectedType: signals.post_type,
-      confidence: signals.confidence,
-    });
+    return apiError("requires_confirmation", "Job post type unclear. Confirm to generate anyway.", 422);
   }
 
   // ── Step 2: Streaming proposal generation ────────────────────────────────────
