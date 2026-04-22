@@ -14,7 +14,7 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
   contactRatelimit = new Ratelimit({
     redis,
     limiter: Ratelimit.slidingWindow(5, "10 m"),
-    prefix: "ratelimit:contact",
+    prefix: "propreso:ratelimit:contact",
     analytics: false,
   });
 
@@ -23,7 +23,7 @@ if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) 
   generationRatelimit = new Ratelimit({
     redis,
     limiter: Ratelimit.slidingWindow(5, "1 m"),
-    prefix: "ratelimit:generation",
+    prefix: "propreso:ratelimit:generation",
     analytics: false,
   });
 }

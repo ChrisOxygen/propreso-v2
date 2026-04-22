@@ -13,6 +13,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       defaults: "2026-01-30",
       capture_exceptions: true,
     });
+    posthog.register({ site: "propreso" });
   }, []);
 
   return (
