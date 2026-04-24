@@ -140,6 +140,110 @@ IMPORTANT: Never hardcode brand hex values in components. Always use the semanti
 - `text-destructive` / `bg-error-subtle` → Cinnabar / Blush Fade
 - The auth brand panel (`auth-brand-panel.tsx`) is the only exception — its dark overlay colors (`#160A04`, flame gradient, `#FBF7F3`) have no light-theme token equivalents and stay hardcoded.
 
+## API Layer
+
+All API routes live under `app/api/v1/` — every endpoint is versioned under `v1/` from the start.
+
+### Route Tree
+
+```
+app/api/v1/
+├── auth/sync/route.ts              POST  — upsert Prisma user on first sign-in
+├── account/route.ts                PUT, DELETE — update/delete account
+├── profiles/
+│   ├── route.ts                    GET, POST
+│   ├── [id]/route.ts               PATCH, DELETE
+│   ├── [id]/default/route.ts       POST — set default profile
+│   └── skills/route.ts             GET, POST
+├── proposals/
+│   ├── route.ts                    GET, POST
+│   └── [id]/status/route.ts        PATCH
+├── generations/route.ts            POST — streaming AI generation
+├── billing/
+│   ├── checkout/route.ts           POST — Stripe checkout session
+│   ├── portal/route.ts             POST — Stripe billing portal
+│   └── webhook/route.ts            POST — Stripe webhook (idempotent via Redis)
+├── contact/route.ts                POST
+└── seed/route.ts                   POST — dev-only seed
+```
+
+### Route Handler Pattern
+
+Every route handler follows the same four-step sequence:
+
+1. **Auth** — call `createClient()` from `@/shared/lib/supabase/server` and `getUser()`. Return `apiError("unauthorized", ..., 401)` if missing.
+2. **Validate** — parse the request body with a `Z`-prefixed Zod schema using `.safeParse()`. Return `apiValidationError(parsed.error)` on failure (422).
+3. **Delegate** — call the `_prefixed` server function from `features/<domain>/server/`. Pass `user.id` extracted from the session — never from the request body.
+4. **Respond** — return `NextResponse.json(result)` on success, or catch errors and map to `apiError(...)`.
+
+```typescript
+export async function POST(request: Request) {
+  // 1. Auth
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) return apiError("unauthorized", "Unauthorized", 401);
+
+  // 2. Validate
+  const body = await request.json();
+  const parsed = ZCreateProfileSchema.safeParse(body);
+  if (!parsed.success) return apiValidationError(parsed.error);
+
+  // 3. Delegate + 4. Respond
+  try {
+    const result = await _createProfile(user.id, parsed.data);
+    return NextResponse.json(result, { status: 201 });
+  } catch (err) {
+    if (err instanceof AppError) return apiError(err.code, err.message, 403);
+    return apiError("internal_error", "Internal server error", 500);
+  }
+}
+```
+
+Long-running routes (e.g. `/generations`) also export `export const maxDuration = 60` for Vercel's function timeout.
+
+## Error Handling
+
+All error responses use a single shape defined in `shared/lib/api-error.ts`:
+
+```typescript
+{ error: { code: string; message: string; details?: unknown } }
+```
+
+### Helpers
+
+| Helper | Usage |
+|--------|-------|
+| `apiError(code, message, status)` | Generic error — returns `NextResponse` with the shape above |
+| `apiValidationError(zodError)` | Zod parse failure — status 422, includes `details: err.flatten()` |
+
+### Error Classes (thrown from server functions)
+
+| Class | Code | When to throw |
+|-------|------|---------------|
+| `AppError` | custom | Base class — throw with any `code` string for domain errors |
+| `NotFoundError` | `not_found` | Resource doesn't exist or doesn't belong to the user |
+
+### Standard Error Codes
+
+| Code | Status | Meaning |
+|------|--------|---------|
+| `unauthorized` | 401 | No valid Supabase session |
+| `validation_error` | 422 | Zod schema parse failed |
+| `not_found` | 404 | Resource not found |
+| `bad_request` | 400 | Malformed request (e.g. invalid JSON) |
+| `rate_limited` | 429 | Rate limit exceeded (Upstash Redis) |
+| `token_limit_reached` | 403 | User token balance depleted |
+| `requires_confirmation` | 422 | Job post classification uncertain |
+| `suspicious_post` | 422 | Post detected as scam/spam |
+| `internal_error` | 500 | Unexpected server error |
+
+### Rate Limiting
+
+Defined in `shared/lib/rate-limit.ts` using Upstash Redis. Applied inline in routes that need it — not global middleware. Degrades gracefully if Upstash env vars are absent.
+
+- `contactRatelimit` — 5 requests / 10 min, keyed by IP
+- `generationRatelimit` — 5 requests / min, keyed by user ID
+
 ## Architecture
 
 ### Auth Flow
